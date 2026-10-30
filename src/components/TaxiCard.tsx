@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Icon } from "./Icon";
+import { ShowCard } from "./ShowCard";
 
 const PRESETS = [
   { label: "ICC Jeju (conference)", ko: "제주국제컨벤션센터", addr: "서귀포시 중문관광로 224" },
@@ -53,22 +53,13 @@ export function TaxiCard() {
       </button>
 
       {open && (
-        <div
-          role="dialog"
-          aria-label="Taxi destination"
-          className="fixed inset-0 z-[2000] flex flex-col items-center justify-center gap-6 bg-white p-6 pt-[max(1.5rem,env(safe-area-inset-top))] text-center text-black"
-          onClick={() => setOpen(false)}
-        >
-          <p className="text-lg text-neutral-500" lang="ko">기사님, 여기로 가주세요</p>
-          <p lang="ko" className="text-[clamp(2.5rem,10vw,6rem)] leading-tight font-bold break-keep">
-            {ko}
-          </p>
-          {!custom && <p lang="ko" className="text-xl text-neutral-600 sm:text-2xl">{dest.addr}</p>}
-          <p lang="ko" className="text-xl sm:text-2xl">감사합니다 🙏</p>
-          <button className="absolute top-[max(1rem,env(safe-area-inset-top))] right-4 flex size-12 items-center justify-center rounded-full bg-neutral-100" aria-label="Close">
-            <Icon name="close" />
-          </button>
-        </div>
+        <ShowCard
+          lead="기사님, 여기로 가주세요"
+          main={ko}
+          sub={custom ? undefined : dest.addr}
+          english="Please take me here"
+          onClose={() => setOpen(false)}
+        />
       )}
     </div>
   );

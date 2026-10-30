@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import { SiteFooter } from "@/components/SiteFooter";
 import { SiteNav } from "@/components/SiteNav";
 import { SITE } from "@/lib/site";
 import "./globals.css";
@@ -15,8 +16,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: { default: `${SITE.name} · Jeju`, template: `%s · ${SITE.shortName}` },
-  description: `${SITE.tagline}. ${SITE.dates}, ${SITE.venue}. Interactive guide to the venue and Jeju Island.`,
+  title: { default: SITE.guideName, template: `%s · ${SITE.guideName}` },
+  description: `Visitor guide to Jeju for ${SITE.name} participants (${SITE.dates}, ${SITE.venue}): maps, transport, food and the venue. Official conference information is on Indico.`,
 };
 
 export const viewport: Viewport = {
@@ -37,7 +38,10 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
     >
       <body className="flex min-h-full flex-col font-sans">
         <SiteNav />
-        <div className="pb-tabbar flex flex-1 flex-col">{children}</div>
+        <div className="pb-tabbar flex flex-1 flex-col">
+          {children}
+          <SiteFooter />
+        </div>
       </body>
     </html>
   );

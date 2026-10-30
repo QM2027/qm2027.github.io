@@ -18,9 +18,8 @@ export function SiteNav() {
       <header className="sticky top-0 z-[1000] border-b border-border bg-surface/90 pt-[env(safe-area-inset-top)] backdrop-blur">
         <div className="mx-auto flex h-14 max-w-7xl items-center justify-between px-4 lg:px-8">
           <Link href="/" className="flex items-baseline gap-2 font-semibold tracking-tight">
-            <span className="text-sea">QM</span>
-            <span>2027</span>
-            <span className="hidden text-sm font-normal text-muted sm:inline">Jeju · 21–27 Mar</span>
+            <span><span className="text-sea">QM</span>2027</span>
+            <span className="text-sm font-normal text-muted">Jeju Visitor Guide</span>
           </Link>
           <nav className="hidden items-center gap-1 md:flex">
             {NAV.map((item) => (
@@ -39,7 +38,7 @@ export function SiteNav() {
               rel="noreferrer"
               className="ml-2 inline-flex items-center gap-1 rounded-full border border-border px-4 py-2 text-sm hover:border-sea"
             >
-              Indico <Icon name="external" className="size-4" />
+              Official site <Icon name="external" className="size-4" />
             </a>
           </nav>
         </div>

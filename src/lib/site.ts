@@ -1,4 +1,5 @@
 export const SITE = {
+  guideName: "QM2027 Jeju Visitor Guide",
   name: "Quark Matter 2027",
   shortName: "QM2027",
   tagline:

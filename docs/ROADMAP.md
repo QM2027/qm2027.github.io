@@ -1,6 +1,9 @@
 # QM2027 웹앱 로드맵
 
-원칙: Indico에 이미 있는 텍스트 정보는 복제하지 않고 딥링크만 한다. 이 사이트는 Indico 게시판식 페이지로는 불가능한 **상호작용 기능**에 집중한다. 모든 화면은 휴대폰(세로·가로) / 태블릿 / 데스크톱을 모두 고려한다.
+원칙:
+- **성격**: QM2027 조직위원회가 만드는 **방문자 가이드(Jeju Visitor Guide)**. Indico 공식 페이지의 보조 사이트이며, **공식 사이트처럼 보이지 않게** 한다. 등록·프로그램·마감 등 공식 정보는 Indico로 딥링크하고, 차이가 있으면 Indico가 우선한다는 안내를 모든 페이지 하단에 둔다.
+- **여행 정보는 풍부하게**: 이 사이트의 주된 가치. Indico 게시판식 페이지로는 불가능한 **상호작용 기능**에 집중한다.
+- 모든 화면은 휴대폰(세로·가로) / 태블릿 / 데스크톱을 모두 고려한다.
 
 ## ✅ 완료
 
@@ -11,14 +14,19 @@
 - [x] `/getting-there` 공항→ICC 비교 + 택시 기사용 한국어 카드
 - [x] 홈: 카운트다운, 기능 카드, Indico 딥링크 허브 — [src/data/indico-links.ts](../src/data/indico-links.ts)
 - [x] `/program` 임시 페이지 (Indico 타임테이블 링크)
+- [x] 방문자 가이드 브랜딩("QM2027 Jeju Visitor Guide"), 공통 푸터에 "공식 정보는 Indico" 안내
+- [x] `/venue` 도식 평면도 (층 탭, 방 상세, 시설 찾기)
+- [x] `/explore/season`, `/explore/food`, `/explore/run`, `/explore/science` (4단계)
 
 ## 🚨 배포 전 필수
 
 - [ ] 장소 좌표 검증 (Kakao/Naver Map 대조) — [src/data/places.ts](../src/data/places.ts)
 - [ ] ICC Jeju 좌표 검증 — [src/lib/geo.ts](../src/lib/geo.ts) `ICC`
 - [ ] 공항버스 600 요금·소요시간·승차 위치, 택시·렌터카 요금 확인 — [src/app/getting-there/page.tsx](../src/app/getting-there/page.tsx)
+- [ ] 러닝 코스 경로를 실제 GPX로 다시 그리기 — [src/data/runs.ts](../src/data/runs.ts)
+- [ ] 시즌 날짜(개화 예상, 들불축제·걷기대회 2027 일정) 확인 — [src/data/season.ts](../src/data/season.ts)
+- [ ] 음식 설명·식이 분류, 한국어 문구 원어민 검수 — [src/data/food.ts](../src/data/food.ts)
 - [ ] 택시 카드 주소(ICC, 서귀포의료원) 확인 — [src/components/TaxiCard.tsx](../src/components/TaxiCard.tsx)
-- [ ] 브랜치 `master` → `main` 변경, 첫 커밋
 - [ ] GitHub 저장소 Settings → Pages → Source를 "GitHub Actions"로 설정
 - [ ] 커스텀 도메인 전환 시: Pages 설정에 도메인 등록 + `public/CNAME` 추가 (basePath는 워크플로가 자동 처리)
 
@@ -28,13 +36,14 @@
 - [ ] ICC Jeju 층별 평면도 원본 확보 (PDF/이미지) → SVG화
 - [x] 층 전환 탭, 방 클릭 시 정보 표시, 시설 찾기(하이라이트), URL 공유
 - [x] (도식) 등록데스크, 포스터 구역, 커피브레이크, 화장실, 수유실/Child care, 엘리베이터 표시
-- [ ] 실제 방 이름·배치로 [src/data/venue.ts](../src/data/venue.ts) 교체, Indico 방 이름 매핑 (나중에 Indico 방 이름과 연결)
+- [ ] 실제 방 이름·배치로 [src/data/venue.ts](../src/data/venue.ts) 교체, Indico 방 이름 매핑
 
-### 4. 관광 확장 1차
-- [ ] **A. March in Jeju 시즌** `/explore/season` — 유채꽃, 왕벚꽃, 들불축제(2027 개최 여부 확인), 한라봉·천혜향 제철; 학회 날짜(3/21~27)와 겹치는지 타임라인 표시
-- [ ] **D. 먹거리 가이드** `/explore/food` — 제주 음식 Must-try 체크리스트(localStorage), 식이 필터(vegetarian/vegan/halal/gluten-free/해산물 알레르기), 한국어 주문 문구
-- [ ] **C. 아침 산책·러닝 코스** `/explore/run` — 올레 8코스 구간, 3/5/10km 루프, GPX 다운로드, 고도 프로파일
-- [ ] **E. Physicist's Science Trail** `/explore/science` — UNESCO 지질 명소 해설, 천문대, 학회 기간 월령·별보기 조건
+### 4. 관광 확장 1차 ✅
+- [x] **A. March in Jeju 시즌** `/explore/season` — 유채꽃, 왕벚꽃, 들불축제(2027 개최 여부 확인), 한라봉·천혜향 제철; 학회 날짜(3/21~27)와 겹치는지 타임라인 표시
+- [x] **D. 먹거리 가이드** `/explore/food` — 제주 음식 Must-try 체크리스트(localStorage), 식이 필터(vegetarian/vegan/halal/gluten-free/해산물 알레르기), 한국어 주문 문구
+- [x] **C. 아침 산책·러닝 코스** `/explore/run` — 3개 코스, GPX 다운로드, 학회 기간 일출·일몰
+- [ ] (C 후속) 고도 프로파일 — 실제 GPX/DEM 데이터 확보 후
+- [x] **E. Physicist's Science Trail** `/explore/science` — UNESCO 지질 명소 해설, 천문대, 학회 기간 월령·별보기 조건
 
 ### 5. 관광 확장 2차 + 도구
 - [ ] **B. 자유시간 플래너** `/explore/plan` — 가용 시간 + 이동수단 → 추천; Open-Meteo 예보로 비/강풍 시 실내 우선; 일출·일몰 반영

@@ -47,6 +47,7 @@ export const PLACES: Place[] = [
 
   // West
   { id: "sanbangsan", name: "Sanbangsan & Yongmeori Coast", nameKo: "산방산·용머리해안", category: "sight", lat: 33.2316, lng: 126.3146, durationMin: 90, march: "Canola fields bloom around the mountain in March.", summary: "A lava dome beside a sandstone coast layered like a dragon's head. The coast path closes when the tide or waves are high.", tags: ["geology", "canola"] },
+  { id: "suwolbong", name: "Suwolbong Geotrail", nameKo: "수월봉 지질트레일", category: "sight", lat: 33.2958, lng: 126.1636, durationMin: 60, summary: "Sea cliff that exposes layered hydrovolcanic ash deposits, with bomb sags where volcanic blocks punched into the beds. A key UNESCO Global Geopark site.", tags: ["geology", "UNESCO Geopark"] },
   { id: "songaksan", name: "Songaksan", nameKo: "송악산", category: "nature", lat: 33.201, lng: 126.2925, durationMin: 90, summary: "Easy coastal crater walk with views of Mara-do and Gapa-do." },
   { id: "osulloc", name: "O'sulloc Tea Museum", nameKo: "오설록 티뮤지엄", category: "culture", lat: 33.3058, lng: 126.2895, durationMin: 75, indoor: true, summary: "Green tea museum and café next to large tea fields.", tags: ["souvenirs"] },
   { id: "bonte", name: "Bonte Museum", nameKo: "본태박물관", category: "culture", lat: 33.3018, lng: 126.3936, durationMin: 90, indoor: true, summary: "Tadao Ando building that houses Korean traditional crafts and contemporary art." },

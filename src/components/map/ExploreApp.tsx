@@ -1,9 +1,10 @@
 "use client";
 
-import dynamic from "next/dynamic";
+import Link from "next/link";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useMemo, useState } from "react";
 import { Icon } from "@/components/Icon";
+import { GUIDES } from "@/data/guides";
 import { CATEGORIES, COURSES, PLACES, placeById, type Category, type Place } from "@/data/places";
 import {
   ICC,
@@ -14,11 +15,7 @@ import {
   travelMinutes,
   type LatLng,
 } from "@/lib/geo";
-
-const MapView = dynamic(() => import("./MapView"), {
-  ssr: false,
-  loading: () => <div className="size-full animate-pulse bg-border/40" />,
-});
+import { LazyMap as MapView } from "./LazyMap";
 
 const ALL_CATEGORIES = Object.keys(CATEGORIES) as Category[];
 
@@ -110,6 +107,14 @@ export function ExploreApp() {
         ) : (
           <>
             <div className="border-b border-border px-4 pt-3">
+              <nav aria-label="Guides" className="-mx-4 mb-3 flex gap-2 overflow-x-auto px-4 [scrollbar-width:none]">
+                {GUIDES.map((g) => (
+                  <Link key={g.href} href={g.href} className="flex min-h-9 shrink-0 items-center gap-1.5 rounded-full bg-canola/15 px-3 text-sm">
+                    <span aria-hidden>{g.emoji}</span>
+                    {g.title}
+                  </Link>
+                ))}
+              </nav>
               <div role="tablist" className="flex gap-1 rounded-full bg-border/50 p-1 text-sm">
                 {(["places", "courses"] as const).map((t) => (
                   <button
