@@ -12,6 +12,8 @@
   --canola: #d9480f;
   --tangerine: #d9480f;
   --on-sea: #ffffff;
+  /* Darker than --tangerine so white text on it passes AA, in both themes. */
+  --alert: #c2410c;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -40,6 +42,7 @@
   --color-canola: var(--canola);
   --color-tangerine: var(--tangerine);
   --color-on-sea: var(--on-sea);
+  --color-alert: var(--alert);
   --font-sans: var(--font-plex), var(--font-plex-kr), system-ui, sans-serif;
   --font-serif: var(--font-source-serif), var(--font-plex-kr), Georgia, serif;
   --font-mono: var(--font-plex-mono), ui-monospace, monospace;

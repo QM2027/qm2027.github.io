@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { IBM_Plex_Mono, IBM_Plex_Sans, IBM_Plex_Sans_KR, Source_Serif_4 } from "next/font/google";
+import { DevNotice } from "@/components/DevNotice";
 import { PwaSupport } from "@/components/pwa/PwaSupport";
 import { SiteFooter } from "@/components/SiteFooter";
 import { SiteNav } from "@/components/SiteNav";
@@ -35,9 +36,10 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       lang="en"
       className={`${serif.variable} ${sans.variable} ${sansKr.variable} ${mono.variable} h-full antialiased`}
     >
-      <body className="flex min-h-full flex-col font-sans">
+      <body className="flex min-h-full flex-col font-sans has-[[data-fill-viewport]]:h-dvh">
         <SiteNav />
-        <div className="flex pb-[env(safe-area-inset-bottom)] flex-1 flex-col">
+        <DevNotice />
+        <div className="flex min-h-0 pb-[env(safe-area-inset-bottom)] flex-1 flex-col">
           {children}
           <SiteFooter />
         </div>

@@ -84,7 +84,7 @@ export function ExploreApp() {
   const selected = selectedId ? placeById(selectedId) : undefined;
 
   return (
-    <div className="flex h-[calc(100dvh-3.5rem-env(safe-area-inset-top)-env(safe-area-inset-bottom))] flex-col md:grid md:grid-cols-[minmax(320px,380px)_1fr] lg:grid-cols-[420px_1fr] max-md:landscape:flex-row">
+    <div data-fill-viewport className="flex min-h-0 flex-1 flex-col md:grid md:grid-cols-[minmax(320px,380px)_1fr] lg:grid-cols-[420px_1fr] max-md:landscape:flex-row">
       {/* Map: top on phones (portrait), right on tablet/desktop and phone landscape */}
       <div className="relative h-[42%] shrink-0 md:order-2 md:h-auto max-md:landscape:order-2 max-md:landscape:h-auto max-md:landscape:flex-1">
         <MapView
