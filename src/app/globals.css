@@ -1,0 +1,76 @@
+@import "tailwindcss";
+
+/* Jeju palette: basalt, sea, canola, tangerine */
+:root {
+  --background: #f7f6f2;
+  --surface: #ffffff;
+  --foreground: #1c2127;
+  --muted: #5d6670;
+  --border: #e3e1da;
+  --sea: #0e7490;
+  --sea-strong: #0b5c72;
+  --canola: #eab308;
+  --tangerine: #ea580c;
+  --tab-height: 4rem;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #11151a;
+    --surface: #1a2027;
+    --foreground: #e8eaed;
+    --muted: #9aa4ae;
+    --border: #2b333c;
+    --sea: #38bdd8;
+    --sea-strong: #67d0e6;
+    --canola: #facc15;
+    --tangerine: #fb923c;
+  }
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-surface: var(--surface);
+  --color-foreground: var(--foreground);
+  --color-muted: var(--muted);
+  --color-border: var(--border);
+  --color-sea: var(--sea);
+  --color-sea-strong: var(--sea-strong);
+  --color-canola: var(--canola);
+  --color-tangerine: var(--tangerine);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Leaflet controls follow the theme */
+.leaflet-container {
+  font: inherit;
+  background: var(--background);
+}
+
+@media (prefers-color-scheme: dark) {
+  .leaflet-tile-pane {
+    filter: brightness(0.75) invert(1) contrast(0.9) hue-rotate(200deg) saturate(0.4);
+  }
+  .leaflet-bar a,
+  .leaflet-control-attribution {
+    background: var(--surface) !important;
+    color: var(--foreground) !important;
+  }
+}
+
+/* Space for the fixed mobile tab bar and the iOS home indicator */
+.pb-tabbar {
+  padding-bottom: calc(var(--tab-height) + env(safe-area-inset-bottom));
+}
+@media (min-width: 768px) {
+  .pb-tabbar {
+    padding-bottom: 0;
+  }
+}
