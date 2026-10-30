@@ -7,7 +7,7 @@ import { SITE } from "@/lib/site";
 
 const FEATURES: { href: string; icon: IconName; title: string; text: string }[] = [
   { href: "/explore/", icon: "map", title: "Explore Jeju", text: "Interactive map with sights, food and rainy-day options, all measured from the venue." },
-  { href: "/explore/?tab=courses", icon: "list", title: "Suggested courses", text: "Itineraries from 2 hours to a full day, drawn on the map." },
+  { href: "/travel/", icon: "list", title: "Travel toolkit", text: "Live weather, currency, emergency numbers and Korean phrase cards." },
   { href: "/getting-there/", icon: "route", title: "Getting there", text: "Airport to ICC Jeju compared, plus a Korean card to show your taxi driver." },
   { href: "/venue/", icon: "building", title: "Venue plan", text: "Find rooms, coffee, restrooms and the nursing room at ICC Jeju." },
 ];

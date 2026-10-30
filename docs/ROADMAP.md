@@ -17,6 +17,7 @@
 - [x] 방문자 가이드 브랜딩("QM2027 Jeju Visitor Guide"), 공통 푸터에 "공식 정보는 Indico" 안내
 - [x] `/venue` 도식 평면도 (층 탭, 방 상세, 시설 찾기)
 - [x] `/explore/season`, `/explore/food`, `/explore/run`, `/explore/science` (4단계)
+- [x] `/explore/plan`, `/explore/companions`, `/explore/hallasan`, `/travel` (5단계)
 
 ## 🚨 배포 전 필수
 
@@ -25,6 +26,8 @@
 - [ ] 공항버스 600 요금·소요시간·승차 위치, 택시·렌터카 요금 확인 — [src/app/getting-there/page.tsx](../src/app/getting-there/page.tsx)
 - [ ] 러닝 코스 경로를 실제 GPX로 다시 그리기 — [src/data/runs.ts](../src/data/runs.ts)
 - [ ] 시즌 날짜(개화 예상, 들불축제·걷기대회 2027 일정) 확인 — [src/data/season.ts](../src/data/season.ts)
+- [ ] 한라산 탐방로 거리·고도·예약 규정·입산 통제시간 확인 — [src/data/hallasan.ts](../src/data/hallasan.ts)
+- [ ] `/travel` 실용정보(택스리펀드 기준, 비자/K-ETA, 제주 무사증) 확인 — [src/app/travel/page.tsx](../src/app/travel/page.tsx)
 - [ ] 음식 설명·식이 분류, 한국어 문구 원어민 검수 — [src/data/food.ts](../src/data/food.ts)
 - [ ] 택시 카드 주소(ICC, 서귀포의료원) 확인 — [src/components/TaxiCard.tsx](../src/components/TaxiCard.tsx)
 - [ ] GitHub 저장소 Settings → Pages → Source를 "GitHub Actions"로 설정
@@ -45,12 +48,13 @@
 - [ ] (C 후속) 고도 프로파일 — 실제 GPX/DEM 데이터 확보 후
 - [x] **E. Physicist's Science Trail** `/explore/science` — UNESCO 지질 명소 해설, 천문대, 학회 기간 월령·별보기 조건
 
-### 5. 관광 확장 2차 + 도구
-- [ ] **B. 자유시간 플래너** `/explore/plan` — 가용 시간 + 이동수단 → 추천; Open-Meteo 예보로 비/강풍 시 실내 우선; 일출·일몰 반영
-- [ ] **F. 동반자·가족 프로그램** `/explore/companions` — 아이 친화·휠체어 접근 필터
-- [ ] `/toolkit` — 실시간 날씨(Open-Meteo), 환율 변환기(Frankfurter), 한국어 문구 카드, 비상 연락처(112/119/1330), 교통카드·eSIM 팁
-- [ ] `/excursions` — 한라산 탐방로 비교(거리·고도 프로파일·입산 통제시간·예약), Indico Hallasan 페이지 링크
-- [ ] `places.ts` 필드 확장: `openHours`, `dietary`, `accessibility`, `seasonMonths`
+### 5. 관광 확장 2차 + 도구 ✅
+- [x] **B. 자유시간 플래너** `/explore/plan` — 가용 시간 + 이동수단 → 추천; Open-Meteo 예보로 비/강풍 시 실내 우선; 일출·일몰 반영
+- [x] **F. 동반자·가족 프로그램** `/explore/companions` — 아이 친화·휠체어 접근 필터
+- [x] `/travel` (툴킷) — 실시간 날씨(Open-Meteo), 환율 변환기(Frankfurter), 한국어 문구 카드, 비상 연락처(112/119/1330), 교통카드·eSIM 팁
+- [x] `/explore/hallasan` — 한라산 탐방로 비교(거리·고도 프로파일·예약), Indico Hallasan 페이지 링크
+- [x] `places.ts`: `family`/`accessible` 태그 추가 (플래너·동반자 필터)
+- [ ] 장소별 실제 영업시간 (`openHours`) — 현재 플래너는 유형별 추정 마감시간 사용 (`closingMin` in [src/lib/planner.ts](../src/lib/planner.ts))
 
 ### 6. 관광 확장 3차 + PWA
 - [ ] **G. Jeju Passport 스탬프 투어** — Geolocation 체크인, localStorage, 완료 배지 공유 이미지(canvas)
