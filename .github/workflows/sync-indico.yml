@@ -1,0 +1,40 @@
+name: Sync Indico timetable
+
+on:
+  schedule:
+    - cron: "17 */6 * * *"      # every 6 hours
+    - cron: "*/30 * 15-28 3 *"  # every 30 minutes around the conference (15–28 March)
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  actions: write
+
+concurrency:
+  group: sync-indico
+  cancel-in-progress: false
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: node scripts/sync-indico.mjs
+      - name: Commit and redeploy if the program changed
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if git diff --quiet -- public/data; then
+            echo "No program changes."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add public/data
+          git commit -m "Sync program from Indico"
+          git push
+          # Pushes made with GITHUB_TOKEN don't trigger other workflows, so start the deploy explicitly.
+          gh workflow run deploy.yml --ref "${GITHUB_REF_NAME}"

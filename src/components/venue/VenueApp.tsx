@@ -1,8 +1,11 @@
 "use client";
 
+import Link from "next/link";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { useState } from "react";
 import { Icon } from "@/components/Icon";
 import { FLOORS, ROOM_KINDS, type Room, type RoomKind } from "@/data/venue";
+import { clock, dayLabel, dayOf, isRunning, useProgram, type Session } from "@/lib/program";
 
 const KINDS = Object.keys(ROOM_KINDS) as RoomKind[];
 
@@ -174,11 +177,43 @@ function RoomCard({ room, floorLabel, onClose }: { room: Room; floorLabel: strin
       </div>
       {room.capacity && <p className="mt-2 text-sm text-muted">Seats about {room.capacity}</p>}
       {room.note && <p className="mt-3 leading-relaxed">{room.note}</p>}
-      {(room.kind === "plenary" || room.kind === "parallel") && (
-        <p className="mt-4 rounded-xl bg-sea/10 p-3 text-sm text-sea">
-          Live “now / next” sessions for this room will appear here once the program sync is ready.
-        </p>
-      )}
+      {(room.kind === "plenary" || room.kind === "parallel") && <RoomSessions room={room} />}
     </div>
+  );
+}
+
+/** What's on in this room now and next, from the synced Indico program. */
+function RoomSessions({ room }: { room: Room }) {
+  const program = useProgram();
+  const [now] = useState(() => Date.now());
+
+  if (program.status !== "ok" || !room.indicoRooms?.length) {
+    return (
+      <p className="mt-4 rounded-xl bg-sea/10 p-3 text-sm text-sea">
+        Sessions in this room will appear here once the program is published and rooms are confirmed.
+      </p>
+    );
+  }
+  const here = program.data.sessions.filter((s) => s.room && room.indicoRooms!.includes(s.room));
+  const current = here.find((s) => isRunning(s, now));
+  const next = here.find((s) => Date.parse(s.start) > now);
+
+  return (
+    <div className="mt-4 space-y-2 text-sm">
+      {current && <SessionLine label="Now" session={current} />}
+      {next && <SessionLine label="Next" session={next} />}
+      {!current && !next && <p className="text-muted">No more sessions scheduled here.</p>}
+      <Link href="/program/" className="inline-block text-sea underline">Full program</Link>
+    </div>
+  );
+}
+
+function SessionLine({ label, session }: { label: string; session: Session }) {
+  return (
+    <p className="rounded-xl bg-sea/10 p-3">
+      <b className="text-sea">{label}</b> · {dayLabel(dayOf(session.start))} {clock(session.start)}–{clock(session.end)}
+      <br />
+      {session.title}
+    </p>
   );
 }

@@ -74,15 +74,18 @@
 - [ ] 한국관광공사 TourAPI 4.0 영문 서비스 키 발급(data.go.kr) → 빌드 타임에 장소·축제·이미지 메타데이터 보강, 키는 GitHub Secrets
 - [ ] 제주관광공사 / 제주컨벤션뷰로 MICE 지원 문의 (사진 라이선스, 문화공연, 웰컴키트, 쿠폰) — 조직위 담당
 
-### 8. (후순위) Indico 연동
-- [ ] `scripts/sync-indico.ts` — `/export/timetable/1622375.json`, `/export/event/1622375.json?detail=contributions` → zod 검증 → `src/data/indico/*.json` (실패 시 기존 스냅샷 유지)
-- [ ] `.github/workflows/sync-indico.yml` — cron(평시 6h, 학회 주간 30분) + 수동 실행, diff 있을 때만 커밋 → 자동 배포
-- [ ] `/program` 본 구현: 일자별 그리드(병렬 세션×방), Now/Next, 세션·talk 상세(KaTeX), Indico 원문 링크
-- [ ] My Schedule (localStorage), 시간 겹침 경고, `.ics` 내보내기
-- [ ] 오프라인 검색 (minisearch)
-- [ ] Program updates (이전 동기화 대비 변경 목록, 저장한 talk 변경 배지)
-- [ ] 평면도에 "지금/다음 세션" 연동
-- [ ] (검증) Indico export의 CORS 허용 여부 → 허용 시 클라이언트에서 최신 여부 확인 배너
+### 8. Indico 연동 ✅ (QM2025 데이터로 검증, QM2027 시간표 공개 대기)
+- [x] [scripts/sync-indico.mjs](../scripts/sync-indico.mjs) — 타임테이블 export → `public/data/program.json` (실패 시 기존 스냅샷 유지, 내용이 바뀔 때만 기록, 변경 내역 diff)
+- [x] [.github/workflows/sync-indico.yml](../.github/workflows/sync-indico.yml) — cron(6h, 3/15–28은 30분) + 수동 실행, 변경 시 커밋 → `gh workflow run deploy.yml`
+- [x] `/program`: 일자별 세션(병렬 세션 나란히), NOW 표시, 발표 상세 패널, Indico 링크
+- [x] My schedule (localStorage), 시간 겹침·변경 경고, `.ics` 내보내기
+- [x] 검색 (제목·발표자·소속·초록, 클라이언트 필터 — 의존성 없음)
+- [x] Updates 탭 (moved / added / removed)
+- [x] 평면도 방 카드 "Now / Next" — `venue.ts`의 `indicoRooms`에 Indico 방 이름 매핑 필요
+- [x] CORS 확인: Indico export는 CORS 헤더 없음 → 클라이언트 직접 조회 불가, 빌드 타임 동기화만 사용
+- [ ] 초록 수식(KaTeX) 렌더링 — 실제 초록 형식 확인 후 결정
+- [ ] 포스터 보드 번호 검색 (`board` 필드는 저장 중)
+- [ ] 첫 실제 동기화 후 화면 점검 (방 이름, 세션 색상, 초록 형식)
 
 ## 💡 서버가 필요한 기능 (필요 시 Vercel 전환)
 - 일정 변경 푸시 알림

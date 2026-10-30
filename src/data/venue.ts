@@ -23,6 +23,8 @@ export type Room = {
   h: number;
   note?: string;
   capacity?: number;
+  /** Room names as they appear in the Indico timetable, for "now / next" sessions. */
+  indicoRooms?: string[];
 };
 
 export type Floor = { id: string; label: string; rooms: Room[] };

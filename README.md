@@ -1,36 +1,51 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# QM2027 Jeju Visitor Guide
 
-## Getting Started
+Companion travel guide for participants of [Quark Matter 2027](https://indico.cern.ch/event/1622375/)
+(21–27 March 2027, ICC Jeju), prepared by the organizing committee. Official information
+(registration, abstracts, program, deadlines) stays on Indico; this site adds what Indico pages
+can't: interactive maps, a venue plan, trip planners and an offline program.
 
-First, run the development server:
+Static Next.js export, hosted on GitHub Pages. Installable as a PWA and usable offline.
+
+## Develop
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm install
+npm run dev        # http://localhost:3000
+npm run lint
+npm run build      # static export in out/
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Local build with the GitHub Pages base path (Git Bash on Windows needs `MSYS_NO_PATHCONV=1`):
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```bash
+NEXT_PUBLIC_BASE_PATH=/qm2027_pwa npm run build
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Program sync
 
-## Learn More
+`npm run sync` pulls the public Indico timetable into `public/data/program.json`. It keeps the
+previous snapshot on any error and only rewrites the file when the program changed. The
+`Sync Indico timetable` workflow runs it on a schedule, commits changes and triggers a deploy.
 
-To learn more about Next.js, take a look at the following resources:
+To try the program UI with real data from a past conference:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```bash
+EVENT_ID=1334113 node scripts/sync-indico.mjs --out public/data/program.json   # QM2025 — don't commit
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Deploy
 
-## Deploy on Vercel
+Pushing to `main` runs `.github/workflows/deploy.yml`. In the repository settings, set
+**Pages → Source** to **GitHub Actions**. The workflow passes the right base path and site URL,
+so switching to a custom domain needs no code change (add `public/CNAME`).
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Where things live
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+| Path | What |
+| --- | --- |
+| `src/data/` | Places, courses, food, season, trails, venue rooms, Indico links |
+| `src/app/explore/*` | Map and guides (planner, season, food, runs, science, Hallasan, passport, Korea, companions) |
+| `src/app/venue`, `travel`, `program` | Floor plan, travel toolkit, synced program |
+| `public/sw.js` | Service worker (offline pages, map tiles, program data) |
+| `docs/ROADMAP.md` | Status, open tasks and data to verify before launch |

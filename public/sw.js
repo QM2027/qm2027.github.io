@@ -13,6 +13,7 @@ const SHELL = [
   "explore/plan/", "explore/season/", "explore/food/", "explore/run/",
   "explore/science/", "explore/hallasan/", "explore/companions/",
   "explore/passport/", "explore/korea/",
+  "data/program.json",
 ].map((p) => BASE + p);
 
 self.addEventListener("install", (event) => {
@@ -75,8 +76,8 @@ self.addEventListener("fetch", (event) => {
   } else if (url.hostname === "api.open-meteo.com" || url.hostname === "api.frankfurter.dev") {
     event.respondWith(networkFirst(request, DATA));
   } else if (url.origin === self.location.origin) {
-    if (request.mode === "navigate" || url.pathname.endsWith(".txt")) {
-      // Pages and RSC payloads: fresh when online, cached when not.
+    if (request.mode === "navigate" || url.pathname.endsWith(".txt") || url.pathname.endsWith(".json")) {
+      // Pages, RSC payloads and the synced program: fresh when online, cached when not.
       event.respondWith(networkFirst(request, PAGES));
     } else if (url.pathname.startsWith(`${BASE}_next/static/`) || url.pathname.startsWith(`${BASE}icons/`)) {
       event.respondWith(cacheFirst(request, ASSETS));
