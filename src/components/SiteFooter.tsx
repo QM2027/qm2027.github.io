@@ -23,6 +23,9 @@ export function SiteFooter() {
           Travel details (fares, opening hours, seasons) are for orientation only. Check them before you go. Map data ©
           OpenStreetMap contributors.
         </p>
+        <p className="mt-4 border-t border-border pt-4 text-xs">
+          Minjae Isaac Kwon (Università degli Studi di Torino) as QM2027 LOC Member / Built with AI - Claude Opus 5.5
+        </p>
       </div>
     </footer>
   );
