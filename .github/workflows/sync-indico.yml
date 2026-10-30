@@ -1,9 +1,12 @@
 name: Sync Indico timetable
 
+# Scheduled runs are off until the timetable goes live. To turn them on, allow
+# "Read and write permissions" under Settings → Actions → General → Workflow
+# permissions, then restore:
+#   schedule:
+#     - cron: "17 */6 * * *"      # every 6 hours
+#     - cron: "*/30 * 15-28 3 *"  # every 30 minutes around the conference (15–28 March)
 on:
-  schedule:
-    - cron: "17 */6 * * *"      # every 6 hours
-    - cron: "*/30 * 15-28 3 *"  # every 30 minutes around the conference (15–28 March)
   workflow_dispatch:
 
 permissions:

@@ -86,6 +86,7 @@
 - [ ] 초록 수식(KaTeX) 렌더링 — 실제 초록 형식 확인 후 결정
 - [ ] 포스터 보드 번호 검색 (`board` 필드는 저장 중)
 - [ ] 첫 실제 동기화 후 화면 점검 (방 이름, 세션 색상, 초록 형식)
+- [ ] **시간표 적용 시**: 저장소 Settings → Actions → General → Workflow permissions를 "Read and write"로 변경하고, [sync-indico.yml](../.github/workflows/sync-indico.yml)의 `schedule` 주석 해제 (현재 자동 실행 꺼둠)
 
 ## 💡 서버가 필요한 기능 (필요 시 Vercel 전환)
 - 일정 변경 푸시 알림
