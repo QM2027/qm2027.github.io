@@ -3,7 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import { PwaSupport } from "@/components/pwa/PwaSupport";
 import { SiteFooter } from "@/components/SiteFooter";
 import { SiteNav } from "@/components/SiteNav";
-import { SITE } from "@/lib/site";
+import { SITE, SITE_URL } from "@/lib/site";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -17,6 +17,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
+  // Origin only: Next adds the base path to metadata URLs itself.
+  metadataBase: new URL(new URL(SITE_URL).origin),
   title: { default: SITE.guideName, template: `%s · ${SITE.guideName}` },
   description: `Visitor guide to Jeju for ${SITE.name} participants (${SITE.dates}, ${SITE.venue}): maps, transport, food and the venue. Official conference information is on Indico.`,
 };

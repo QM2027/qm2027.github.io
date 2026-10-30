@@ -13,6 +13,9 @@ export const SITE = {
   indico: "https://indico.cern.ch/event/1622375/",
 } as const;
 
+/** Absolute site URL (including any base path), set by the deploy workflow. */
+export const SITE_URL = (process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000").replace(/\/$/, "");
+
 export const NAV = [
   { href: "/", label: "Home", icon: "home" },
   { href: "/explore/", label: "Explore", icon: "map" },
