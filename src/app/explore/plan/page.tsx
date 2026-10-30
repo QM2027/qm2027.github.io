@@ -16,7 +16,7 @@ export default function PlanPage() {
         and switches to indoor options when the live forecast shows rain or strong wind.
       </GuideHeader>
       <div className="mt-8">
-        <Suspense fallback={<div className="h-96 animate-pulse rounded-2xl bg-border/40" />}>
+        <Suspense fallback={<div className="h-96 animate-pulse rounded-md bg-border/40" />}>
           <PlannerApp />
         </Suspense>
       </div>

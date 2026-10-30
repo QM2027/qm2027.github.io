@@ -22,7 +22,7 @@ export function SeasonTimeline() {
 
   return (
     <div className="grid gap-6 lg:grid-cols-[1fr_400px]">
-      <div className="rounded-2xl border border-border bg-surface p-4 sm:p-5">
+      <div className="rounded-md border border-border bg-surface p-4 sm:p-5">
         {/* Gantt-style timeline. The name column stacks above the bar on phones. */}
         <div className="relative">
           <div className="relative mt-5 mr-2 ml-2 h-6 text-xs text-muted sm:ml-[12.5rem]">
@@ -48,12 +48,11 @@ export function SeasonTimeline() {
                   <button
                     onClick={() => setSelectedId(s.id)}
                     aria-pressed={s.id === selectedId}
-                    className="grid w-full items-center gap-1 rounded-xl p-2 text-left aria-pressed:bg-sea/10 sm:grid-cols-[11rem_1fr] sm:gap-4"
+                    className="grid w-full items-center gap-1 rounded-md p-2 text-left aria-pressed:bg-sea/10 sm:grid-cols-[11rem_1fr] sm:gap-4"
                   >
                     <span className="flex items-center gap-2 text-sm font-medium">
-                      <span aria-hidden>{s.emoji}</span>
                       <span className="truncate">{s.title}</span>
-                      {status === "peak" && <span className="shrink-0 rounded bg-canola/30 px-1 text-[10px]">PEAK</span>}
+                      {status === "peak" && <span className="shrink-0 rounded border border-tangerine px-1 text-tangerine text-[10px]">PEAK</span>}
                     </span>
                     <span className="relative block h-5">
                       {/* Conference week, repeated per row so it never covers the labels */}
@@ -63,7 +62,7 @@ export function SeasonTimeline() {
                       />
                       <span
                         className="absolute inset-y-1 rounded-full opacity-40"
-                        style={{ left: `${left}%`, width: `${width}%`, background: s.kind === "festival" ? "var(--tangerine)" : s.kind === "food" ? "var(--canola)" : "#16a34a" }}
+                        style={{ left: `${left}%`, width: `${width}%`, background: s.kind === "festival" ? "var(--tangerine)" : "var(--muted)" }}
                       />
                       {s.peak && (
                         <span
@@ -71,7 +70,7 @@ export function SeasonTimeline() {
                           style={{
                             left: `${seasonPos(s.peak[0]) * 100}%`,
                             width: `${(seasonPos(s.peak[1]) - seasonPos(s.peak[0])) * 100}%`,
-                            background: "#16a34a",
+                            background: "var(--foreground)",
                           }}
                         />
                       )}
@@ -84,14 +83,13 @@ export function SeasonTimeline() {
           </ul>
         </div>
         <p className="mt-4 text-xs text-muted">
-          Bars show typical windows from past years; darker parts are the usual peak. Nature does not read our schedule.
+          Bars show typical windows from past years; darker parts are the usual peak.
         </p>
       </div>
 
       <div className="space-y-4">
-        <div className="rounded-2xl border border-border bg-surface p-5">
-          <p className="text-3xl" aria-hidden>{selected.emoji}</p>
-          <h2 className="mt-2 text-xl font-semibold">{selected.title}</h2>
+        <div className="rounded-md border border-border bg-surface p-5">
+          <h2 className="text-xl font-semibold">{selected.title}</h2>
           <p className="text-muted" lang="ko">{selected.titleKo}</p>
           <p className="mt-1 text-sm font-medium">
             {fmt(selected.from)} – {fmt(selected.to)}
@@ -99,11 +97,11 @@ export function SeasonTimeline() {
           </p>
           <p className="mt-3 leading-relaxed">{selected.text}</p>
           <p className="mt-3 text-sm">
-            {{ peak: "✅ Likely at its best during the conference.", yes: "🟡 Overlaps the conference week.", no: "⚪ Outside the conference week. Plan extra days for this." }[overlapsConference(selected)]}
+            {{ peak: "Likely at its best during the conference.", yes: "Overlaps the conference week.", no: "Outside the conference week. Plan extra days for this." }[overlapsConference(selected)]}
           </p>
         </div>
         {spots.length > 0 && (
-          <div className="h-72 overflow-hidden rounded-2xl border border-border">
+          <div className="h-72 overflow-hidden rounded-md border border-border">
             <LazyMap places={spots} onSelect={() => {}} route={spots.length > 1 ? spots : []} />
           </div>
         )}

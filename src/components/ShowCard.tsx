@@ -28,7 +28,7 @@ export function ShowCard({
         {main}
       </p>
       {sub && <p lang="ko" className="text-xl text-neutral-600 sm:text-2xl">{sub}</p>}
-      <p lang="ko" className="text-xl sm:text-2xl">감사합니다 🙏</p>
+      <p lang="ko" className="text-xl sm:text-2xl">감사합니다</p>
       {english && <p className="text-sm text-neutral-400">{english}</p>}
       <button
         className="absolute top-[max(1rem,env(safe-area-inset-top))] right-4 flex size-12 items-center justify-center rounded-full bg-neutral-100"

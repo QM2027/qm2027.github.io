@@ -46,7 +46,7 @@ function useNow() {
 export function ProgramApp() {
   const program = useProgram();
 
-  if (program.status === "loading") return <div className="h-64 animate-pulse rounded-2xl bg-border/40" />;
+  if (program.status === "loading") return <div className="h-64 animate-pulse rounded-md bg-border/40" />;
   if (program.status === "error" || program.data.contributions.length === 0) {
     return <NotPublished syncedAt={program.status === "ok" ? program.data.syncedAt : undefined} />;
   }
@@ -62,10 +62,10 @@ function NotPublished({ syncedAt }: { syncedAt?: string }) {
         with search, a personal schedule and offline access.
       </p>
       {syncedAt && <p className="mt-2 text-xs text-muted">Last checked {new Date(syncedAt).toLocaleString("en-GB")}.</p>}
-      <a href={INDICO_TIMETABLE} target="_blank" rel="noreferrer" className="mt-6 inline-flex min-h-12 items-center gap-2 rounded-xl bg-sea px-6 font-semibold text-on-sea">
+      <a href={INDICO_TIMETABLE} target="_blank" rel="noreferrer" className="mt-6 inline-flex min-h-12 items-center gap-2 rounded-md bg-sea px-6 font-semibold text-on-sea">
         Open timetable on Indico <Icon name="external" className="size-4" />
       </a>
-      <ul className="mt-8 divide-y divide-border rounded-2xl border border-border bg-surface">
+      <ul className="mt-8 divide-y divide-border rounded-md border border-border bg-surface">
         {links.map((l) => (
           <li key={l.href}>
             <a href={l.href} target="_blank" rel="noreferrer" className="flex min-h-12 items-center justify-between px-4">
@@ -130,7 +130,7 @@ function ProgramBrowser({ program }: { program: Program }) {
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           placeholder="Search talks, speakers, abstracts…"
-          className="min-h-11 w-full rounded-xl border border-border bg-surface px-4"
+          className="min-h-11 w-full rounded-md border border-border bg-surface px-4"
           aria-label="Search the program"
         />
         {!q && (
@@ -138,7 +138,7 @@ function ProgramBrowser({ program }: { program: Program }) {
             {(
               [
                 ["day", "Schedule"],
-                ["mine", `★ My schedule (${mine.length})`],
+                ["mine", `My schedule (${mine.length})`],
                 ["updates", `Updates${program.changes.length ? ` (${program.changes.length})` : ""}`],
               ] as const
             ).map(([v, label]) => (
@@ -146,7 +146,7 @@ function ProgramBrowser({ program }: { program: Program }) {
                 key={v}
                 onClick={() => update({ view: v === "day" ? undefined : v })}
                 aria-pressed={view === v}
-                className="min-h-10 rounded-full border border-border px-4 text-sm aria-pressed:border-transparent aria-pressed:bg-foreground aria-pressed:text-background"
+                className="min-h-10 rounded-md border border-border px-4 text-sm aria-pressed:border-transparent aria-pressed:bg-foreground aria-pressed:text-background"
               >
                 {label}
               </button>
@@ -160,7 +160,7 @@ function ProgramBrowser({ program }: { program: Program }) {
                 key={d}
                 onClick={() => update({ day: d })}
                 aria-pressed={d === day}
-                className="min-h-10 shrink-0 rounded-full border border-border bg-surface px-4 text-sm aria-pressed:border-sea aria-pressed:bg-sea aria-pressed:text-on-sea"
+                className="min-h-10 shrink-0 rounded-md border border-border bg-surface px-4 text-sm aria-pressed:border-sea aria-pressed:bg-sea aria-pressed:text-on-sea"
               >
                 {dayLabel(d)}
                 {d === todayKey && " · today"}
@@ -221,7 +221,7 @@ function StarButton({ on, title, onClick }: { on: boolean; title: string; onClic
       onClick={onClick}
       aria-pressed={on}
       aria-label={on ? `Remove “${title}” from my schedule` : `Add “${title}” to my schedule`}
-      className={`flex size-10 shrink-0 items-center justify-center rounded-full text-xl ${on ? "text-canola" : "text-muted hover:text-foreground"}`}
+      className={`flex size-10 shrink-0 items-center justify-center rounded-full text-xl ${on ? "text-tangerine" : "text-muted hover:text-foreground"}`}
     >
       {on ? "★" : "☆"}
     </button>
@@ -247,7 +247,7 @@ function TalkRow({ c, session, starred, onStar, onOpen, showDay, warn }: { c: Co
 function TalkList({ items, empty, showDay, ...p }: ListProps & { items: Contribution[]; empty: string; showDay?: boolean }) {
   if (!items.length) return <p className="text-muted">{empty}</p>;
   return (
-    <ul className="divide-y divide-border rounded-2xl border border-border bg-surface px-3">
+    <ul className="divide-y divide-border rounded-md border border-border bg-surface px-3">
       {items.map((c) => (
         <TalkRow key={c.id} c={c} session={p.sessionsById.get(c.sessionId ?? "")} starred={p.starred.has(c.id)} onStar={() => p.onStar(c.id)} onOpen={() => p.onOpen(c.id)} showDay={showDay} />
       ))}
@@ -275,7 +275,7 @@ function DaySchedule({ program, day, now, ...p }: ListProps & { program: Program
         row.kind === "break" ? (
           <p key={`b${row.start}${row.b.title}`} className="flex items-center gap-3 text-sm text-muted">
             <span className="w-12 tabular-nums">{clock(row.b.start)}</span>
-            <span className="h-px flex-1 bg-border" />☕ {row.b.title}
+            <span className="h-px flex-1 bg-border" />{row.b.title}
             <span className="h-px flex-1 bg-border" />
           </p>
         ) : (
@@ -285,7 +285,7 @@ function DaySchedule({ program, day, now, ...p }: ListProps & { program: Program
               const expanded = open.has(s.id) || row.list.length === 1;
               const live = now !== undefined && isRunning(s, now);
               return (
-                <section key={s.id} className={`rounded-2xl border bg-surface p-4 ${live ? "border-tangerine ring-2 ring-tangerine/20" : "border-border"}`}>
+                <section key={s.id} className={`rounded-md border bg-surface p-4 ${live ? "border-tangerine ring-2 ring-tangerine/20" : "border-border"}`}>
                   <button
                     onClick={() => setOpen((cur) => new Set(cur.has(s.id) ? [...cur].filter((x) => x !== s.id) : [...cur, s.id]))}
                     aria-expanded={expanded}
@@ -328,14 +328,14 @@ function MySchedule({ items, changedIds, ...p }: ListProps & { items: Contributi
     <div className="space-y-6">
       <button
         onClick={() => downloadIcs("qm2027-my-schedule.ics", items.map((c) => toIcs(c, p.sessionsById.get(c.sessionId ?? ""))))}
-        className="min-h-11 rounded-xl bg-sea px-5 font-semibold text-on-sea"
+        className="min-h-11 rounded-md bg-sea px-5 font-semibold text-on-sea"
       >
         Add all {items.length} to my calendar (.ics)
       </button>
       {days.map((d) => (
         <section key={d}>
           <h2 className="font-semibold">{dayLabel(d)}</h2>
-          <ul className="mt-2 divide-y divide-border rounded-2xl border border-border bg-surface px-3">
+          <ul className="mt-2 divide-y divide-border rounded-md border border-border bg-surface px-3">
             {items
               .filter((c) => dayOf(c.start) === d)
               .map((c) => {
@@ -362,7 +362,7 @@ function MySchedule({ items, changedIds, ...p }: ListProps & { items: Contributi
 function Updates({ program, onOpen }: { program: Program; onOpen: (id: string) => void }) {
   if (!program.changes.length) return <p className="text-muted">No changes since the program was published.</p>;
   return (
-    <ul className="divide-y divide-border rounded-2xl border border-border bg-surface px-4">
+    <ul className="divide-y divide-border rounded-md border border-border bg-surface px-4">
       {program.changes.map((c) => (
         <li key={`${c.id}${c.detectedAt}`} className="py-3">
           <p className="text-xs text-muted">
@@ -411,7 +411,7 @@ function TalkDetail({ talk, session, starred, changed, onStar, onClose }: { talk
         </div>
         <h2 className="mt-2 text-xl font-semibold leading-snug">{talk.title}</h2>
         {session && <p className="mt-1 text-sm text-muted">{session.title}</p>}
-        {changed && <p className="mt-3 rounded-xl bg-tangerine/10 p-3 text-sm text-tangerine">This talk&apos;s time or room changed recently.</p>}
+        {changed && <p className="mt-3 rounded-md bg-tangerine/10 p-3 text-sm text-tangerine">This talk&apos;s time or room changed recently.</p>}
         {talk.speakers.length > 0 && (
           <ul className="mt-4 space-y-1">
             {talk.speakers.map((s) => (
@@ -423,17 +423,17 @@ function TalkDetail({ talk, session, starred, changed, onStar, onClose }: { talk
           </ul>
         )}
         <div className="mt-4 flex flex-wrap gap-2">
-          <button onClick={onStar} aria-pressed={starred} className="min-h-11 rounded-xl border border-border px-4 text-sm aria-pressed:border-canola aria-pressed:bg-canola/15">
+          <button onClick={onStar} aria-pressed={starred} className="min-h-11 rounded-md border border-border px-4 text-sm aria-pressed:border-tangerine aria-pressed:text-tangerine">
             {starred ? "★ In my schedule" : "☆ Add to my schedule"}
           </button>
-          <button onClick={() => downloadIcs(`qm2027-${talk.id}.ics`, [toIcs(talk, session)])} className="min-h-11 rounded-xl border border-border px-4 text-sm">
-            📅 Calendar
+          <button onClick={() => downloadIcs(`qm2027-${talk.id}.ics`, [toIcs(talk, session)])} className="min-h-11 rounded-md border border-border px-4 text-sm">
+            Add to calendar
           </button>
-          <Link href="/venue/" className="flex min-h-11 items-center rounded-xl border border-border px-4 text-sm">
-            🗺 Floor plan
+          <Link href="/venue/" className="flex min-h-11 items-center rounded-md border border-border px-4 text-sm">
+            Floor plan
           </Link>
           {talk.url && (
-            <a href={talk.url} target="_blank" rel="noreferrer" className="flex min-h-11 items-center gap-1 rounded-xl border border-border px-4 text-sm">
+            <a href={talk.url} target="_blank" rel="noreferrer" className="flex min-h-11 items-center gap-1 rounded-md border border-border px-4 text-sm">
               Indico <Icon name="external" className="size-4" />
             </a>
           )}

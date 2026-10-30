@@ -1,20 +1,16 @@
 import type { Metadata, Viewport } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { IBM_Plex_Mono, IBM_Plex_Sans, IBM_Plex_Sans_KR, Source_Serif_4 } from "next/font/google";
 import { PwaSupport } from "@/components/pwa/PwaSupport";
 import { SiteFooter } from "@/components/SiteFooter";
 import { SiteNav } from "@/components/SiteNav";
 import { SITE, SITE_URL } from "@/lib/site";
 import "./globals.css";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
+const serif = Source_Serif_4({ variable: "--font-source-serif", subsets: ["latin"] });
+const sans = IBM_Plex_Sans({ variable: "--font-plex", subsets: ["latin"], weight: ["400", "500", "600"] });
+// Korean glyphs come in many unicode-range files; let the browser fetch only what a page uses.
+const sansKr = IBM_Plex_Sans_KR({ variable: "--font-plex-kr", weight: ["400", "600"], preload: false });
+const mono = IBM_Plex_Mono({ variable: "--font-plex-mono", subsets: ["latin"], weight: ["400", "500"] });
 
 export const metadata: Metadata = {
   // Origin only: Next adds the base path to metadata URLs itself.
@@ -29,7 +25,7 @@ export const viewport: Viewport = {
   viewportFit: "cover",
   themeColor: [
     { media: "(prefers-color-scheme: light)", color: "#ffffff" },
-    { media: "(prefers-color-scheme: dark)", color: "#1a2027" },
+    { media: "(prefers-color-scheme: dark)", color: "#0e0e0e" },
   ],
 };
 
@@ -37,7 +33,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
+      className={`${serif.variable} ${sans.variable} ${sansKr.variable} ${mono.variable} h-full antialiased`}
     >
       <body className="flex min-h-full flex-col font-sans">
         <SiteNav />

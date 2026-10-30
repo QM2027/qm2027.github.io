@@ -23,7 +23,7 @@ export function FoodGuide() {
               key={d}
               onClick={() => setDiets((cur) => (cur.includes(d) ? cur.filter((x) => x !== d) : [...cur, d]))}
               aria-pressed={diets.includes(d)}
-              className="min-h-10 rounded-full border border-border px-4 text-sm aria-pressed:border-transparent aria-pressed:bg-foreground aria-pressed:text-background"
+              className="min-h-10 rounded-md border border-border px-4 text-sm aria-pressed:border-transparent aria-pressed:bg-foreground aria-pressed:text-background"
             >
               {DIETS[d]}
             </button>
@@ -33,7 +33,7 @@ export function FoodGuide() {
           Tried {DISHES.filter((d) => tried.has(d.id)).length} of {DISHES.length} · {dishes.length} shown
         </p>
         {diets.length > 0 && (
-          <p className="mt-2 rounded-xl bg-canola/15 p-3 text-sm">
+          <p className="mt-2 border-l-2 border-tangerine bg-surface p-3 text-sm">
             Many Korean dishes use anchovy broth, fish sauce or pork stock, even when they look vegetable-only. Show
             a phrase card to confirm.
           </p>
@@ -43,12 +43,11 @@ export function FoodGuide() {
           {dishes.map((d) => {
             const done = tried.has(d.id);
             return (
-              <li key={d.id} className="flex flex-col rounded-2xl border border-border bg-surface p-4">
+              <li key={d.id} className="flex flex-col rounded-md border border-border bg-surface p-4">
                 <div className="flex items-start gap-3">
-                  <span className="text-3xl" aria-hidden>{d.emoji}</span>
                   <div className="min-w-0 flex-1">
                     <h3 className="font-semibold">{d.name}</h3>
-                    <p className="text-sm text-muted" lang="ko">{d.nameKo}{d.spicy && " · 🌶"}</p>
+                    <p className="text-sm text-muted" lang="ko">{d.nameKo}{d.spicy && " · spicy"}</p>
                   </div>
                   <button
                     onClick={() => toggleTried(d.id)}
@@ -56,11 +55,11 @@ export function FoodGuide() {
                     aria-label={done ? `Mark ${d.name} as not tried` : `Mark ${d.name} as tried`}
                     className="flex size-11 shrink-0 items-center justify-center rounded-full border border-border text-lg aria-pressed:border-transparent aria-pressed:bg-sea aria-pressed:text-on-sea"
                   >
-                    {done ? "✓" : "＋"}
+                    {done ? "✓" : "+"}
                   </button>
                 </div>
                 <p className="mt-2 text-sm leading-relaxed">{d.text}</p>
-                <p className="mt-auto pt-2 text-xs text-muted">📍 {d.where}</p>
+                <p className="mt-auto pt-2 text-xs text-muted">{d.where}</p>
               </li>
             );
           })}
@@ -69,13 +68,13 @@ export function FoodGuide() {
       </section>
 
       <aside className="lg:sticky lg:top-20 lg:self-start">
-        <div className="rounded-2xl border border-border bg-surface p-4">
+        <div className="rounded-md border border-border bg-surface p-4">
           <h2 className="font-semibold">Show-the-staff phrases</h2>
           <p className="mt-1 text-sm text-muted">Tap a phrase to show it full screen.</p>
           <ul className="mt-3 space-y-2">
             {PHRASES.map((p) => (
               <li key={p.id}>
-                <button onClick={() => setShown(p)} className="w-full rounded-xl border border-border px-3 py-2.5 text-left hover:border-sea">
+                <button onClick={() => setShown(p)} className="w-full rounded-md border border-border px-3 py-2.5 text-left hover:border-sea">
                   <span className="block text-sm font-medium">{p.en}</span>
                   <span className="block text-sm text-muted" lang="ko">{p.ko}</span>
                 </button>

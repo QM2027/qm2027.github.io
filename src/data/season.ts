@@ -3,7 +3,6 @@
 
 export type SeasonItem = {
   id: string;
-  emoji: string;
   title: string;
   titleKo: string;
   /** Inclusive day-of-year style dates as "MM-DD". */
@@ -22,7 +21,6 @@ export const CONFERENCE = { from: "03-21", to: "03-27" };
 export const SEASON: SeasonItem[] = [
   {
     id: "canola",
-    emoji: "🌼",
     title: "Canola flowers",
     titleKo: "유채꽃",
     from: "03-01",
@@ -34,7 +32,6 @@ export const SEASON: SeasonItem[] = [
   },
   {
     id: "cherry",
-    emoji: "🌸",
     title: "King cherry blossoms",
     titleKo: "왕벚꽃",
     from: "03-20",
@@ -46,7 +43,6 @@ export const SEASON: SeasonItem[] = [
   },
   {
     id: "camellia",
-    emoji: "🌺",
     title: "Camellia (late season)",
     titleKo: "동백꽃",
     from: "03-01",
@@ -57,7 +53,6 @@ export const SEASON: SeasonItem[] = [
   },
   {
     id: "walking-festival",
-    emoji: "🚶",
     title: "Seogwipo Canola Walking Festival",
     titleKo: "서귀포 유채꽃 국제걷기대회",
     from: "03-14",
@@ -69,7 +64,6 @@ export const SEASON: SeasonItem[] = [
   },
   {
     id: "fire-festival",
-    emoji: "🔥",
     title: "Jeju Fire Festival",
     titleKo: "제주들불축제",
     from: "03-08",
@@ -81,7 +75,6 @@ export const SEASON: SeasonItem[] = [
   },
   {
     id: "citrus",
-    emoji: "🍊",
     title: "Hallabong & cheonhyehyang season",
     titleKo: "한라봉·천혜향",
     from: "03-01",

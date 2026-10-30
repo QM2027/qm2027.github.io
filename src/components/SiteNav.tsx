@@ -15,19 +15,19 @@ export function SiteNav() {
 
   return (
     <>
-      <header className="sticky top-0 z-[1000] border-b border-border bg-surface/90 pt-[env(safe-area-inset-top)] backdrop-blur">
+      <header className="sticky top-0 z-[1000] border-b border-border bg-background/95 pt-[env(safe-area-inset-top)] backdrop-blur">
         <div className="mx-auto flex h-14 max-w-7xl items-center justify-between px-4 lg:px-8">
-          <Link href="/" className="flex items-baseline gap-2 font-semibold tracking-tight">
-            <span><span className="text-sea">QM</span>2027</span>
-            <span className="text-sm font-normal text-muted">Jeju Visitor Guide</span>
+          <Link href="/" className="flex items-baseline gap-2">
+            <span className="font-serif text-lg font-semibold">QM2027</span>
+            <span className="font-mono text-xs tracking-wider text-muted uppercase">Jeju visitor guide</span>
           </Link>
-          <nav className="hidden items-center gap-1 md:flex">
+          <nav className="hidden h-full items-stretch gap-6 md:flex">
             {NAV.map((item) => (
               <Link
                 key={item.href}
                 href={item.href}
                 aria-current={isActive(pathname, item.href) ? "page" : undefined}
-                className="rounded-full px-4 py-2 text-sm text-muted transition-colors hover:bg-background hover:text-foreground aria-[current=page]:bg-sea aria-[current=page]:text-on-sea"
+                className="flex items-center border-b-2 border-transparent text-sm text-muted hover:text-foreground aria-[current=page]:border-foreground aria-[current=page]:text-foreground"
               >
                 {item.label}
               </Link>
@@ -36,7 +36,7 @@ export function SiteNav() {
               href={SITE.indico}
               target="_blank"
               rel="noreferrer"
-              className="ml-2 inline-flex items-center gap-1 rounded-full border border-border px-4 py-2 text-sm hover:border-sea"
+              className="flex items-center gap-1 text-sm text-muted hover:text-foreground"
             >
               Official site <Icon name="external" className="size-4" />
             </a>

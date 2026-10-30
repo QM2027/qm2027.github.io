@@ -16,10 +16,10 @@ const DURATIONS = [
   { min: 240, label: "Half day" },
   { min: 480, label: "Full day" },
 ];
-const MODES: { id: Mode; label: string; emoji: string }[] = [
-  { id: "walk", label: "On foot", emoji: "🚶" },
-  { id: "taxi", label: "Taxi / bus", emoji: "🚕" },
-  { id: "car", label: "Rental car", emoji: "🚗" },
+const MODES: { id: Mode; label: string }[] = [
+  { id: "walk", label: "On foot" },
+  { id: "taxi", label: "Taxi / bus" },
+  { id: "car", label: "Rental car" },
 ];
 const INTERESTS: Interest[] = ["sight", "nature", "culture", "food"];
 
@@ -77,7 +77,7 @@ export function PlannerApp() {
         </Field>
         <Field label="Getting around">
           {MODES.map((m) => (
-            <Chip key={m.id} on={mode === m.id} onClick={() => update({ mode: m.id })}>{m.emoji} {m.label}</Chip>
+            <Chip key={m.id} on={mode === m.id} onClick={() => update({ mode: m.id })}>{m.label}</Chip>
           ))}
         </Field>
         <Field label="Interested in (optional)">
@@ -94,19 +94,19 @@ export function PlannerApp() {
               {CATEGORIES[i].label}
             </Chip>
           ))}
-          <Chip on={family} onClick={() => update({ family: family ? undefined : "1" })}>👨‍👩‍👧 With kids</Chip>
+          <Chip on={family} onClick={() => update({ family: family ? undefined : "1" })}>With kids</Chip>
         </Field>
         <Field label="Weather">
           {(["auto", "dry", "wet"] as const).map((w) => (
             <Chip key={w} on={weatherPref === w} onClick={() => update({ weather: w === "auto" ? undefined : w })}>
-              {{ auto: "Live forecast", dry: "☀ Dry", wet: "☂ Rain / wind" }[w]}
+              {{ auto: "Live forecast", dry: "Dry", wet: "Rain or wind" }[w]}
             </Chip>
           ))}
         </Field>
         {weatherPref === "auto" && (
-          <p className="rounded-xl bg-surface p-3 text-sm">
+          <p className="rounded-md bg-surface p-3 text-sm">
             {forecast.status === "ok"
-              ? `${describeWeather(forecast.data.current.weather_code).emoji} Now at the venue: ${Math.round(forecast.data.current.temperature_2m)}°C, wind ${Math.round(forecast.data.current.wind_speed_10m)} m/s${wet ? ", so indoor options come first." : "."}`
+              ? `Now at the venue: ${describeWeather(forecast.data.current.weather_code).toLowerCase()}, ${Math.round(forecast.data.current.temperature_2m)}°C, wind ${Math.round(forecast.data.current.wind_speed_10m)} m/s${wet ? ", so indoor options come first." : "."}`
               : forecast.status === "loading"
                 ? "Checking the forecast…"
                 : "Forecast unavailable. Choose dry or rain above."}
@@ -118,22 +118,22 @@ export function PlannerApp() {
             type="time"
             value={start}
             onChange={(e) => update({ start: e.target.value || undefined })}
-            className="min-h-11 rounded-xl border border-border bg-surface px-3"
+            className="min-h-11 rounded-md border border-border bg-surface px-3"
           />
         </label>
       </div>
 
       <div className="space-y-4">
-        <div className="h-72 overflow-hidden rounded-2xl border border-border sm:h-96">
+        <div className="h-72 overflow-hidden rounded-md border border-border sm:h-96">
           <LazyMap places={plan.stops.map((s) => s.place)} onSelect={() => {}} route={plan.stops.length ? route : []} />
         </div>
 
         {plan.stops.length === 0 ? (
-          <p className="rounded-2xl border border-dashed border-border p-5 text-muted">
+          <p className="rounded-md border border-dashed border-border p-5 text-muted">
             Nothing fits. Try more time or a faster way to get around.
           </p>
         ) : (
-          <ol className="relative space-y-2 rounded-2xl border border-border bg-surface p-4">
+          <ol className="relative space-y-2 rounded-md border border-border bg-surface p-4">
             <Row time={startMin} title="Leave ICC Jeju" />
             {plan.stops.map((s, i) => (
               <li key={s.place.id}>
@@ -145,7 +145,7 @@ export function PlannerApp() {
                       {i + 1}. {s.place.name}
                     </Link>
                     <p className="text-sm text-muted">
-                      {formatMinutes(s.place.durationMin)} · {s.place.indoor ? "☂ indoor" : "outdoor"}
+                      {formatMinutes(s.place.durationMin)} · {s.place.indoor ? "indoor" : "outdoor"}
                     </p>
                   </div>
                 </div>
@@ -156,8 +156,8 @@ export function PlannerApp() {
           </ol>
         )}
         {afterDark.length > 0 && (
-          <p className="rounded-xl bg-canola/15 p-3 text-sm">
-            🌇 Sunset is around {formatClock(sunset)}. {afterDark.map((s) => s.place.name).join(", ")} will be after dark.
+          <p className="border-l-2 border-tangerine bg-surface p-3 text-sm">
+            Sunset is around {formatClock(sunset)}. {afterDark.map((s) => s.place.name).join(", ")} will be after dark.
           </p>
         )}
         <p className="text-xs text-muted">
@@ -185,7 +185,7 @@ function Chip({ on, onClick, children }: { on: boolean; onClick: () => void; chi
       type="button"
       onClick={onClick}
       aria-pressed={on}
-      className="min-h-10 rounded-full border border-border bg-surface px-4 text-sm aria-pressed:border-transparent aria-pressed:bg-foreground aria-pressed:text-background"
+      className="min-h-10 rounded-md border border-border bg-surface px-4 text-sm aria-pressed:border-transparent aria-pressed:bg-foreground aria-pressed:text-background"
     >
       {children}
     </button>

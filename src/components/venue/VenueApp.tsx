@@ -39,24 +39,24 @@ export function VenueApp() {
     <div className="grid gap-6 lg:grid-cols-[1fr_340px]">
       <div>
         <div className="flex flex-wrap items-center gap-3">
-          <div role="tablist" aria-label="Floor" className="flex gap-1 rounded-full bg-border/50 p-1">
+          <div role="tablist" aria-label="Floor" className="flex gap-6 border-b border-border">
             {FLOORS.map((f) => (
               <button
                 key={f.id}
                 role="tab"
                 aria-selected={f.id === floor.id}
                 onClick={() => update({ floor: f.id, room: undefined })}
-                className="relative min-h-10 min-w-14 rounded-full px-4 font-semibold text-muted aria-selected:bg-surface aria-selected:text-foreground aria-selected:shadow-sm"
+                className="relative -mb-px min-h-10 border-b-2 border-transparent px-1 font-mono font-medium text-muted aria-selected:border-foreground aria-selected:text-foreground"
               >
                 {f.label}
-                {hits.has(f.id) && <span className="absolute top-1 right-2 size-2 rounded-full bg-tangerine" />}
+                {hits.has(f.id) && <span className="absolute top-1 -right-2 size-1.5 rounded-full bg-tangerine" />}
               </button>
             ))}
           </div>
           <p className="text-sm text-muted">Tap a room for details.</p>
         </div>
 
-        <div className="mt-4 overflow-hidden rounded-2xl border border-border bg-surface p-2 sm:p-4">
+        <div className="mt-4 overflow-hidden rounded-md border border-border bg-surface p-2 sm:p-4">
           <svg viewBox="0 0 400 260" className="h-auto w-full" role="img" aria-label={`Floor plan ${floor.label}`}>
             <rect x="5" y="5" width="390" height="250" rx="10" fill="none" stroke="currentColor" strokeOpacity="0.15" strokeWidth="2" />
             {floor.rooms.map((r) => {
@@ -94,7 +94,7 @@ export function VenueApp() {
                     dominantBaseline="middle"
                     fontSize={r.w < 80 ? 8 : 11}
                     fontWeight={600}
-                    fill={active ? "#fff" : "currentColor"}
+                    fill={active ? "var(--background)" : "currentColor"}
                     className="pointer-events-none select-none"
                   >
                     {r.name}
@@ -111,7 +111,7 @@ export function VenueApp() {
               <button
                 onClick={() => update({ room: r.id, floor: floor.id })}
                 aria-pressed={r.id === room?.id}
-                className="flex min-h-10 items-center gap-2 rounded-full border border-border px-3 text-sm aria-pressed:border-foreground"
+                className="flex min-h-10 items-center gap-2 rounded-md border border-border px-3 text-sm aria-pressed:border-foreground"
               >
                 <span className="size-2.5 rounded-full" style={{ background: ROOM_KINDS[r.kind].color }} />
                 {r.name}
@@ -128,12 +128,12 @@ export function VenueApp() {
         {room ? (
           <RoomCard room={room} floorLabel={floor.label} onClose={() => update({ room: undefined })} />
         ) : (
-          <div className="rounded-2xl border border-dashed border-border p-5 text-sm text-muted">
+          <div className="rounded-md border border-dashed border-border p-5 text-sm text-muted">
             Select a room on the plan, or find a facility below.
           </div>
         )}
 
-        <div className="rounded-2xl border border-border bg-surface p-4">
+        <div className="rounded-md border border-border bg-surface p-4">
           <h2 className="text-sm font-semibold">Find…</h2>
           <ul className="mt-3 grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-2">
             {KINDS.map((k) => (
@@ -141,7 +141,7 @@ export function VenueApp() {
                 <button
                   onClick={() => update({ find: highlight === k ? undefined : k, room: undefined })}
                   aria-pressed={highlight === k}
-                  className="flex min-h-11 w-full items-center gap-2 rounded-xl border border-border px-3 text-left text-sm aria-pressed:border-foreground aria-pressed:bg-foreground aria-pressed:text-background"
+                  className="flex min-h-11 w-full items-center gap-2 rounded-md border border-border px-3 text-left text-sm aria-pressed:border-foreground aria-pressed:bg-foreground aria-pressed:text-background"
                 >
                   <span className="size-3 shrink-0 rounded" style={{ background: ROOM_KINDS[k].color }} />
                   {ROOM_KINDS[k].label}
@@ -163,7 +163,7 @@ export function VenueApp() {
 function RoomCard({ room, floorLabel, onClose }: { room: Room; floorLabel: string; onClose: () => void }) {
   const meta = ROOM_KINDS[room.kind];
   return (
-    <div className="rounded-2xl border border-border bg-surface p-5">
+    <div className="rounded-md border border-border bg-surface p-5">
       <div className="flex items-start justify-between gap-3">
         <div>
           <p className="text-xs font-medium uppercase tracking-wide" style={{ color: meta.color }}>
@@ -189,7 +189,7 @@ function RoomSessions({ room }: { room: Room }) {
 
   if (program.status !== "ok" || !room.indicoRooms?.length) {
     return (
-      <p className="mt-4 rounded-xl bg-sea/10 p-3 text-sm text-sea">
+      <p className="mt-4 rounded-md bg-sea/10 p-3 text-sm text-sea">
         Sessions in this room will appear here once the program is published and rooms are confirmed.
       </p>
     );
@@ -210,7 +210,7 @@ function RoomSessions({ room }: { room: Room }) {
 
 function SessionLine({ label, session }: { label: string; session: Session }) {
   return (
-    <p className="rounded-xl bg-sea/10 p-3">
+    <p className="rounded-md bg-sea/10 p-3">
       <b className="text-sea">{label}</b> · {dayLabel(dayOf(session.start))} {clock(session.start)}–{clock(session.end)}
       <br />
       {session.title}

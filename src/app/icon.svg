@@ -1,7 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
-  <rect width="512" height="512" rx="112" fill="#0e7490"/>
-  <path d="M96 372 L206 214 Q256 150 306 214 L416 372 Z" fill="#0b5c72"/>
-  <circle cx="356" cy="150" r="44" fill="#eab308"/>
-  <text x="256" y="356" text-anchor="middle" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="150" font-weight="700" fill="#fff" letter-spacing="-4">QM</text>
-  <text x="256" y="430" text-anchor="middle" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="56" font-weight="600" fill="#fff" fill-opacity="0.85">2027</text>
+  <rect width="512" height="512" rx="96" fill="#111111"/>
+  <text x="256" y="300" text-anchor="middle" font-family="Georgia, 'Times New Roman', serif" font-size="210" font-weight="700" fill="#ffffff" letter-spacing="-6">QM</text>
+  <rect x="136" y="346" width="240" height="4" fill="#d9480f"/>
+  <text x="256" y="420" text-anchor="middle" font-family="Consolas, 'Courier New', monospace" font-size="54" fill="#ffffff" fill-opacity="0.8" letter-spacing="8">2027</text>
 </svg>

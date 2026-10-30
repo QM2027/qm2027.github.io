@@ -37,7 +37,7 @@ export function PhraseBook() {
   const [shown, setShown] = useState<{ en: string; ko: string }>();
 
   return (
-    <section className="rounded-2xl border border-border bg-surface p-5">
+    <section className="rounded-md border border-border bg-surface p-5">
       <h2 className="font-semibold">Show-in-Korean cards</h2>
       <p className="mt-1 text-sm text-muted">
         Tap to show full screen. Food and allergy phrases are in the <Link href="/explore/food/" className="text-sea underline">food guide</Link>.
@@ -49,7 +49,7 @@ export function PhraseBook() {
             <ul className="mt-2 space-y-2">
               {g.phrases.map((p) => (
                 <li key={p.ko}>
-                  <button onClick={() => setShown(p)} className="w-full rounded-xl border border-border px-3 py-2 text-left hover:border-sea">
+                  <button onClick={() => setShown(p)} className="w-full rounded-md border border-border px-3 py-2 text-left hover:border-sea">
                     <span className="block text-sm font-medium">{p.en}</span>
                     <span className="block text-sm text-muted" lang="ko">{p.ko}</span>
                   </button>

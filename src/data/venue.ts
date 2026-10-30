@@ -29,16 +29,17 @@ export type Room = {
 
 export type Floor = { id: string; label: string; rooms: Room[] };
 
+// Theme greys by role; the accent is reserved for where you go first (registration).
 export const ROOM_KINDS: Record<RoomKind, { label: string; color: string; facility?: boolean }> = {
-  plenary: { label: "Plenary", color: "#0e7490" },
-  parallel: { label: "Parallel sessions", color: "#0891b2" },
-  poster: { label: "Posters", color: "#7c3aed" },
-  registration: { label: "Registration", color: "#ea580c", facility: true },
-  catering: { label: "Coffee & lunch", color: "#ca8a04", facility: true },
-  restroom: { label: "Restrooms", color: "#64748b", facility: true },
-  elevator: { label: "Elevators & stairs", color: "#475569", facility: true },
-  nursing: { label: "Nursing / child care", color: "#db2777", facility: true },
-  info: { label: "Info & first aid", color: "#16a34a", facility: true },
+  plenary: { label: "Plenary", color: "var(--foreground)" },
+  parallel: { label: "Parallel sessions", color: "var(--foreground)" },
+  poster: { label: "Posters", color: "var(--muted)" },
+  registration: { label: "Registration", color: "var(--tangerine)", facility: true },
+  catering: { label: "Coffee & lunch", color: "var(--muted)", facility: true },
+  restroom: { label: "Restrooms", color: "var(--muted)", facility: true },
+  elevator: { label: "Elevators & stairs", color: "var(--muted)", facility: true },
+  nursing: { label: "Nursing / child care", color: "var(--muted)", facility: true },
+  info: { label: "Info & first aid", color: "var(--muted)", facility: true },
 };
 
 export const FLOORS: Floor[] = [

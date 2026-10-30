@@ -18,8 +18,8 @@ export function Countdown() {
   const start = Date.parse(SITE.start);
   const end = Date.parse(SITE.end);
 
-  if (t >= end) return <span>See you at the next Quark Matter!</span>;
-  if (t >= start) return <span>🔴 Happening now in Jeju</span>;
+  if (t >= end) return <span>The conference has ended.</span>;
+  if (t >= start) return <span>The conference is on now</span>;
 
   const days = Math.ceil((start - t) / 86_400_000);
   return (

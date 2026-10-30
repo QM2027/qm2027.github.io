@@ -36,7 +36,7 @@ function PlaceRow({ p }: { p: Place }) {
       <Link href={`/explore/?place=${p.id}`} className="flex items-start gap-3 py-2.5 hover:text-sea">
         <span className="mt-1.5 size-2.5 shrink-0 rounded-full" style={{ background: CATEGORIES[p.category].color }} />
         <span className="min-w-0 flex-1">
-          <span className="block font-medium">{p.name}{p.indoor && " ☂"}</span>
+          <span className="block font-medium">{p.name}</span>
           <span className="block truncate text-sm text-muted">{p.summary}</span>
         </span>
         <span className="shrink-0 text-xs text-muted">{formatDistance(distanceKm(ICC, p))}</span>
@@ -57,7 +57,7 @@ export default function CompanionsPage() {
       <ul className="mt-8 grid gap-3 sm:grid-cols-3">
         {PRESETS.map((p) => (
           <li key={p.href}>
-            <Link href={p.href} className="block h-full rounded-2xl bg-canola/10 p-4 hover:bg-canola/20">
+            <Link href={p.href} className="block h-full rounded-md bg-surface p-4 hover:bg-border/60">
               <span className="block font-semibold">{p.title} →</span>
               <span className="mt-1 block text-sm text-muted">{p.text}</span>
             </Link>
@@ -66,16 +66,16 @@ export default function CompanionsPage() {
       </ul>
 
       <div className="mt-8 grid gap-6 md:grid-cols-2 lg:grid-cols-[1fr_1fr_400px]">
-        <section className="rounded-2xl border border-border bg-surface p-4">
-          <h2 className="font-semibold">👨‍👩‍👧 Good with kids</h2>
+        <section className="rounded-md border border-border bg-surface p-4">
+          <h2 className="font-semibold">Good with kids</h2>
           <ul className="mt-2 divide-y divide-border">{KIDS.map((p) => <PlaceRow key={p.id} p={p} />)}</ul>
         </section>
-        <section className="rounded-2xl border border-border bg-surface p-4">
-          <h2 className="font-semibold">♿ Step-free main route</h2>
+        <section className="rounded-md border border-border bg-surface p-4">
+          <h2 className="font-semibold">Step-free main route</h2>
           <ul className="mt-2 divide-y divide-border">{STEP_FREE.map((p) => <PlaceRow key={p.id} p={p} />)}</ul>
           <p className="mt-2 text-xs text-muted">Step-free means the main visitor route, as far as we know. Call ahead if it matters.</p>
         </section>
-        <div className="h-80 overflow-hidden rounded-2xl border border-border md:col-span-2 lg:col-span-1 lg:sticky lg:top-20 lg:h-[32rem]">
+        <div className="h-80 overflow-hidden rounded-md border border-border md:col-span-2 lg:col-span-1 lg:sticky lg:top-20 lg:h-[32rem]">
           <PlacesMap ids={[...new Set([...KIDS, ...STEP_FREE].map((p) => p.id))]} />
         </div>
       </div>
@@ -84,7 +84,7 @@ export default function CompanionsPage() {
         <h2 className="text-xl font-semibold">Practical tips</h2>
         <dl className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
           {TIPS.map(([title, text]) => (
-            <div key={title} className="rounded-2xl border border-border bg-surface p-4">
+            <div key={title} className="rounded-md border border-border bg-surface p-4">
               <dt className="font-medium">{title}</dt>
               <dd className="mt-1 text-sm text-muted">{text}</dd>
             </div>

@@ -17,8 +17,8 @@ export function TaxiCard() {
   const ko = custom.trim() || dest.ko;
 
   return (
-    <div className="rounded-2xl border border-border bg-surface p-4 sm:p-6">
-      <h2 className="text-lg font-semibold">🚕 Show-the-driver card</h2>
+    <div className="rounded-md border border-border bg-surface p-4 sm:p-6">
+      <h2 className="text-lg font-semibold">Show-the-driver card</h2>
       <p className="mt-1 text-sm text-muted">
         Pick a destination or paste your hotel’s Korean name (it’s in your booking confirmation), then tap
         “Show”.
@@ -32,7 +32,7 @@ export function TaxiCard() {
               setCustom("");
             }}
             aria-pressed={!custom && dest.ko === p.ko}
-            className="min-h-11 rounded-full border border-border px-4 text-sm aria-pressed:border-sea aria-pressed:bg-sea aria-pressed:text-on-sea"
+            className="min-h-11 rounded-md border border-border px-4 text-sm aria-pressed:border-sea aria-pressed:bg-sea aria-pressed:text-on-sea"
           >
             {p.label}
           </button>
@@ -42,12 +42,12 @@ export function TaxiCard() {
         value={custom}
         onChange={(e) => setCustom(e.target.value)}
         placeholder="Or type a Korean name / address, e.g. 롯데호텔 제주"
-        className="mt-3 min-h-11 w-full rounded-xl border border-border bg-background px-3"
+        className="mt-3 min-h-11 w-full rounded-md border border-border bg-background px-3"
         lang="ko"
       />
       <button
         onClick={() => setOpen(true)}
-        className="mt-3 min-h-12 w-full rounded-xl bg-tangerine font-semibold text-white sm:w-auto sm:px-8"
+        className="mt-3 min-h-12 w-full rounded-md bg-tangerine font-semibold text-white sm:w-auto sm:px-8"
       >
         Show
       </button>

@@ -64,9 +64,8 @@ export function PwaSupport() {
     <div
       role="dialog"
       aria-label="Install the guide"
-      className="fixed inset-x-3 bottom-[calc(var(--tab-height)+env(safe-area-inset-bottom)+0.75rem)] z-[1500] mx-auto flex max-w-md items-start gap-3 rounded-2xl border border-border bg-surface p-4 shadow-lg md:bottom-6"
+      className="fixed inset-x-3 bottom-[calc(var(--tab-height)+env(safe-area-inset-bottom)+0.75rem)] z-[1500] mx-auto flex max-w-md items-start gap-3 rounded-md border border-border bg-surface p-4 shadow-lg md:bottom-6"
     >
-      <span className="text-2xl" aria-hidden>📲</span>
       <div className="flex-1 text-sm">
         <p className="font-semibold">Use the guide offline</p>
         {ios ? (
@@ -79,7 +78,7 @@ export function PwaSupport() {
                 await deferred?.prompt();
                 dismiss();
               }}
-              className="mt-2 min-h-10 rounded-xl bg-sea px-4 font-semibold text-on-sea"
+              className="mt-2 min-h-10 rounded-md bg-sea px-4 font-semibold text-on-sea"
             >
               Install
             </button>

@@ -26,18 +26,18 @@ export type Forecast = {
   };
 };
 
-/** WMO weather code → emoji and label. */
+/** WMO weather code → short label. */
 export function describeWeather(code: number) {
-  if (code === 0) return { emoji: "☀️", label: "Clear" };
-  if (code <= 2) return { emoji: "🌤️", label: "Partly cloudy" };
-  if (code === 3) return { emoji: "☁️", label: "Overcast" };
-  if (code <= 48) return { emoji: "🌫️", label: "Fog" };
-  if (code <= 57) return { emoji: "🌦️", label: "Drizzle" };
-  if (code <= 67) return { emoji: "🌧️", label: "Rain" };
-  if (code <= 77) return { emoji: "🌨️", label: "Snow" };
-  if (code <= 82) return { emoji: "🌧️", label: "Showers" };
-  if (code <= 86) return { emoji: "🌨️", label: "Snow showers" };
-  return { emoji: "⛈️", label: "Thunderstorm" };
+  if (code === 0) return "Clear";
+  if (code <= 2) return "Partly cloudy";
+  if (code === 3) return "Overcast";
+  if (code <= 48) return "Fog";
+  if (code <= 57) return "Drizzle";
+  if (code <= 67) return "Rain";
+  if (code <= 77) return "Snow";
+  if (code <= 82) return "Showers";
+  if (code <= 86) return "Snow showers";
+  return "Thunderstorm";
 }
 
 /** Wet or very windy — prefer indoor plans. Jeju's coast is often gusty. */

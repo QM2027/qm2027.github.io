@@ -31,19 +31,19 @@ export const CATEGORIES: Record<Category, { label: string; color: string }> = {
 
 export const PLACES: Place[] = [
   // Jungmun — walking distance from ICC Jeju
-  { id: "jusangjeolli", name: "Jusangjeolli Cliff", nameKo: "대포동 주상절리대", category: "sight", lat: 33.2378, lng: 126.4253, durationMin: 40, summary: "Hexagonal basalt columns formed as lava cooled against the sea — a textbook in fracture physics, 10 minutes' walk from the venue.", tags: ["walkable", "geology", "UNESCO Geopark", "photo"] },
+  { id: "jusangjeolli", name: "Jusangjeolli Cliff", nameKo: "대포동 주상절리대", category: "sight", lat: 33.2378, lng: 126.4253, durationMin: 40, summary: "Hexagonal basalt columns formed as a lava flow cooled against the sea. 10 minutes' walk from the venue.", tags: ["walkable", "geology", "UNESCO Geopark", "photo"] },
   { id: "saekdal", name: "Jungmun Saekdal Beach", nameKo: "중문색달해수욕장", category: "nature", lat: 33.2445, lng: 126.4119, durationMin: 45, summary: "Black-and-white sand beach below the resort cliffs; popular with surfers year-round.", tags: ["walkable", "sunset", "family", "photo"] },
   { id: "cheonjeyeon", name: "Cheonjeyeon Falls", nameKo: "천제연폭포", category: "nature", lat: 33.2523, lng: 126.4183, durationMin: 60, summary: "Three-tier waterfall in a subtropical gorge, crossed by the arched Seonimgyo Bridge.", tags: ["walkable", "photo"] },
-  { id: "yeomiji", name: "Yeomiji Botanical Garden", nameKo: "여미지식물원", category: "nature", lat: 33.2496, lng: 126.4178, durationMin: 75, indoor: true, summary: "Large glasshouse garden — a good rainy-day option next to the venue.", tags: ["walkable", "family", "accessible"] },
+  { id: "yeomiji", name: "Yeomiji Botanical Garden", nameKo: "여미지식물원", category: "nature", lat: 33.2496, lng: 126.4178, durationMin: 75, indoor: true, summary: "Large glasshouse garden next to the venue. Works on a rainy day.", tags: ["walkable", "family", "accessible"] },
   { id: "teddy", name: "Teddy Bear Museum", nameKo: "테디베어뮤지엄", category: "culture", lat: 33.2502, lng: 126.4122, durationMin: 60, indoor: true, summary: "Light-hearted museum in the Jungmun complex; easy with children.", tags: ["walkable", "family", "accessible"] },
-  { id: "olle8", name: "Olle Trail Route 8", nameKo: "올레 8코스", category: "nature", lat: 33.2398, lng: 126.4176, durationMin: 120, summary: "The coastal Olle route passes right by ICC Jeju — ideal for an early-morning walk or run.", tags: ["walkable", "running"] },
+  { id: "olle8", name: "Olle Trail Route 8", nameKo: "올레 8코스", category: "nature", lat: 33.2398, lng: 126.4176, durationMin: 120, summary: "The coastal Olle trail passes ICC Jeju. Good for an early walk or run.", tags: ["walkable", "running"] },
 
   // Seogwipo city
-  { id: "cheonjiyeon", name: "Cheonjiyeon Falls", nameKo: "천지연폭포", category: "nature", lat: 33.2469, lng: 126.5543, durationMin: 45, summary: "22 m waterfall at the end of a lit evening path — one of the few sights open after dark.", tags: ["evening", "family", "accessible"] },
+  { id: "cheonjiyeon", name: "Cheonjiyeon Falls", nameKo: "천지연폭포", category: "nature", lat: 33.2469, lng: 126.5543, durationMin: 45, summary: "22 m waterfall at the end of a lit path. Open in the evening.", tags: ["evening", "family", "accessible"] },
   { id: "jeongbang", name: "Jeongbang Falls", nameKo: "정방폭포", category: "nature", lat: 33.2448, lng: 126.5719, durationMin: 40, summary: "One of the few waterfalls in Asia that drops straight into the sea." },
   { id: "oedolgae", name: "Oedolgae Rock", nameKo: "외돌개", category: "sight", lat: 33.2394, lng: 126.5446, durationMin: 40, summary: "Lone volcanic sea stack on Olle Route 7 with cliffside views.", tags: ["geology", "photo"] },
   { id: "leejungseop", name: "Lee Jung-seop Street & Art Museum", nameKo: "이중섭거리·미술관", category: "culture", lat: 33.2471, lng: 126.565, durationMin: 60, indoor: true, summary: "Former home and museum of the modernist painter Lee Jung-seop, on a street of small galleries and cafés.", tags: ["accessible"] },
-  { id: "olle-market", name: "Seogwipo Maeil Olle Market", nameKo: "서귀포매일올레시장", category: "food", lat: 33.2494, lng: 126.5636, durationMin: 60, indoor: true, summary: "Covered market for street food, tangerines and hallabong — busy in the evening.", tags: ["evening", "souvenirs", "family", "accessible"] },
+  { id: "olle-market", name: "Seogwipo Maeil Olle Market", nameKo: "서귀포매일올레시장", category: "food", lat: 33.2494, lng: 126.5636, durationMin: 60, indoor: true, summary: "Covered market for street food, tangerines and hallabong. Busiest in the evening.", tags: ["evening", "souvenirs", "family", "accessible"] },
   { id: "astro-seogwipo", name: "Seogwipo Astronomical Science Center", nameKo: "서귀포천문과학문화관", category: "culture", lat: 33.256, lng: 126.545, durationMin: 90, indoor: true, summary: "Public observatory with evening telescope sessions; check the programme and the cloud forecast.", tags: ["science", "evening", "family"] },
 
   // West
@@ -56,8 +56,8 @@ export const PLACES: Place[] = [
   { id: "saebyeol", name: "Saebyeol Oreum", nameKo: "새별오름", category: "nature", lat: 33.3664, lng: 126.3573, durationMin: 60, summary: "Grassy volcanic cone with a 20-minute climb; host of the Jeju Fire Festival (check whether it runs in 2027).", tags: ["oreum", "photo"] },
 
   // Hallasan
-  { id: "yeongsil", name: "Hallasan — Yeongsil Trail", nameKo: "한라산 영실코스", category: "nature", lat: 33.3473, lng: 126.4964, durationMin: 300, summary: "The shortest and most scenic Hallasan trail, 35 minutes by car from ICC. It does not reach the summit.", tags: ["UNESCO", "hiking", "photo"] },
-  { id: "seongpanak", name: "Hallasan — Seongpanak Trail", nameKo: "한라산 성판악코스", category: "nature", lat: 33.3846, lng: 126.62, durationMin: 540, summary: "Summit trail (1,947 m). Online reservation required; start before the cut-off time. See the Indico Hallasan page.", tags: ["UNESCO", "hiking", "reservation"] },
+  { id: "yeongsil", name: "Hallasan, Yeongsil Trail", nameKo: "한라산 영실코스", category: "nature", lat: 33.3473, lng: 126.4964, durationMin: 300, summary: "The shortest and most scenic Hallasan trail, 35 minutes by car from ICC. It does not reach the summit.", tags: ["UNESCO", "hiking", "photo"] },
+  { id: "seongpanak", name: "Hallasan, Seongpanak Trail", nameKo: "한라산 성판악코스", category: "nature", lat: 33.3846, lng: 126.62, durationMin: 540, summary: "Summit trail (1,947 m). Online reservation required; start before the cut-off time. See the Indico Hallasan page.", tags: ["UNESCO", "hiking", "reservation"] },
 
   // East
   { id: "seongsan", name: "Seongsan Ilchulbong", nameKo: "성산일출봉", category: "sight", lat: 33.4587, lng: 126.9425, durationMin: 90, march: "Canola fields surround the crater in March.", summary: "Tuff cone that rose from the sea, a UNESCO World Heritage site. Climb it at sunrise; haenyeo diving shows run at the beach below.", tags: ["UNESCO", "geology", "sunrise", "haenyeo", "photo"] },
@@ -112,14 +112,14 @@ export const COURSES: Course[] = [
   },
   {
     id: "east-unesco",
-    title: "East Jeju — UNESCO day",
+    title: "East Jeju: volcanic sites",
     length: "Full day · car or tour",
     blurb: "Sunrise crater, a lava tube and canola roads: Jeju's volcanic story in one loop.",
     stops: ["seongsan", "udo", "manjanggul", "bijarim", "noksanro"],
   },
   {
     id: "west-art",
-    title: "West Jeju — art, tea & coast",
+    title: "West Jeju: art, tea and coast",
     length: "Full day · car",
     blurb: "Ando architecture, tea fields, a lava dome and a turquoise beach at sunset.",
     stops: ["bonte", "osulloc", "sanbangsan", "songaksan", "hyeopjae"],

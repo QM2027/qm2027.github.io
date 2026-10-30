@@ -111,22 +111,21 @@ export function ExploreApp() {
         ) : (
           <>
             <div className="border-b border-border px-4 pt-3">
-              <nav aria-label="Guides" className="-mx-4 mb-3 flex gap-2 overflow-x-auto px-4 [scrollbar-width:none]">
+              <nav aria-label="Guides" className="-mx-4 mb-2 flex gap-4 overflow-x-auto px-4 [scrollbar-width:none]">
                 {GUIDES.map((g) => (
-                  <Link key={g.href} href={g.href} className="flex min-h-9 shrink-0 items-center gap-1.5 rounded-full bg-canola/15 px-3 text-sm">
-                    <span aria-hidden>{g.emoji}</span>
+                  <Link key={g.href} href={g.href} className="flex min-h-9 shrink-0 items-center text-sm text-muted underline decoration-border underline-offset-4 hover:text-foreground">
                     {g.title}
                   </Link>
                 ))}
               </nav>
-              <div role="tablist" className="flex gap-1 rounded-full bg-border/50 p-1 text-sm">
+              <div role="tablist" className="flex gap-6 border-b border-border text-sm">
                 {(["places", "courses"] as const).map((t) => (
                   <button
                     key={t}
                     role="tab"
                     aria-selected={tab === t}
                     onClick={() => update({ tab: t === "courses" ? "courses" : undefined, course: undefined })}
-                    className="min-h-9 flex-1 rounded-full text-muted aria-selected:bg-surface aria-selected:text-foreground aria-selected:shadow-sm"
+                    className="-mb-px min-h-10 border-b-2 border-transparent text-muted aria-selected:border-foreground aria-selected:text-foreground"
                   >
                     {t === "places" ? "Places" : "Suggested courses"}
                   </button>
@@ -142,7 +141,7 @@ export function ExploreApp() {
                         key={c}
                         onClick={() => toggleCategory(c)}
                         aria-pressed={on}
-                        className="flex min-h-9 shrink-0 items-center gap-2 rounded-full border border-border px-3 text-sm aria-pressed:border-transparent aria-pressed:bg-foreground aria-pressed:text-background"
+                        className="flex min-h-9 shrink-0 items-center gap-2 rounded-md border border-border px-3 text-sm aria-pressed:border-transparent aria-pressed:bg-foreground aria-pressed:text-background"
                       >
                         <span className="size-2.5 rounded-full" style={{ background: CATEGORIES[c].color }} />
                         {CATEGORIES[c].label}
@@ -152,16 +151,16 @@ export function ExploreApp() {
                   <button
                     onClick={() => update({ indoor: indoorOnly ? undefined : "1", place: undefined })}
                     aria-pressed={indoorOnly}
-                    className="min-h-9 shrink-0 rounded-full border border-dashed border-border px-3 text-sm aria-pressed:border-solid aria-pressed:border-sea aria-pressed:text-sea"
+                    className="min-h-9 shrink-0 rounded-md border border-dashed border-border px-3 text-sm aria-pressed:border-solid aria-pressed:border-sea aria-pressed:text-sea"
                   >
-                    ☂ Rainy-day
+                    Indoor only
                   </button>
                   <button
                     onClick={() => update({ photo: photoOnly ? undefined : "1", place: undefined })}
                     aria-pressed={photoOnly}
-                    className="min-h-9 shrink-0 rounded-full border border-dashed border-border px-3 text-sm aria-pressed:border-solid aria-pressed:border-sea aria-pressed:text-sea"
+                    className="min-h-9 shrink-0 rounded-md border border-dashed border-border px-3 text-sm aria-pressed:border-solid aria-pressed:border-sea aria-pressed:text-sea"
                   >
-                    📸 Photo spots
+                    Photo spots
                   </button>
                 </div>
               )}
@@ -171,7 +170,7 @@ export function ExploreApp() {
                     <p className="font-semibold">{course.title}</p>
                     <p className="text-sm text-muted">{course.length}</p>
                   </div>
-                  <button onClick={() => update({ course: undefined })} className="min-h-9 rounded-full border border-border px-3 text-sm">
+                  <button onClick={() => update({ course: undefined })} className="min-h-9 rounded-md border border-border px-3 text-sm">
                     All courses
                   </button>
                 </div>
@@ -179,7 +178,7 @@ export function ExploreApp() {
               {tab === "courses" && !course && <div className="h-3" />}
             </div>
 
-            {locError && <p className="bg-canola/15 px-4 py-2 text-sm">{locError}</p>}
+            {locError && <p className="bg-surface px-4 py-2 text-sm">{locError}</p>}
             <p className="px-4 pt-3 text-xs text-muted">
               {course ? "Stops in order" : `${places.length} places · distance from ${me ? "you" : "ICC Jeju"}`}
             </p>
@@ -191,7 +190,7 @@ export function ExploreApp() {
                     <li key={c.id}>
                       <button
                         onClick={() => update({ course: c.id, tab: undefined })}
-                        className="w-full rounded-2xl border border-border bg-surface p-4 text-left transition hover:border-sea"
+                        className="w-full rounded-md border border-border bg-surface p-4 text-left transition hover:border-sea"
                       >
                         <p className="font-semibold">{c.title}</p>
                         <p className="text-xs font-medium text-tangerine">{c.length}</p>
@@ -221,13 +220,13 @@ export function ExploreApp() {
                           <span className="block font-medium">{place.name}</span>
                           <span className="block truncate text-sm text-muted">{place.summary}</span>
                           {place.march && (
-                            <span className="mt-1 inline-block rounded bg-canola/20 px-1.5 text-xs">🌼 In bloom in March</span>
+                            <span className="mt-1 inline-block rounded border border-border px-1.5 text-xs">In season in March</span>
                           )}
                         </span>
                         <span className="shrink-0 text-right text-xs text-muted">
                           {formatDistance(km)}
                           <br />
-                          {km < 2 ? `🚶 ${formatMinutes(travelMinutes(km, "walk"))}` : `🚗 ${formatMinutes(travelMinutes(km, "car"))}`}
+                          {km < 2 ? `${formatMinutes(travelMinutes(km, "walk"))} walk` : `${formatMinutes(travelMinutes(km, "car"))} drive`}
                         </span>
                       </button>
                     </li>
@@ -272,21 +271,21 @@ function PlaceDetail({
       </div>
 
       <p className="mt-3 leading-relaxed">{place.summary}</p>
-      {place.march && <p className="mt-3 rounded-xl bg-canola/15 p-3 text-sm">🌼 {place.march}</p>}
+      {place.march && <p className="mt-3 border-l-2 border-tangerine bg-surface p-3 text-sm">{place.march}</p>}
       {place.tags?.includes("photo") && (
-        <p className="mt-3 text-sm text-muted">📸 Photo spot. Share yours with <b className="text-foreground">#QM2027Jeju</b></p>
+        <p className="mt-3 text-sm text-muted">Photo spot. Share yours with <b className="text-foreground">#QM2027Jeju</b></p>
       )}
 
       <dl className="mt-4 grid grid-cols-3 gap-2 text-center text-sm">
-        <div className="rounded-xl bg-surface p-2">
+        <div className="rounded-md bg-surface p-2">
           <dt className="text-xs text-muted">From {fromMe ? "you" : "ICC"}</dt>
           <dd className="font-semibold">{formatDistance(km)}</dd>
         </div>
-        <div className="rounded-xl bg-surface p-2">
+        <div className="rounded-md bg-surface p-2">
           <dt className="text-xs text-muted">{km < 2 ? "Walk" : "Drive"}</dt>
           <dd className="font-semibold">~{formatMinutes(travelMinutes(km, km < 2 ? "walk" : "car"))}</dd>
         </div>
-        <div className="rounded-xl bg-surface p-2">
+        <div className="rounded-md bg-surface p-2">
           <dt className="text-xs text-muted">Time there</dt>
           <dd className="font-semibold">{place.durationMin ? formatMinutes(place.durationMin) : "—"}</dd>
         </div>
@@ -294,22 +293,24 @@ function PlaceDetail({
 
       {place.tags && (
         <ul className="mt-3 flex flex-wrap gap-1.5">
-          {place.indoor && <li className="rounded-full bg-sea/10 px-2 py-0.5 text-xs text-sea">☂ Indoor</li>}
+          {place.indoor && <li className="rounded-md bg-sea/10 px-2 py-0.5 text-xs text-sea">Indoor</li>}
           {place.tags.map((t) => (
-            <li key={t} className="rounded-full bg-border/60 px-2 py-0.5 text-xs">{t}</li>
+            <li key={t} className="rounded-md bg-border/60 px-2 py-0.5 text-xs">{t}</li>
           ))}
         </ul>
       )}
 
       <p className="mt-5 text-sm font-medium">Directions</p>
       <div className="mt-2 grid grid-cols-2 gap-2 sm:grid-cols-3 md:grid-cols-2 lg:grid-cols-3">
-        <a href={links.kakao} target="_blank" rel="noreferrer" className="flex min-h-11 items-center justify-center rounded-xl bg-[#fee500] font-medium text-black">
+        <a href={links.kakao} target="_blank" rel="noreferrer" className="flex min-h-11 items-center justify-center gap-2 rounded-md border border-foreground font-medium">
+          <span className="size-2 rounded-full bg-[#fee500] ring-1 ring-black/20" aria-hidden />
           Kakao Map
         </a>
-        <a href={links.naver} target="_blank" rel="noreferrer" className="flex min-h-11 items-center justify-center rounded-xl bg-[#03c75a] font-medium text-white">
+        <a href={links.naver} target="_blank" rel="noreferrer" className="flex min-h-11 items-center justify-center gap-2 rounded-md border border-foreground font-medium">
+          <span className="size-2 rounded-full bg-[#03c75a]" aria-hidden />
           Naver Map
         </a>
-        <a href={links.google} target="_blank" rel="noreferrer" className="col-span-2 flex min-h-11 items-center justify-center rounded-xl border border-border sm:col-span-1 md:col-span-2 lg:col-span-1">
+        <a href={links.google} target="_blank" rel="noreferrer" className="col-span-2 flex min-h-11 items-center justify-center rounded-md border border-border sm:col-span-1 md:col-span-2 lg:col-span-1">
           Google Maps
         </a>
       </div>

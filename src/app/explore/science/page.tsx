@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { GuideHeader } from "@/components/GuideNav";
 import { PlacesMap } from "@/components/map/PlacesMap";
+import { MoonGlyph } from "@/components/MoonGlyph";
 import { ICC } from "@/lib/geo";
 import { CONFERENCE_DAYS, formatClock, moonLabel, moonPhase, sunTimes } from "@/lib/sky";
 
@@ -58,7 +59,7 @@ export default function SciencePage() {
     // Phase at 21:00 KST that evening.
     const { age, illumination } = moonPhase(new Date(Date.UTC(y, m - 1, d, 12)));
     const { sunset } = sunTimes(y, m, d, ICC.lat, ICC.lng);
-    return { d, age, illumination, sunset, ...moonLabel(age) };
+    return { d, age, illumination, sunset, name: moonLabel(age) };
   });
   const darkNights = nights.filter((n) => n.illumination < 0.35).map((n) => n.d);
 
@@ -66,13 +67,13 @@ export default function SciencePage() {
     <main className="mx-auto w-full max-w-7xl px-4 py-6 sm:py-10 lg:px-8">
       <GuideHeader kicker="For the curious physicist" title="The physicist's trail">
         Jeju is a volcanic island, a UNESCO World Natural Heritage site and a Global Geopark. Each stop below is
-        a lesson in thermodynamics, fluid dynamics or fracture mechanics, from sea level to 1,950 m.
+        explained in terms of the physics behind it, from sea level to 1,950 m.
       </GuideHeader>
 
       <div className="mt-8 grid gap-6 lg:grid-cols-[1fr_420px]">
         <ol className="space-y-3">
           {STOPS.map((s, i) => (
-            <li key={s.id} className="rounded-2xl border border-border bg-surface p-4 sm:p-5">
+            <li key={s.id} className="rounded-md border border-border bg-surface p-4 sm:p-5">
               <div className="flex items-baseline gap-3">
                 <span className="flex size-7 shrink-0 items-center justify-center rounded-full bg-sea text-sm font-semibold text-on-sea">{i + 1}</span>
                 <div>
@@ -86,17 +87,17 @@ export default function SciencePage() {
         </ol>
 
         <div className="space-y-4 lg:sticky lg:top-20 lg:self-start">
-          <div className="h-72 overflow-hidden rounded-2xl border border-border sm:h-96">
+          <div className="h-72 overflow-hidden rounded-md border border-border sm:h-96">
             <PlacesMap ids={[...STOPS.map((s) => s.id), ...OBSERVATORIES.map((o) => o.id)]} />
           </div>
 
-          <section className="rounded-2xl border border-border bg-surface p-4">
+          <section className="rounded-md border border-border bg-surface p-4">
             <h2 className="font-semibold">Night sky during QM2027</h2>
             <ul className="mt-3 grid grid-cols-4 gap-2 text-center text-sm sm:grid-cols-7 lg:grid-cols-4">
               {nights.map((n) => (
-                <li key={n.d} className="rounded-xl bg-background p-2">
+                <li key={n.d} className="rounded-md bg-background p-2">
                   <p className="text-xs text-muted">Mar {n.d}</p>
-                  <p className="text-2xl" title={n.name}>{n.emoji}</p>
+                  <MoonGlyph age={n.age} className="mx-auto my-1 size-7" label={n.name} />
                   <p className="text-xs tabular-nums">{Math.round(n.illumination * 100)}%</p>
                 </li>
               ))}
@@ -108,9 +109,9 @@ export default function SciencePage() {
               Sunset is around {formatClock(nights[0].sunset)}.
             </p>
             <p className="mt-3 text-sm leading-relaxed text-muted">
-              ✨ <b className="text-foreground">Look for Canopus.</b> At latitude 33°N, Jeju is one of the few
+              <b className="text-foreground">Look for Canopus.</b> At latitude 33°N, Jeju is one of the few
               places in Korea where α Carinae clears the southern horizon. Look low in the south after dusk, from
-              the Seogwipo coast. Seeing it was traditionally said to bring a long life.
+              the Seogwipo coast.
             </p>
             <p className="mt-3 text-sm text-muted">
               Observatory: Seogwipo Astronomical Science Center. {OBSERVATORIES[0].note}

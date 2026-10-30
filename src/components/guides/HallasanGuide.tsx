@@ -30,17 +30,17 @@ export function HallasanGuide() {
               role="tab"
               aria-selected={t.id === selectedId}
               onClick={() => setSelectedId(t.id)}
-              className="rounded-2xl border border-border bg-surface p-3 text-left aria-selected:border-sea aria-selected:ring-2 aria-selected:ring-sea/30"
+              className="rounded-md border border-border bg-surface p-3 text-left aria-selected:border-sea aria-selected:ring-2 aria-selected:ring-sea/30"
             >
               <span className="block font-semibold">{t.name}</span>
               <span className="block text-xs text-muted">
-                {t.km} km · {t.summit ? "⛰ summit" : "no summit"}
+                {t.km} km · {t.summit ? "to summit" : "no summit"}
               </span>
             </button>
           ))}
         </div>
 
-        <figure className="rounded-2xl border border-border bg-surface p-3 sm:p-4">
+        <figure className="rounded-md border border-border bg-surface p-3 sm:p-4">
           <svg viewBox={`0 0 ${W} ${H}`} className="h-auto w-full" role="img" aria-label={`Elevation profile of the ${trail.name} trail`}>
             {[500, 1000, 1500, 2000].map((m) => (
               <g key={m}>
@@ -85,26 +85,26 @@ export function HallasanGuide() {
       </div>
 
       <div className="space-y-4">
-        <div className="rounded-2xl border border-border bg-surface p-5">
+        <div className="rounded-md border border-border bg-surface p-5">
           <h2 className="text-xl font-semibold">{trail.name} trail</h2>
           <p className="text-muted" lang="ko">{trail.nameKo}</p>
           <dl className="mt-4 grid grid-cols-3 gap-2 text-center text-sm">
-            <div className="rounded-xl bg-background p-2"><dt className="text-xs text-muted">One way</dt><dd className="font-semibold">{trail.km} km</dd></div>
-            <div className="rounded-xl bg-background p-2"><dt className="text-xs text-muted">Climb</dt><dd className="font-semibold">+{gain} m</dd></div>
-            <div className="rounded-xl bg-background p-2"><dt className="text-xs text-muted">Up</dt><dd className="font-semibold">≈ {trail.hoursUp} h</dd></div>
+            <div className="rounded-md bg-background p-2"><dt className="text-xs text-muted">One way</dt><dd className="font-semibold">{trail.km} km</dd></div>
+            <div className="rounded-md bg-background p-2"><dt className="text-xs text-muted">Climb</dt><dd className="font-semibold">+{gain} m</dd></div>
+            <div className="rounded-md bg-background p-2"><dt className="text-xs text-muted">Up</dt><dd className="font-semibold">≈ {trail.hoursUp} h</dd></div>
           </dl>
           <p className="mt-3 flex flex-wrap gap-2 text-xs">
-            <span className={`rounded-full px-2 py-0.5 ${trail.difficulty === "Hard" ? "bg-tangerine/15 text-tangerine" : "bg-sea/10 text-sea"}`}>{trail.difficulty}</span>
+            <span className={`rounded-md px-2 py-0.5 ${trail.difficulty === "Hard" ? "bg-tangerine/15 text-tangerine" : "bg-sea/10 text-sea"}`}>{trail.difficulty}</span>
             {trail.reservation ? (
-              <span className="rounded-full bg-tangerine/15 px-2 py-0.5 text-tangerine">Reservation required</span>
+              <span className="rounded-md bg-tangerine/15 px-2 py-0.5 text-tangerine">Reservation required</span>
             ) : (
-              <span className="rounded-full bg-border/60 px-2 py-0.5">No reservation</span>
+              <span className="rounded-md bg-border/60 px-2 py-0.5">No reservation</span>
             )}
           </p>
           <p className="mt-3 leading-relaxed">{trail.text}</p>
-          <p className="mt-3 text-sm text-muted">🚕 {trail.access}</p>
+          <p className="mt-3 text-sm text-muted">{trail.access}</p>
         </div>
-        <div className="rounded-2xl bg-canola/15 p-4 text-sm leading-relaxed">
+        <div className="border-l-2 border-tangerine bg-surface p-4 text-sm leading-relaxed">
           <b>March on Hallasan:</b> the summit area can still have snow and ice, with temperatures below zero and
           strong wind. Bring crampons (rentable or sold near trailheads), gloves, a shell and water. Start early: trails
           close to new hikers in the early afternoon.

@@ -34,7 +34,7 @@ export function RunGuide() {
               <button
                 onClick={() => setSelectedId(r.id)}
                 aria-pressed={r.id === selectedId}
-                className="w-full rounded-2xl border border-border bg-surface p-4 text-left aria-pressed:border-sea aria-pressed:ring-2 aria-pressed:ring-sea/30"
+                className="w-full rounded-md border border-border bg-surface p-4 text-left aria-pressed:border-sea aria-pressed:ring-2 aria-pressed:ring-sea/30"
               >
                 <span className="flex items-baseline justify-between gap-2">
                   <span className="font-semibold">{r.title}</span>
@@ -46,14 +46,14 @@ export function RunGuide() {
             </li>
           ))}
         </ul>
-        <button onClick={() => downloadGpx(run)} className="min-h-11 w-full rounded-xl bg-sea font-semibold text-on-sea">
+        <button onClick={() => downloadGpx(run)} className="min-h-11 w-full rounded-md bg-sea font-semibold text-on-sea">
           Download GPX: {run.title}
         </button>
         <p className="text-xs text-muted">Routes are approximate. Follow signs and Olle ribbons on the ground.</p>
       </div>
 
       <div className="space-y-4">
-        <div className="h-80 overflow-hidden rounded-2xl border border-border sm:h-[28rem]">
+        <div className="h-80 overflow-hidden rounded-md border border-border sm:h-[28rem]">
           <LazyMap places={[]} onSelect={() => {}} route={route} />
         </div>
         <SunriseTable />
@@ -64,17 +64,17 @@ export function RunGuide() {
 
 function SunriseTable() {
   return (
-    <div className="rounded-2xl border border-border bg-surface p-4">
+    <div className="rounded-md border border-border bg-surface p-4">
       <h2 className="font-semibold">Sunrise & sunset at the venue</h2>
       <div className="mt-3 grid grid-cols-4 gap-2 text-center text-sm sm:grid-cols-7">
         {CONFERENCE_DAYS.map(({ y, m, d }) => {
           const { sunrise, sunset } = sunTimes(y, m, d, ICC.lat, ICC.lng);
           const weekday = new Date(Date.UTC(y, m - 1, d)).toLocaleDateString("en-GB", { weekday: "short", timeZone: "UTC" });
           return (
-            <div key={d} className="rounded-xl bg-background p-2">
+            <div key={d} className="rounded-md bg-background p-2">
               <p className="text-xs text-muted">{weekday} {d}</p>
-              <p className="font-semibold tabular-nums">☀ {formatClock(sunrise)}</p>
-              <p className="text-xs tabular-nums text-muted">☾ {formatClock(sunset)}</p>
+              <p className="font-semibold tabular-nums">{formatClock(sunrise)}</p>
+              <p className="text-xs tabular-nums text-muted">sets {formatClock(sunset)}</p>
             </div>
           );
         })}

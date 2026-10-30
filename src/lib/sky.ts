@@ -43,9 +43,8 @@ export function moonPhase(date: Date) {
 
 export function moonLabel(age: number) {
   const names = ["New moon", "Waxing crescent", "First quarter", "Waxing gibbous", "Full moon", "Waning gibbous", "Last quarter", "Waning crescent"];
-  const emoji = ["🌑", "🌒", "🌓", "🌔", "🌕", "🌖", "🌗", "🌘"];
   const i = Math.round((age / SYNODIC) * 8) % 8;
-  return { name: names[i], emoji: emoji[i] };
+  return names[i];
 }
 
 /** Each conference night, 21–27 March 2027. */

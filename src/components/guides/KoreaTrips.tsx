@@ -19,7 +19,7 @@ export function KoreaTrips() {
               role="tab"
               aria-selected={t.id === tripId}
               onClick={() => setTripId(t.id)}
-              className="rounded-2xl border border-border bg-surface p-3 text-left aria-selected:border-sea aria-selected:ring-2 aria-selected:ring-sea/30"
+              className="rounded-md border border-border bg-surface p-3 text-left aria-selected:border-sea aria-selected:ring-2 aria-selected:ring-sea/30"
             >
               <span className="block text-sm font-semibold">{t.title}</span>
               <span className="block text-xs text-muted">{t.when}</span>
@@ -27,7 +27,7 @@ export function KoreaTrips() {
           ))}
         </div>
 
-        <div className="rounded-2xl border border-border bg-surface p-5">
+        <div className="rounded-md border border-border bg-surface p-5">
           <h2 className="text-xl font-semibold">{trip.title}</h2>
           <p className="mt-2 leading-relaxed">{trip.text}</p>
           <ol className="mt-4 space-y-2">
@@ -40,7 +40,7 @@ export function KoreaTrips() {
           </ol>
         </div>
 
-        <section className="rounded-2xl border border-border bg-surface p-5">
+        <section className="rounded-md border border-border bg-surface p-5">
           <h2 className="font-semibold">Satellite meetings</h2>
           <p className="mt-1 text-sm text-muted">Dates, venues and registration are on each meeting&apos;s own page.</p>
           <ul className="mt-3 divide-y divide-border">
@@ -56,7 +56,7 @@ export function KoreaTrips() {
         </section>
       </div>
 
-      <div className="h-96 overflow-hidden rounded-2xl border border-border lg:sticky lg:top-20 lg:h-[36rem]">
+      <div className="h-96 overflow-hidden rounded-md border border-border lg:sticky lg:top-20 lg:h-[36rem]">
         <LazyMap region="korea" places={stops} onSelect={() => {}} route={stops} />
       </div>
     </div>

@@ -17,10 +17,10 @@ const EMERGENCY = [
 ];
 
 const LINKS = [
-  { href: "/getting-there/", emoji: "✈️", title: "Airport → venue", text: "Bus, taxi and car compared, plus a taxi card." },
-  { href: "/explore/plan/", emoji: "🧭", title: "Free-time planner", text: "A loop from the venue that fits your time." },
-  { href: "/explore/hallasan/", emoji: "⛰️", title: "Hallasan trails", text: "Profiles, reservations and March conditions." },
-  { href: "/explore/companions/", emoji: "👨‍👩‍👧", title: "Companions & families", text: "Kid-friendly and step-free ideas." },
+  { href: "/getting-there/", title: "Airport → venue", text: "Bus, taxi and car compared, plus a taxi card." },
+  { href: "/explore/plan/", title: "Free-time planner", text: "A loop from the venue that fits your time." },
+  { href: "/explore/hallasan/", title: "Hallasan trails", text: "Profiles, reservations and March conditions." },
+  { href: "/explore/companions/", title: "Companions & families", text: "Kid-friendly and step-free ideas." },
 ];
 
 const PRACTICAL: { title: string; items: string[] }[] = [
@@ -80,12 +80,12 @@ const PRACTICAL: { title: string; items: string[] }[] = [
 export default function TravelPage() {
   return (
     <main className="mx-auto w-full max-w-7xl px-4 py-6 sm:py-10 lg:px-8">
-      <p className="text-sm font-medium text-sea">Practical Jeju</p>
+      <p className="font-mono text-xs tracking-widest text-muted uppercase">Practical Jeju</p>
       <h1 className="mt-1 text-3xl font-semibold tracking-tight sm:text-4xl">Travel toolkit</h1>
 
       <section aria-label="Emergency numbers" className="mt-6 grid grid-cols-2 gap-2 sm:grid-cols-4">
         {EMERGENCY.map((e) => (
-          <a key={e.n} href={`tel:${e.n}`} className="flex items-center gap-3 rounded-2xl border border-border bg-surface p-3 hover:border-tangerine">
+          <a key={e.n} href={`tel:${e.n}`} className="flex items-center gap-3 rounded-md border border-border bg-surface p-3 hover:border-tangerine">
             <span className="text-2xl font-bold tabular-nums text-tangerine">{e.n}</span>
             <span className="text-sm leading-tight">{e.what}</span>
           </a>
@@ -95,8 +95,7 @@ export default function TravelPage() {
       <ul className="mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
         {LINKS.map((l) => (
           <li key={l.href}>
-            <Link href={l.href} className="flex h-full items-start gap-3 rounded-2xl bg-canola/10 p-4 hover:bg-canola/20">
-              <span className="text-2xl" aria-hidden>{l.emoji}</span>
+            <Link href={l.href} className="flex h-full items-start gap-3 rounded-md bg-surface p-4 hover:bg-border/60">
               <span>
                 <span className="block font-semibold">{l.title}</span>
                 <span className="block text-sm text-muted">{l.text}</span>
@@ -119,7 +118,7 @@ export default function TravelPage() {
         <h2 className="text-xl font-semibold">Good to know</h2>
         <div className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {PRACTICAL.map((g) => (
-            <div key={g.title} className="rounded-2xl border border-border bg-surface p-5">
+            <div key={g.title} className="rounded-md border border-border bg-surface p-5">
               <h3 className="font-semibold">{g.title}</h3>
               <ul className="mt-2 list-disc space-y-1.5 pl-5 text-sm text-muted">
                 {g.items.map((i) => <li key={i}>{i}</li>)}

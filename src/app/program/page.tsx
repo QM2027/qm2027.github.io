@@ -12,7 +12,7 @@ export default function ProgramPage() {
     <main className="mx-auto w-full max-w-7xl px-4 py-6 sm:py-10 lg:px-8">
       <h1 className="text-3xl font-semibold tracking-tight sm:text-4xl">Program</h1>
       <div className="mt-4">
-        <Suspense fallback={<div className="h-64 animate-pulse rounded-2xl bg-border/40" />}>
+        <Suspense fallback={<div className="h-64 animate-pulse rounded-md bg-border/40" />}>
           <ProgramApp />
         </Suspense>
       </div>

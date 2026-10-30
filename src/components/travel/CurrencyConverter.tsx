@@ -24,10 +24,10 @@ export function CurrencyConverter() {
   const fmt = (n: number) => n.toLocaleString("en", { maximumFractionDigits: cur === "JPY" ? 0 : 2 });
 
   return (
-    <section className="rounded-2xl border border-border bg-surface p-5">
+    <section className="rounded-md border border-border bg-surface p-5">
       <h2 className="font-semibold">Currency</h2>
       <div className="mt-3 flex flex-wrap items-center gap-2">
-        <label className="flex min-h-11 flex-1 items-center gap-2 rounded-xl border border-border bg-background px-3">
+        <label className="flex min-h-11 flex-1 items-center gap-2 rounded-md border border-border bg-background px-3">
           <span className="text-muted">₩</span>
           <input
             inputMode="numeric"
@@ -38,7 +38,7 @@ export function CurrencyConverter() {
           />
         </label>
         <span aria-hidden>→</span>
-        <select value={cur} onChange={(e) => setCur(e.target.value)} className="min-h-11 rounded-xl border border-border bg-background px-3" aria-label="Currency">
+        <select value={cur} onChange={(e) => setCur(e.target.value)} className="min-h-11 rounded-md border border-border bg-background px-3" aria-label="Currency">
           {CURRENCIES.map((c) => <option key={c}>{c}</option>)}
         </select>
       </div>
@@ -48,7 +48,7 @@ export function CurrencyConverter() {
       {rate && (
         <ul className="mt-3 grid grid-cols-2 gap-2 text-sm">
           {PRICES.map((p) => (
-            <li key={p.label} className="rounded-xl bg-background p-2">
+            <li key={p.label} className="rounded-md bg-background p-2">
               <span className="block text-xs text-muted">{p.label}</span>
               ₩{p.krw.toLocaleString("en")} ≈ {fmt(p.krw * rate)} {cur}
             </li>

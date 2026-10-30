@@ -11,7 +11,6 @@ export const metadata: Metadata = {
 // Fares and times are approximate and must be checked before launch.
 const OPTIONS = [
   {
-    icon: "🚌",
     title: "Airport Limousine Bus 600",
     time: "60–75 min",
     cost: "≈ ₩5,500",
@@ -23,7 +22,6 @@ const OPTIONS = [
     ],
   },
   {
-    icon: "🚕",
     title: "Taxi",
     time: "≈ 50 min",
     cost: "≈ ₩45,000–55,000",
@@ -35,7 +33,6 @@ const OPTIONS = [
     ],
   },
   {
-    icon: "🚗",
     title: "Rental car",
     time: "≈ 50 min",
     cost: "from ≈ ₩40,000 / day",
@@ -51,7 +48,7 @@ const OPTIONS = [
 export default function GettingTherePage() {
   return (
     <main className="mx-auto w-full max-w-5xl px-4 py-6 sm:py-10 lg:px-8">
-      <p className="text-sm font-medium text-sea">CJU ✈ → ICC Jeju</p>
+      <p className="font-mono text-xs tracking-widest text-muted uppercase">CJU → ICC Jeju</p>
       <h1 className="mt-1 text-3xl font-semibold tracking-tight sm:text-4xl">Getting to the venue</h1>
       <p className="mt-3 max-w-2xl text-muted">
         ICC Jeju is in the Jungmun resort area on the south coast, about 45 km from Jeju International Airport.
@@ -64,10 +61,9 @@ export default function GettingTherePage() {
 
       <ol className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {OPTIONS.map((o) => (
-          <li key={o.title} className="flex flex-col rounded-2xl border border-border bg-surface p-5">
+          <li key={o.title} className="flex flex-col rounded-md border border-border bg-surface p-5">
             <div className="flex items-center justify-between">
-              <span className="text-3xl" aria-hidden>{o.icon}</span>
-              <span className="rounded-full bg-sea/10 px-2.5 py-0.5 text-xs font-medium text-sea">{o.best}</span>
+              <span className="rounded-md bg-sea/10 px-2.5 py-0.5 text-xs font-medium text-sea">{o.best}</span>
             </div>
             <h2 className="mt-3 text-lg font-semibold">{o.title}</h2>
             <dl className="mt-2 flex gap-4 text-sm">
@@ -87,7 +83,7 @@ export default function GettingTherePage() {
       </div>
 
       <section className="mt-8 grid gap-4 sm:grid-cols-2">
-        <div className="rounded-2xl border border-border bg-surface p-5">
+        <div className="rounded-md border border-border bg-surface p-5">
           <h2 className="font-semibold">Apps worth installing</h2>
           <ul className="mt-2 space-y-1 text-sm text-muted">
             <li><b className="text-foreground">Kakao Map / Naver Map</b>: bus routes and walking directions</li>
@@ -95,7 +91,7 @@ export default function GettingTherePage() {
             <li><b className="text-foreground">Papago</b>: translation, including from photos</li>
           </ul>
         </div>
-        <div className="rounded-2xl border border-border bg-surface p-5">
+        <div className="rounded-md border border-border bg-surface p-5">
           <h2 className="font-semibold">Around the island</h2>
           <p className="mt-2 text-sm text-muted">
             See suggested courses with distances from the venue on the{" "}
