@@ -12,7 +12,6 @@
   --canola: #d9480f;
   --tangerine: #d9480f;
   --on-sea: #ffffff;
-  --tab-height: 4rem;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -85,12 +84,3 @@ body {
   }
 }
 
-/* Space for the fixed mobile tab bar and the iOS home indicator */
-.pb-tabbar {
-  padding-bottom: calc(var(--tab-height) + env(safe-area-inset-bottom));
-}
-@media (min-width: 768px) {
-  .pb-tabbar {
-    padding-bottom: 0;
-  }
-}

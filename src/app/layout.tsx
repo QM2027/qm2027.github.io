@@ -37,7 +37,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
     >
       <body className="flex min-h-full flex-col font-sans">
         <SiteNav />
-        <div className="pb-tabbar flex flex-1 flex-col">
+        <div className="flex pb-[env(safe-area-inset-bottom)] flex-1 flex-col">
           {children}
           <SiteFooter />
         </div>

@@ -6,6 +6,7 @@ const PATHS = {
   calendar: "M4 6h16v14H4zM4 10h16M8 3v4m8-4v4",
   locate: "M12 8a4 4 0 1 0 0 8 4 4 0 0 0 0-8zM12 2v3m0 14v3M2 12h3m14 0h3",
   close: "M6 6l12 12M18 6 6 18",
+  menu: "M4 6h16M4 12h16M4 18h16",
   external: "M14 4h6v6m0-6L10 14M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5",
   list: "M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01",
   chevron: "M9 6l6 6-6 6",
