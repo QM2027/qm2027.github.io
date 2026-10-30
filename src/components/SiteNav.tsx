@@ -49,7 +49,7 @@ export function SiteNav() {
         aria-label="Main"
         className="fixed inset-x-0 bottom-0 z-[1000] border-t border-border bg-surface/95 pb-[env(safe-area-inset-bottom)] backdrop-blur md:hidden"
       >
-        <ul className="grid h-[var(--tab-height)] grid-cols-4">
+        <ul className="grid h-[var(--tab-height)] grid-cols-5">
           {NAV.map((item) => {
             const active = isActive(pathname, item.href);
             return (
@@ -57,7 +57,7 @@ export function SiteNav() {
                 <Link
                   href={item.href}
                   aria-current={active ? "page" : undefined}
-                  className={`flex h-full flex-col items-center justify-center gap-1 text-[11px] ${
+                  className={`flex h-full flex-col items-center justify-center gap-1 text-[10px] leading-tight text-center ${
                     active ? "text-sea" : "text-muted"
                   }`}
                 >
