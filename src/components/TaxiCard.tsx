@@ -32,7 +32,7 @@ export function TaxiCard() {
               setCustom("");
             }}
             aria-pressed={!custom && dest.ko === p.ko}
-            className="min-h-11 rounded-full border border-border px-4 text-sm aria-pressed:border-sea aria-pressed:bg-sea aria-pressed:text-white"
+            className="min-h-11 rounded-full border border-border px-4 text-sm aria-pressed:border-sea aria-pressed:bg-sea aria-pressed:text-on-sea"
           >
             {p.label}
           </button>

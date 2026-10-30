@@ -74,7 +74,7 @@ export default function SciencePage() {
           {STOPS.map((s, i) => (
             <li key={s.id} className="rounded-2xl border border-border bg-surface p-4 sm:p-5">
               <div className="flex items-baseline gap-3">
-                <span className="flex size-7 shrink-0 items-center justify-center rounded-full bg-sea text-sm font-semibold text-white">{i + 1}</span>
+                <span className="flex size-7 shrink-0 items-center justify-center rounded-full bg-sea text-sm font-semibold text-on-sea">{i + 1}</span>
                 <div>
                   <h2 className="font-semibold">{s.title}</h2>
                   <Link href={`/explore/?place=${s.id}`} className="text-sm text-sea underline">Show on map</Link>

@@ -66,7 +66,7 @@ export function HallasanGuide() {
             {waypoints.map(([k, m], i) => (
               <g key={k}>
                 <circle cx={x(k)} cy={y(m)} r="11" fill="var(--sea)" />
-                <text x={x(k)} y={y(m)} textAnchor="middle" dominantBaseline="central" fontSize="13" fontWeight="600" fill="#fff">{i + 1}</text>
+                <text x={x(k)} y={y(m)} textAnchor="middle" dominantBaseline="central" fontSize="13" fontWeight="600" fill="var(--on-sea)">{i + 1}</text>
               </g>
             ))}
           </svg>
@@ -74,7 +74,7 @@ export function HallasanGuide() {
           <ol className="mt-3 grid gap-x-4 gap-y-1 text-sm sm:grid-cols-2">
             {waypoints.map(([k, m, label], i) => (
               <li key={k} className="flex items-center gap-2">
-                <span className="flex size-5 shrink-0 items-center justify-center rounded-full bg-sea text-[11px] font-semibold text-white">{i + 1}</span>
+                <span className="flex size-5 shrink-0 items-center justify-center rounded-full bg-sea text-[11px] font-semibold text-on-sea">{i + 1}</span>
                 <span className="flex-1">{label}</span>
                 <span className="tabular-nums text-muted">{k} km · {m.toLocaleString("en")} m</span>
               </li>

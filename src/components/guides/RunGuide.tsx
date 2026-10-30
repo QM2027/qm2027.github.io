@@ -46,7 +46,7 @@ export function RunGuide() {
             </li>
           ))}
         </ul>
-        <button onClick={() => downloadGpx(run)} className="min-h-11 w-full rounded-xl bg-sea font-semibold text-white">
+        <button onClick={() => downloadGpx(run)} className="min-h-11 w-full rounded-xl bg-sea font-semibold text-on-sea">
           Download GPX: {run.title}
         </button>
         <p className="text-xs text-muted">Routes are approximate. Follow signs and Olle ribbons on the ground.</p>

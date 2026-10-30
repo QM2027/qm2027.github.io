@@ -15,7 +15,7 @@ export function GuideNav() {
           key={g.href}
           href={g.href}
           aria-current={pathname === g.href.replace(/\/$/, "") || pathname === g.href ? "page" : undefined}
-          className="flex min-h-10 shrink-0 items-center gap-1.5 rounded-full border border-border bg-surface px-3 text-sm aria-[current=page]:border-sea aria-[current=page]:bg-sea aria-[current=page]:text-white"
+          className="flex min-h-10 shrink-0 items-center gap-1.5 rounded-full border border-border bg-surface px-3 text-sm aria-[current=page]:border-sea aria-[current=page]:bg-sea aria-[current=page]:text-on-sea"
         >
           <span aria-hidden>{g.emoji}</span>
           {g.title}

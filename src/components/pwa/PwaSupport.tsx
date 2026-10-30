@@ -79,7 +79,7 @@ export function PwaSupport() {
                 await deferred?.prompt();
                 dismiss();
               }}
-              className="mt-2 min-h-10 rounded-xl bg-sea px-4 font-semibold text-white"
+              className="mt-2 min-h-10 rounded-xl bg-sea px-4 font-semibold text-on-sea"
             >
               Install
             </button>

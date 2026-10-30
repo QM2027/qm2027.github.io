@@ -27,7 +27,7 @@ export function SiteNav() {
                 key={item.href}
                 href={item.href}
                 aria-current={isActive(pathname, item.href) ? "page" : undefined}
-                className="rounded-full px-4 py-2 text-sm text-muted transition-colors hover:bg-background hover:text-foreground aria-[current=page]:bg-sea aria-[current=page]:text-white"
+                className="rounded-full px-4 py-2 text-sm text-muted transition-colors hover:bg-background hover:text-foreground aria-[current=page]:bg-sea aria-[current=page]:text-on-sea"
               >
                 {item.label}
               </Link>

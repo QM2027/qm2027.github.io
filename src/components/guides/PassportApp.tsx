@@ -99,7 +99,7 @@ export function PassportApp() {
   return (
     <div className="grid gap-6 lg:grid-cols-[1fr_420px]">
       <div>
-        <div className="flex flex-wrap items-center justify-between gap-3 rounded-2xl bg-sea p-5 text-white">
+        <div className="flex flex-wrap items-center justify-between gap-3 rounded-2xl bg-[#0e7490] p-5 text-white">
           <div>
             <p className="text-sm text-white/80">Your passport</p>
             <p className="text-2xl font-semibold">

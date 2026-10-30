@@ -15,7 +15,7 @@ const FEATURES: { href: string; icon: IconName; title: string; text: string }[] 
 export default function Home() {
   return (
     <main className="w-full">
-      <section className="bg-gradient-to-br from-sea-strong via-sea to-[#155e75] text-white">
+      <section className="bg-gradient-to-br from-[#0b5c72] via-[#0e7490] to-[#155e75] text-white">
         <div className="mx-auto max-w-7xl px-4 py-12 sm:py-16 lg:px-8 lg:py-24">
           <p className="text-sm font-medium tracking-wide text-white/80">
             Visitor guide for {SITE.name} participants · {SITE.dates}

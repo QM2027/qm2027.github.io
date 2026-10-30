@@ -18,7 +18,7 @@ export default function ProgramPage() {
         href={INDICO_TIMETABLE}
         target="_blank"
         rel="noreferrer"
-        className="mt-6 inline-flex min-h-12 items-center gap-2 rounded-xl bg-sea px-6 font-semibold text-white"
+        className="mt-6 inline-flex min-h-12 items-center gap-2 rounded-xl bg-sea px-6 font-semibold text-on-sea"
       >
         Open timetable on Indico <Icon name="external" className="size-4" />
       </a>
