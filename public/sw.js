@@ -1,6 +1,6 @@
 // Offline support for the visitor guide. Plain JS so it can be served as-is from /public.
 // Bump VERSION when the caching strategy changes; hashed build assets need no bumping.
-const VERSION = "v1";
+const VERSION = "v2";
 const PAGES = `pages-${VERSION}`;
 const ASSETS = `assets-${VERSION}`;
 const TILES = `tiles-${VERSION}`;

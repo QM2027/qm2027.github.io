@@ -22,7 +22,7 @@ const REGIONS = {
 
 const iccIcon = L.divIcon({
   className: "",
-  html: '<div style="background:#ea580c;color:#fff;font:600 11px/1 system-ui;padding:6px 8px;border-radius:999px;box-shadow:0 1px 4px #0006;white-space:nowrap">ICC Jeju</div>',
+  html: '<div style="background:#d9480f;color:#fff;font:500 11px/1 ui-monospace,monospace;padding:5px 7px;border-radius:3px;white-space:nowrap">ICC Jeju</div>',
   iconSize: [64, 24],
   iconAnchor: [32, 12],
 });
@@ -93,7 +93,7 @@ export default function MapView({ places, selectedId, onSelect, route, me, regio
       {route.length > 1 && (
         <Polyline
           positions={route.map((p) => [p.lat, p.lng])}
-          pathOptions={{ color: "#ea580c", weight: 4, dashArray: "8 8" }}
+          pathOptions={{ color: "#d9480f", weight: 3, dashArray: "6 6" }}
         />
       )}
 

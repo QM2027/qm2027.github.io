@@ -59,15 +59,24 @@ body {
   -webkit-tap-highlight-color: transparent;
 }
 
-/* Leaflet controls follow the theme */
-.leaflet-container {
+/* Leaflet controls follow the theme. Doubled class beats leaflet.css, which loads later. */
+.leaflet-container.leaflet-container {
   font: inherit;
   background: var(--background);
 }
 
+.leaflet-control-attribution {
+  font-size: 11px;
+}
+
+/* OSM's default style is beige land and yellow roads; render it in greys instead. */
+.leaflet-tile-pane {
+  filter: grayscale(1) brightness(1.04) contrast(0.92);
+}
+
 @media (prefers-color-scheme: dark) {
   .leaflet-tile-pane {
-    filter: brightness(0.75) invert(1) contrast(0.9) hue-rotate(200deg) saturate(0.4);
+    filter: grayscale(1) invert(1) brightness(0.85) contrast(0.9);
   }
   .leaflet-bar a,
   .leaflet-control-attribution {

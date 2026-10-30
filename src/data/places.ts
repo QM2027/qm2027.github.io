@@ -21,12 +21,13 @@ export type Place = {
 };
 
 export const CATEGORIES: Record<Category, { label: string; color: string }> = {
-  sight: { label: "Sights", color: "#0e7490" },
-  nature: { label: "Nature & Hiking", color: "#15803d" },
-  culture: { label: "Museums & Culture", color: "#7c3aed" },
-  food: { label: "Food & Markets", color: "#ea580c" },
-  transport: { label: "Transport", color: "#475569" },
-  health: { label: "Medical", color: "#dc2626" },
+  // Muted so markers read on a grey basemap without turning the map into confetti.
+  sight: { label: "Sights", color: "#1f4e79" },
+  nature: { label: "Nature & Hiking", color: "#3f6b4a" },
+  culture: { label: "Museums & Culture", color: "#5b4b7a" },
+  food: { label: "Food & Markets", color: "#d9480f" },
+  transport: { label: "Transport", color: "#555555" },
+  health: { label: "Medical", color: "#b42318" },
 };
 
 export const PLACES: Place[] = [
