@@ -18,6 +18,7 @@
 - [x] `/venue` 도식 평면도 (층 탭, 방 상세, 시설 찾기)
 - [x] `/explore/season`, `/explore/food`, `/explore/run`, `/explore/science` (4단계)
 - [x] `/explore/plan`, `/explore/companions`, `/explore/hallasan`, `/travel` (5단계)
+- [x] PWA, `/explore/passport`, `/explore/korea`, 사진 스폿 필터 (6단계)
 
 ## 🚨 배포 전 필수
 
@@ -26,6 +27,8 @@
 - [ ] 공항버스 600 요금·소요시간·승차 위치, 택시·렌터카 요금 확인 — [src/app/getting-there/page.tsx](../src/app/getting-there/page.tsx)
 - [ ] 러닝 코스 경로를 실제 GPX로 다시 그리기 — [src/data/runs.ts](../src/data/runs.ts)
 - [ ] 시즌 날짜(개화 예상, 들불축제·걷기대회 2027 일정) 확인 — [src/data/season.ts](../src/data/season.ts)
+- [ ] 스탬프 투어 체크인 반경 현장 테스트 — [src/data/passport.ts](../src/data/passport.ts)
+- [ ] 국내선 소요시간·환승 안내 확인 — [src/data/korea.ts](../src/data/korea.ts)
 - [ ] 한라산 탐방로 거리·고도·예약 규정·입산 통제시간 확인 — [src/data/hallasan.ts](../src/data/hallasan.ts)
 - [ ] `/travel` 실용정보(택스리펀드 기준, 비자/K-ETA, 제주 무사증) 확인 — [src/app/travel/page.tsx](../src/app/travel/page.tsx)
 - [ ] 음식 설명·식이 분류, 한국어 문구 원어민 검수 — [src/data/food.ts](../src/data/food.ts)
@@ -56,12 +59,15 @@
 - [x] `places.ts`: `family`/`accessible` 태그 추가 (플래너·동반자 필터)
 - [ ] 장소별 실제 영업시간 (`openHours`) — 현재 플래너는 유형별 추정 마감시간 사용 (`closingMin` in [src/lib/planner.ts](../src/lib/planner.ts))
 
-### 6. 관광 확장 3차 + PWA
-- [ ] **G. Jeju Passport 스탬프 투어** — Geolocation 체크인, localStorage, 완료 배지 공유 이미지(canvas)
-- [ ] **H. Korea 연계 여행** `/explore/korea` — Satellite meetings(서울·대전 등) 연계 전후 이동 플래너
-- [ ] **I. 기념품·쇼핑** + 면세/택스리펀드 안내
-- [ ] **J. 사진 스폿 레이어** + 해시태그 #QM2027Jeju
-- [ ] PWA: `src/app/manifest.ts`, 아이콘(192/512/maskable), `public/sw.js`(앱셸 precache, 지도 타일 캐시 제한, 빌드 해시로 무효화), 설치 안내 배너(iOS 포함)
+### 6. 관광 확장 3차 + PWA (대부분 완료)
+- [x] **G. Jeju Passport 스탬프 투어** `/explore/passport` — Geolocation 체크인, localStorage, 배지 공유 이미지(canvas / Web Share)
+- [x] **H. Korea 연계 여행** `/explore/korea` — 서울·대전·부산/경주·인천 귀국 경로, Satellite meetings 링크
+- [x] **I. 기념품·쇼핑** + 면세/택스리펀드 안내 (`/travel` "Souvenirs", "Money")
+- [x] **J. 사진 스폿** — 지도 "📸 Photo spots" 필터(`?photo=1`), 해시태그 #QM2027Jeju
+- [x] PWA: manifest, 아이콘(192/512/maskable/apple), `public/sw.js`(페이지 precache, 지도 타일 600장 캐시), 설치 배너(iOS 안내 포함)
+- [ ] **실기기 검증**: Android Chrome 설치 → 비행기 모드로 페이지·본 지도 열람, iOS Safari 홈 화면 추가
+- [ ] 새 페이지 추가 시 `public/sw.js`의 `SHELL` 목록에도 추가 (자동화 검토)
+- [ ] Satellite meetings 날짜·장소 기입 (현재 각 사이트 링크만)
 - [ ] SEO/OG 이미지, 접근성 점검(키보드·스크린리더), Lighthouse
 
 ### 7. 데이터 보강

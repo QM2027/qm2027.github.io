@@ -15,7 +15,10 @@ import {
 import { CATEGORIES, type Place } from "@/data/places";
 import { ICC, type LatLng } from "@/lib/geo";
 
-const JEJU_CENTER: [number, number] = [33.37, 126.55];
+const REGIONS = {
+  jeju: { center: [33.37, 126.55], zoom: 10, minZoom: 9, bounds: [[32.9, 125.9], [33.8, 127.2]] },
+  korea: { center: [35.9, 127.6], zoom: 7, minZoom: 6, bounds: [[32.5, 123.5], [39.0, 132.0]] },
+} as const;
 
 const iccIcon = L.divIcon({
   className: "",
@@ -65,20 +68,19 @@ type Props = {
   onSelect: (id: string) => void;
   route: LatLng[];
   me?: LatLng;
+  region?: keyof typeof REGIONS;
 };
 
-export default function MapView({ places, selectedId, onSelect, route, me }: Props) {
+export default function MapView({ places, selectedId, onSelect, route, me, region = "jeju" }: Props) {
   const selected = places.find((p) => p.id === selectedId);
+  const r = REGIONS[region];
 
   return (
     <MapContainer
-      center={JEJU_CENTER}
-      zoom={10}
-      minZoom={9}
-      maxBounds={[
-        [32.9, 125.9],
-        [33.8, 127.2],
-      ]}
+      center={[...r.center]}
+      zoom={r.zoom}
+      minZoom={r.minZoom}
+      maxBounds={r.bounds.map((b) => [...b] as [number, number])}
       className="size-full"
       zoomControl={false}
     >

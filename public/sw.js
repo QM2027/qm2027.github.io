@@ -12,6 +12,7 @@ const SHELL = [
   "", "explore/", "venue/", "travel/", "program/", "getting-there/",
   "explore/plan/", "explore/season/", "explore/food/", "explore/run/",
   "explore/science/", "explore/hallasan/", "explore/companions/",
+  "explore/passport/", "explore/korea/",
 ].map((p) => BASE + p);
 
 self.addEventListener("install", (event) => {

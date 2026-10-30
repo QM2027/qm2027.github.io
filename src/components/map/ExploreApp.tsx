@@ -33,6 +33,7 @@ export function ExploreApp() {
   const selectedId = params.get("place") ?? undefined;
   const course = COURSES.find((c) => c.id === params.get("course"));
   const indoorOnly = params.get("indoor") === "1";
+  const photoOnly = params.get("photo") === "1";
   const tab = course || params.get("tab") === "courses" ? "courses" : "places";
 
   const [me, setMe] = useState<LatLng>();
@@ -70,11 +71,14 @@ export function ExploreApp() {
     const list = course
       ? course.stops.map(placeById).filter((p): p is Place => !!p)
       : PLACES.filter(
-          (p) => (cats.length === 0 || cats.includes(p.category)) && (!indoorOnly || p.indoor),
+          (p) =>
+            (cats.length === 0 || cats.includes(p.category)) &&
+            (!indoorOnly || p.indoor) &&
+            (!photoOnly || p.tags?.includes("photo")),
         );
     const withDist = list.map((p) => ({ place: p, km: distanceKm(origin, p) }));
     return course ? withDist : withDist.sort((a, b) => a.km - b.km);
-  }, [cats, course, indoorOnly, origin]);
+  }, [cats, course, indoorOnly, photoOnly, origin]);
 
   const route = useMemo(() => (course ? places.map((x) => x.place) : []), [course, places]);
   const selected = selectedId ? placeById(selectedId) : undefined;
@@ -151,6 +155,13 @@ export function ExploreApp() {
                     className="min-h-9 shrink-0 rounded-full border border-dashed border-border px-3 text-sm aria-pressed:border-solid aria-pressed:border-sea aria-pressed:text-sea"
                   >
                     ☂ Rainy-day
+                  </button>
+                  <button
+                    onClick={() => update({ photo: photoOnly ? undefined : "1", place: undefined })}
+                    aria-pressed={photoOnly}
+                    className="min-h-9 shrink-0 rounded-full border border-dashed border-border px-3 text-sm aria-pressed:border-solid aria-pressed:border-sea aria-pressed:text-sea"
+                  >
+                    📸 Photo spots
                   </button>
                 </div>
               )}
@@ -262,6 +273,9 @@ function PlaceDetail({
 
       <p className="mt-3 leading-relaxed">{place.summary}</p>
       {place.march && <p className="mt-3 rounded-xl bg-canola/15 p-3 text-sm">🌼 {place.march}</p>}
+      {place.tags?.includes("photo") && (
+        <p className="mt-3 text-sm text-muted">📸 Photo spot. Share yours with <b className="text-foreground">#QM2027Jeju</b></p>
+      )}
 
       <dl className="mt-4 grid grid-cols-3 gap-2 text-center text-sm">
         <div className="rounded-xl bg-surface p-2">
