@@ -14,7 +14,7 @@ export default function VenuePage() {
       <p className="font-mono text-xs tracking-widest text-muted uppercase">{SITE.venue}</p>
       <h1 className="mt-1 text-3xl font-semibold tracking-tight sm:text-4xl">Venue floor plan</h1>
       <div className="mt-6">
-        <Suspense fallback={<div className="aspect-[400/260] animate-pulse rounded-md bg-border/40" />}>
+        <Suspense fallback={<div className="aspect-[3/2] animate-pulse rounded-md bg-border/40" />}>
           <VenueApp />
         </Suspense>
       </div>
