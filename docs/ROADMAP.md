@@ -74,6 +74,7 @@
 
 ### 7. 데이터 보강
 - [ ] 한국관광공사 TourAPI 4.0 영문 서비스 키 발급(data.go.kr) → 빌드 타임에 장소·축제·이미지 메타데이터 보강, 키는 GitHub Secrets
+- [ ] 날씨를 기상청(data.go.kr)으로 바꿀 여지 유지 — 지금은 Open-Meteo(비상업 무료, CC BY 링크 필수). 전환 시: 단기예보(~3일)+기상특보를 GitHub Actions가 1시간마다 받아 JSON으로 Pages 배포(키는 Secrets), 사이트는 그 JSON만 CSR로 읽음. cron 스크립트가 기상청 값(SKY·PTY)을 WMO 코드로 바꿔 [src/lib/weather.ts](../src/lib/weather.ts)의 `Forecast` 형태 그대로 내보내면 화면 코드는 URL만 교체. 지금 5일 예보를 쓰므로 4–5일째는 중기예보 API도 필요
 - [ ] 제주관광공사 / 제주컨벤션뷰로 MICE 지원 문의 (사진 라이선스, 문화공연, 웰컴키트, 쿠폰) — 조직위 담당
 
 ### 8. Indico 연동 ✅ (QM2025 데이터로 검증, QM2027 시간표 공개 대기)
