@@ -33,7 +33,7 @@ export const TRAILS: Trail[] = [
     reservation: false,
     difficulty: "Moderate",
     profile: [[0, 1236, "Trailhead"], [2.5, 1579, "Byeongpung rock"], [3.7, 1666, "Witse-oreum shelter"], [5.8, 1610, "Nambyeok junction"]],
-    access: "≈ 35 min by taxi from ICC Jeju; ask for 영실매표소.",
+    access: "≈ 35 min by taxi from ICC Jeju. Ask for 영실휴게소 (the trailhead), or start at 영실매표소 and walk about 2.4 km up to it first.",
     text: "The best choice for a conference week: one steep climb past the Obaek Nahan spires, then an easy walk across alpine plateau with views of the summit wall. It does not reach the summit.",
   },
   {
