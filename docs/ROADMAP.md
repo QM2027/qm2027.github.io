@@ -40,12 +40,12 @@
 
 ## 📋 다음 작업 (우선순위 순)
 
-### 3. 회의장 인터랙티브 평면도 `/venue` (도식 버전 완료)
+### 3. 회의장 인터랙티브 평면도 `/venue` (트레이싱 완료)
 - [x] ICC Jeju 층별 평면도 원본 확보 — `docs/floorplans/`의 jpg 5장(1F 백록·영주, 3F 삼다·한라, 5F)이 구할 수 있는 최선. 로컬 참고용, 커밋 금지(.gitignore)
-- [ ] 위 jpg를 따라 [src/data/venue.ts](../src/data/venue.ts) 도형 트레이싱 (진행 중)
+- [x] 위 jpg를 따라 [src/data/venue.ts](../src/data/venue.ts) 도형 트레이싱 — 2026-11-19 완료 (1F·3F·5F, 곡선 벽). 추가 다듬기 없음
 - [x] 층 전환 탭, 방 클릭 시 정보 표시, 시설 찾기(하이라이트), URL 공유
 - [x] (도식) 등록데스크, 포스터 구역, 커피브레이크, 화장실, 수유실/Child care, 엘리베이터 표시
-- [ ] 실제 방 이름·배치로 [src/data/venue.ts](../src/data/venue.ts) 교체, Indico 방 이름 매핑
+- [ ] Indico 방 이름 매핑 — QM2027 시간표 공개 후 [src/data/indico-rooms.ts](../src/data/indico-rooms.ts) (방 이름·배치는 트레이싱으로 반영)
 
 ### 4. 관광 확장 1차 ✅
 - [x] **A. March in Jeju 시즌** `/explore/season` — 유채꽃, 왕벚꽃, 들불축제(2027 개최 여부 확인), 한라봉·천혜향 제철; 학회 날짜(3/21~27)와 겹치는지 타임라인 표시
