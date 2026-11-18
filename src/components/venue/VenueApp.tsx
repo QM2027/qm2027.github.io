@@ -3,13 +3,17 @@
 import Link from "next/link";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { Icon } from "@/components/Icon";
-import { DEFAULT_FLOOR, FLOORS, ROOM_KINDS, ROUTES, type Room, type RoomKind, type Route } from "@/data/venue";
-import { FloorPlan, Legend } from "./FloorPlan";
+import { DEFAULT_FLOOR, FLOORS, KIND_GROUPS, ROOM_KINDS, ROUTES, type KindGroup, type Room, type RoomKind, type Route } from "@/data/venue";
+import { FloorPlan, KindGlyph, KindTag, Legend } from "./FloorPlan";
 import { clock, dayLabel, dayOf, isRunning, useProgram } from "@/lib/program";
 import { pinnedNow, useNow } from "@/lib/use-now";
 import { INDICO_ROOM_MAP, MAPPED_ROOM_IDS } from "@/data/indico-rooms";
 
+const GROUP_ORDER: KindGroup[] = ["hall", "participant", "office", "service", "other"];
 const FIND_KINDS = (Object.keys(ROOM_KINDS) as RoomKind[]).filter((k) => !ROOM_KINDS[k].hidden);
+/** Find buttons under their group headings. */
+const FIND_GROUPS = GROUP_ORDER.map((g) => ({ group: g, kinds: FIND_KINDS.filter((k) => ROOM_KINDS[k].group === g) })).filter((x) => x.kinds.length);
+const groupRank = (r: Room) => GROUP_ORDER.indexOf(ROOM_KINDS[r.kind].group);
 
 export function VenueApp() {
   const params = useSearchParams();
@@ -35,6 +39,12 @@ export function VenueApp() {
     }
     const qs = next.toString();
     router.replace(qs ? `${pathname}?${qs}` : pathname, { scroll: false });
+  }
+
+  // Picking a room of another kind ends the Find highlight; browsing within the kind keeps it.
+  function select(id: string) {
+    const kind = floor.rooms.find((r) => r.id === id)?.kind;
+    update({ room: id, floor: floor.id, find: kind === highlight ? (highlight ?? undefined) : undefined });
   }
 
   // Floors that hold the highlighted facility or part of the active route: dots on the floor tabs.
@@ -71,20 +81,20 @@ export function VenueApp() {
             selected={room?.id}
             highlight={highlight}
             route={route}
-            onSelect={(id) => update({ room: id, floor: floor.id })}
+            onSelect={select}
           />
         </div>
         <Legend />
         {/* Markers are small on phones; the list is the reliable target. */}
         <ul className="mt-3 flex flex-wrap gap-2" aria-label={`Rooms on ${floor.label}`}>
-          {floor.rooms.map((r) => (
+          {[...floor.rooms].sort((a, b) => groupRank(a) - groupRank(b)).map((r) => (
             <li key={r.id}>
               <button
-                onClick={() => update({ room: r.id, floor: floor.id })}
+                onClick={() => select(r.id)}
                 aria-pressed={r.id === room?.id}
-                className="flex min-h-10 items-center gap-2 rounded-md border border-border px-3 text-sm aria-pressed:border-foreground"
+                className="flex min-h-10 items-center gap-2 rounded-md border border-border px-3 text-sm aria-pressed:border-foreground aria-pressed:bg-foreground aria-pressed:text-background"
               >
-                <span className="size-2.5 rounded-full" style={{ background: ROOM_KINDS[r.kind].color }} />
+                <KindGlyph group={ROOM_KINDS[r.kind].group} />
                 {r.name}
               </button>
             </li>
@@ -119,20 +129,28 @@ export function VenueApp() {
 
         <div className="rounded-md border border-border bg-surface p-4">
           <h2 className="text-sm font-semibold">Find…</h2>
-          <ul className="mt-3 grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-2">
-            {FIND_KINDS.map((k) => (
-              <li key={k}>
-                <button
-                  onClick={() => update({ find: highlight === k ? undefined : k, room: undefined })}
-                  aria-pressed={highlight === k}
-                  className="flex min-h-11 w-full items-center gap-2 rounded-md border border-border px-3 text-left text-sm aria-pressed:border-foreground aria-pressed:bg-foreground aria-pressed:text-background"
-                >
-                  <span className="size-3 shrink-0 rounded" style={{ background: ROOM_KINDS[k].color }} />
-                  {ROOM_KINDS[k].label}
-                </button>
-              </li>
-            ))}
-          </ul>
+          {FIND_GROUPS.map(({ group, kinds }) => (
+            <section key={group} className="mt-3" aria-label={KIND_GROUPS[group].label}>
+              <h3 className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wide text-muted">
+                <KindGlyph group={group} className="size-3" />
+                {KIND_GROUPS[group].label}
+              </h3>
+              <ul className="mt-1.5 grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-2">
+                {kinds.map((k) => (
+                  <li key={k}>
+                    <button
+                      onClick={() => update({ find: highlight === k ? undefined : k, room: undefined })}
+                      aria-pressed={highlight === k}
+                      className="flex min-h-11 w-full items-center gap-2 rounded-md border border-border border-l-4 px-3 text-left text-sm aria-pressed:border-foreground aria-pressed:bg-foreground aria-pressed:text-background"
+                      style={{ borderLeftColor: KIND_GROUPS[group].color }}
+                    >
+                      {ROOM_KINDS[k].label}
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            </section>
+          ))}
           {highlight && (
             <p className="mt-3 text-sm text-muted">
               On {FLOORS.filter((f) => f.rooms.some((r) => r.kind === highlight)).map((f) => f.label).join(", ")}
@@ -200,15 +218,14 @@ function RouteCard({
 }
 
 function RoomCard({ room, floorLabel, onClose }: { room: Room; floorLabel: string; onClose: () => void }) {
-  const meta = ROOM_KINDS[room.kind];
   return (
     <div className="rounded-md border border-border bg-surface p-5">
       <div className="flex items-start justify-between gap-3">
         <div>
-          <p className="text-xs font-medium uppercase tracking-wide" style={{ color: meta.color }}>
-            {meta.label} · {floorLabel}
-            {room.estimated && <span className="ml-2 normal-case text-muted">planned</span>}
-          </p>
+          <KindTag kind={room.kind}>
+            <span className="text-muted">· {floorLabel}</span>
+            {room.estimated && <span className="ml-1 font-medium normal-case text-muted">planned</span>}
+          </KindTag>
           <h2 className="mt-1 text-xl font-semibold">{room.name}</h2>
         </div>
         <button onClick={onClose} aria-label="Close" className="flex size-11 shrink-0 items-center justify-center rounded-full border border-border">

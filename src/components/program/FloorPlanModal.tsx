@@ -2,8 +2,8 @@
 
 import { useEffect, useState } from "react";
 import { Icon } from "@/components/Icon";
-import { FloorPlan, Legend } from "@/components/venue/FloorPlan";
-import { DEFAULT_FLOOR, FLOORS, ROOM_KINDS } from "@/data/venue";
+import { FloorPlan, KindTag, Legend } from "@/components/venue/FloorPlan";
+import { DEFAULT_FLOOR, FLOORS } from "@/data/venue";
 
 /**
  * The floor plan over the program, so checking a room never leaves the page. Opens on the
@@ -67,10 +67,9 @@ export function FloorPlanModal({ roomId, onClose }: { roomId?: string; onClose: 
 
         {room && (
           <div className="mt-3 text-sm">
-            <p className="text-xs font-medium uppercase tracking-wide" style={{ color: ROOM_KINDS[room.kind].color }}>
-              {ROOM_KINDS[room.kind].label}
-              {room.estimated && <span className="ml-2 normal-case text-muted">planned</span>}
-            </p>
+            <KindTag kind={room.kind}>
+              {room.estimated && <span className="ml-1 font-medium normal-case text-muted">planned</span>}
+            </KindTag>
             {room.note && <p className="mt-1 leading-relaxed">{room.note}</p>}
           </div>
         )}

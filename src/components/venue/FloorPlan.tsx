@@ -1,7 +1,7 @@
 "use client";
 
 import type { KeyboardEvent, ReactNode } from "react";
-import { ROOM_KINDS, type Floor, type Part, type Point, type Room, type RoomKind, type Route } from "@/data/venue";
+import { KIND_GROUPS, ROOM_KINDS, type Floor, type KindGroup, type Part, type Point, type Room, type RoomKind, type Route } from "@/data/venue";
 
 type Props = {
   floor: Floor;
@@ -38,7 +38,7 @@ export function FloorPlan({ floor, selected, highlight, route, onSelect }: Props
     <svg viewBox={`0 0 ${floor.width} ${floor.height}`} className="h-auto w-full" role="img" aria-label={`Floor plan ${floor.label}`}>
       <defs>
         <marker id="route-arrow" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
-          <path d="M0 0 L10 5 L0 10 Z" fill="var(--tangerine)" />
+          <path d="M0 0 L10 5 L0 10 Z" fill="var(--foreground)" />
         </marker>
         <marker id="entry-arrow" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="4" markerHeight="4" orient="auto-start-reverse">
           <path d="M0 0 L10 5 L0 10 Z" fill="var(--foreground)" />
@@ -81,17 +81,16 @@ export function FloorPlan({ floor, selected, highlight, route, onSelect }: Props
             {shape({
               className: "shape",
               fill: meta.color,
-              fillOpacity: active ? 0.85 : subtle ? 0.06 : 0.16,
-              stroke: meta.color,
+              // Selection is a heavier tint plus a thick outline, so it shows without telling hues apart.
+              fillOpacity: active ? 0.34 : subtle ? 0.06 : 0.16,
+              stroke: active && subtle ? "var(--foreground)" : meta.color,
               strokeOpacity: subtle && !active ? 0.45 : 1,
-              strokeWidth: active ? 3 : 1.4,
+              strokeWidth: active ? 3.5 : 1.6,
             })}
-            {r.tables && !active && shape({ fill: "url(#tables)" })}
-            {r.hatch && !active && shape({ fill: "url(#hatch)" })}
-            {r.seats && !active && <Seats room={r} />}
-            {r.boards && (
-              <path d={r.boards} fill="none" stroke={active ? "var(--background)" : "var(--foreground)"} strokeOpacity="0.55" strokeWidth="3" strokeDasharray="7 5" />
-            )}
+            {r.tables && shape({ fill: "url(#tables)" })}
+            {r.hatch && shape({ fill: "url(#hatch)" })}
+            {r.seats && <Seats room={r} />}
+            {r.boards && <path d={r.boards} fill="none" stroke="var(--foreground)" strokeOpacity="0.55" strokeWidth="3" strokeDasharray="7 5" />}
             {r.doors?.map(([x, y], i) => (
               <line key={i} x1={x - 6} y1={y} x2={x + 6} y2={y} stroke="var(--background)" strokeWidth="3.5" />
             ))}
@@ -115,29 +114,25 @@ export function FloorPlan({ floor, selected, highlight, route, onSelect }: Props
             {...interactive(r)}
             className="cursor-pointer outline-none"
             opacity={dimmed(r)}
-            style={active ? { filter: "drop-shadow(0 0 2px var(--tangerine))" } : undefined}
+            style={active ? { filter: "drop-shadow(0 0 1.5px var(--foreground))" } : undefined}
           >
             {r.parts!.map((p, i) => (
-              <PartShape key={i} part={p} color={active ? "var(--tangerine)" : ROOM_KINDS[r.kind].color} />
+              <PartShape key={i} part={p} color={ROOM_KINDS[r.kind].color} />
             ))}
           </g>
         );
       })}
 
-      {lines.map((pts, i) => (
-        <polyline
-          key={i}
-          points={pts.map((p) => p.join(",")).join(" ")}
-          fill="none"
-          stroke="var(--tangerine)"
-          strokeWidth="4"
-          strokeDasharray="8 6"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          markerEnd="url(#route-arrow)"
-          className="pointer-events-none"
-        />
-      ))}
+      {/* Ink with a halo, so the route reads over every room colour. */}
+      {lines.map((pts, i) => {
+        const points = pts.map((p) => p.join(",")).join(" ");
+        return (
+          <g key={i} className="pointer-events-none" fill="none" strokeLinecap="round" strokeLinejoin="round">
+            <polyline points={points} stroke="var(--background)" strokeWidth="7" />
+            <polyline points={points} stroke="var(--foreground)" strokeWidth="4" strokeDasharray="8 6" markerEnd="url(#route-arrow)" />
+          </g>
+        );
+      })}
 
       {points.map((r) => (
         <g key={r.id} {...interactive(r)} className="cursor-pointer outline-none" opacity={dimmed(r)}>
@@ -147,6 +142,37 @@ export function FloorPlan({ floor, selected, highlight, route, onSelect }: Props
         </g>
       ))}
     </svg>
+  );
+}
+
+/**
+ * Shape for each group (hall square, participant circle, office diamond, service triangle), so the
+ * chips and tags still match the map for readers who cannot tell the colours apart.
+ */
+export function KindGlyph({ group, className = "size-3.5" }: { group: KindGroup; className?: string }) {
+  const color = KIND_GROUPS[group].color;
+  // A thin background rim keeps the glyph visible on a dark pressed button too.
+  const paint = { fill: color, stroke: "var(--background)", strokeWidth: 1, paintOrder: "stroke" } as const;
+  return (
+    <svg viewBox="0 0 14 14" className={`shrink-0 ${className}`} aria-hidden>
+      {group === "hall" && <rect x="1.5" y="1.5" width="11" height="11" rx="1.5" {...paint} />}
+      {group === "participant" && <circle cx="7" cy="7" r="5.8" {...paint} />}
+      {group === "office" && <path d="M7 0.8 L13.2 7 L7 13.2 L0.8 7 Z" {...paint} />}
+      {group === "service" && <path d="M7 1 L13.4 12.6 H0.6 Z" {...paint} />}
+      {group === "other" && <circle cx="7" cy="7" r="4.8" fill="none" stroke={color} strokeWidth="1.6" />}
+    </svg>
+  );
+}
+
+/** The kind label shown above a room's name: group glyph plus the kind in ink. */
+export function KindTag({ kind, children }: { kind: RoomKind; children?: ReactNode }) {
+  const meta = ROOM_KINDS[kind];
+  return (
+    <p className="flex flex-wrap items-center gap-x-1.5 text-xs font-semibold uppercase tracking-wide">
+      <KindGlyph group={meta.group} />
+      {meta.label}
+      {children}
+    </p>
   );
 }
 
@@ -172,7 +198,7 @@ function RoomLabel({ room, x, y, active }: { room: Room; x: number; y: number; a
     <text
       x={x}
       textAnchor="middle"
-      fill={active ? "var(--background)" : "currentColor"}
+      fill="currentColor"
       transform={room.vertical ? `rotate(-90 ${x} ${y})` : undefined}
       className="pointer-events-none select-none"
     >
@@ -187,7 +213,7 @@ function RoomLabel({ room, x, y, active }: { room: Room; x: number; y: number; a
           y={top + lines.length * size * 1.15 + sub * 0.1}
           fontSize={sub}
           fontWeight={500}
-          fillOpacity={active ? 0.85 : 0.6}
+          fillOpacity={active ? 0.8 : 0.6}
           dominantBaseline="central"
           className="uppercase"
           letterSpacing="0.04em"
@@ -373,6 +399,12 @@ export function Legend() {
   );
   return (
     <ul className="mt-3 flex flex-wrap gap-x-4 gap-y-1.5 text-xs text-muted" aria-label="Map symbols">
+      {(["hall", "participant", "office", "service"] as const).map((g) => (
+        <li key={g} className="flex items-center gap-1.5 font-medium text-foreground">
+          <KindGlyph group={g} />
+          {KIND_GROUPS[g].label}
+        </li>
+      ))}
       {item(<Marker kind="restroom" x={12} y={12} />, "Restrooms")}
       {item(<Marker kind="elevator" x={12} y={12} />, "Elevator")}
       {item(<PartShape part={{ t: "esc", x: 7, y: 2, w: 10, h: 20 }} color="var(--muted)" />, "Escalator")}

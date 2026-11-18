@@ -17,6 +17,11 @@
   --on-sea: #ffffff;
   /* Darker than --tangerine so white text on it passes AA, in both themes. */
   --alert: #c2410c;
+  /* Floor plan groups: kept apart under colour-blindness simulation; each also has its own glyph. */
+  --k-hall: #3a4fd0;
+  --k-participant: #1f6b45;
+  --k-office: #c060a8;
+  --k-service: #d0681f;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -31,6 +36,11 @@
     --canola: #ff7a3d;
     --tangerine: #ff7a3d;
     --on-sea: #0e0e0e;
+    /* Lighter versions of the --k-* group colours for the dark background. */
+    --k-hall: #9db8ea;
+    --k-participant: #46d394;
+    --k-office: #c66ae0;
+    --k-service: #e08a33;
   }
 }
 

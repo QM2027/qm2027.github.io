@@ -102,21 +102,40 @@ export type Route = {
   paths: Record<string, Point[][]>;
 };
 
-// Theme greys by role; the accent is reserved for where you go first (registration) and routes.
-export const ROOM_KINDS: Record<RoomKind, { label: string; color: string; marker?: boolean; hidden?: boolean }> = {
-  plenary: { label: "Plenary", color: "var(--foreground)" },
-  parallel: { label: "Parallel sessions", color: "var(--foreground)" },
-  poster: { label: "Posters", color: "var(--muted)" },
-  registration: { label: "Registration", color: "var(--tangerine)" },
-  catering: { label: "Lunch", color: "var(--muted)" },
-  office: { label: "Organiser offices", color: "var(--muted)" },
-  childcare: { label: "Child care", color: "var(--muted)" },
-  info: { label: "Info & services", color: "var(--muted)", marker: true },
-  entrance: { label: "Entrances", color: "var(--foreground)" },
-  restroom: { label: "Restrooms", color: "var(--muted)", marker: true },
-  elevator: { label: "Elevators", color: "var(--muted)", marker: true },
-  escalator: { label: "Escalators & stairs", color: "var(--muted)" },
-  other: { label: "Other spaces", color: "var(--muted)", hidden: true },
+/**
+ * Four groups, one colour each. The colours (globals.css, --k-*) were checked to stay apart under
+ * protan, deutan and tritan simulation, and each group also has its own glyph shape, so colour is
+ * never the only cue.
+ */
+export type KindGroup = "hall" | "participant" | "office" | "service" | "other";
+export const KIND_GROUPS: Record<KindGroup, { label: string; color: string }> = {
+  hall: { label: "Lecture halls", color: "var(--k-hall)" },
+  participant: { label: "Participant areas", color: "var(--k-participant)" },
+  office: { label: "Secretariat & LOC", color: "var(--k-office)" },
+  service: { label: "Venue services", color: "var(--k-service)" },
+  other: { label: "Other spaces", color: "var(--muted)" },
+};
+
+const kind = (label: string, group: KindGroup, extra: { marker?: boolean; hidden?: boolean } = {}) => ({
+  label,
+  group,
+  color: KIND_GROUPS[group].color,
+  ...extra,
+});
+export const ROOM_KINDS: Record<RoomKind, { label: string; group: KindGroup; color: string; marker?: boolean; hidden?: boolean }> = {
+  plenary: kind("Plenary", "hall"),
+  parallel: kind("Parallel sessions", "hall"),
+  poster: kind("Posters", "participant"),
+  registration: kind("Registration", "participant"),
+  catering: kind("Lunch", "participant"),
+  childcare: kind("Child care", "participant"),
+  office: kind("Secretariat & LOC offices", "office"),
+  info: kind("Info & services", "service", { marker: true }),
+  entrance: kind("Entrances", "service"),
+  restroom: kind("Restrooms", "service", { marker: true }),
+  elevator: kind("Elevators", "service", { marker: true }),
+  escalator: kind("Escalators & stairs", "service"),
+  other: kind("Other spaces", "other", { hidden: true }),
 };
 
 export const DEFAULT_FLOOR = "3f";
