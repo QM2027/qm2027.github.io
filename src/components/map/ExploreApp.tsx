@@ -105,7 +105,7 @@ export function ExploreApp() {
 
   return (
     <div data-fill-viewport className="flex min-h-0 flex-1 flex-col">
-      <div className="shrink-0 px-4">
+      <div className="mx-auto w-full max-w-7xl shrink-0 px-4 lg:px-8">
         <GuideNav />
       </div>
       <div className="flex min-h-0 flex-1 flex-col md:grid md:grid-cols-[minmax(320px,380px)_1fr] lg:grid-cols-[420px_1fr] max-md:landscape:flex-row">

@@ -4,12 +4,12 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { GUIDES } from "@/data/guides";
 
-export function GuideNav() {
+export function GuideNav({ className = "" }: { className?: string }) {
   const pathname = usePathname();
   const links = [{ href: "/explore/", title: "Map" }, ...GUIDES];
 
   return (
-    <nav aria-label="Guides" className="-mx-4 flex gap-5 overflow-x-auto border-b border-border px-4 [scrollbar-width:none]">
+    <nav aria-label="Guides" className={`-mx-4 flex gap-5 overflow-x-auto border-b border-border px-4 [scrollbar-width:none] ${className}`}>
       {links.map((g) => (
         <Link
           key={g.href}
@@ -27,7 +27,8 @@ export function GuideNav() {
 export function GuideHeader({ kicker, title, children }: { kicker: string; title: string; children?: React.ReactNode }) {
   return (
     <header>
-      <GuideNav />
+      {/* Cancel the page's top padding so the tabs sit right under the site bar, as on the map. */}
+      <GuideNav className="-mt-6 sm:-mt-10" />
       <p className="mt-8 font-mono text-xs tracking-widest text-muted uppercase">{kicker}</p>
       <h1 className="mt-1 text-3xl font-semibold tracking-tight sm:text-4xl">{title}</h1>
       {children && <div className="mt-3 max-w-3xl text-muted">{children}</div>}
