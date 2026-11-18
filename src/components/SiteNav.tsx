@@ -186,6 +186,11 @@ function AppTitleBar({ pathname, updateLater }: { pathname: string; updateLater:
   const collapsed = useCollapsedTitle(pathname);
   // Home's heading is the dates, not a name; elsewhere echo the heading the bar replaces.
   const title = (pathname !== "/" && collapsed.text) || screen.title;
+  // While the title fades out, keep the words that were showing: after a navigation the new page's
+  // heading isn't measured yet, and swapping the text mid-fade flashes the wrong name.
+  const [lastShown, setLastShown] = useState(title);
+  if (collapsed.shown && lastShown !== title) setLastShown(title);
+  const shownTitle = collapsed.shown ? title : lastShown;
 
   function goBack() {
     if (!back) return;
@@ -213,7 +218,7 @@ function AppTitleBar({ pathname, updateLater }: { pathname: string; updateLater:
         aria-hidden={!collapsed.shown}
         className={`min-w-0 truncate text-base font-semibold transition-opacity duration-150 ${collapsed.shown ? "" : "opacity-0"}`}
       >
-        {title}
+        {shownTitle}
       </p>
       {updateLater && (
         <div className="ml-auto pl-2 pr-2">
