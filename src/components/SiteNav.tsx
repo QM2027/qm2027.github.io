@@ -1,17 +1,17 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { NAV, SITE } from "@/lib/site";
 import { Icon } from "./Icon";
+import { isActive, screenOf } from "./pwa/AppNav";
 import { install, useInstall } from "./pwa/install";
 
-function isActive(pathname: string, href: string) {
-  return href === "/" ? pathname === "/" : pathname.startsWith(href.replace(/\/$/, ""));
-}
-
-/** Top bar links on tablet/desktop, hamburger menu on phones. */
+/**
+ * In a browser: top bar links on tablet/desktop, hamburger menu on phones.
+ * In the installed app: a title bar with a back button, since sections live in the app's own nav.
+ */
 export function SiteNav() {
   const pathname = usePathname();
   const [menuOpen, setMenuOpen] = useState(false);
@@ -32,8 +32,9 @@ export function SiteNav() {
   }, [menuOpen]);
 
   return (
-    <header className="sticky top-0 z-[1000] border-b border-border bg-background/95 pt-[env(safe-area-inset-top)] backdrop-blur">
-      <div className="mx-auto flex h-14 max-w-7xl items-center justify-between px-4 lg:px-8">
+    <header className="app-chrome sticky top-0 z-[1000] border-b border-border bg-background/95 pt-[env(safe-area-inset-top)] backdrop-blur">
+      <AppTitleBar pathname={pathname} />
+      <div className="mx-auto flex h-14 standalone:hidden max-w-7xl items-center justify-between px-4 lg:px-8">
         <Link href="/" className="flex items-baseline gap-2">
           <span className="font-serif text-lg font-semibold">QM2027</span>
           {/* Narrow phones can't fit the subtitle beside the Install button. */}
@@ -89,7 +90,7 @@ export function SiteNav() {
       </div>
 
       {menuOpen && (
-        <nav id="site-menu" aria-label="Menu" className="border-t border-border bg-background md:hidden">
+        <nav id="site-menu" aria-label="Menu" className="border-t border-border bg-background md:hidden standalone:hidden">
           <ul className="mx-auto max-w-7xl px-4 py-2">
             {NAV.map((item) => (
               <li key={item.href}>
@@ -119,5 +120,36 @@ export function SiteNav() {
         </nav>
       )}
     </header>
+  );
+}
+
+function AppTitleBar({ pathname }: { pathname: string }) {
+  const router = useRouter();
+  const { title, back } = screenOf(pathname);
+
+  function goBack() {
+    if (!back) return;
+    // Launched straight into a sub-page (from a shortcut or link) there is nothing to go back to.
+    const nav = (window as Window & { navigation?: { canGoBack?: boolean } }).navigation;
+    if (nav?.canGoBack ?? window.history.length > 1) router.back();
+    else router.push(back);
+  }
+
+  return (
+    <div className="mx-auto hidden h-12 max-w-7xl items-center gap-1 px-2 standalone:flex lg:px-6">
+      {back ? (
+        <button
+          type="button"
+          onClick={goBack}
+          aria-label="Back"
+          className="flex size-11 shrink-0 items-center justify-center rounded-md text-foreground active:bg-surface lg:hover:bg-surface"
+        >
+          <Icon name="chevron" className="size-6 rotate-180" />
+        </button>
+      ) : (
+        <span className="w-2 shrink-0" />
+      )}
+      <p className="truncate text-base font-semibold">{title}</p>
+    </div>
   );
 }

@@ -1,0 +1,127 @@
+"use client";
+
+import Link from "next/link";
+import { usePathname, useRouter } from "next/navigation";
+import { useEffect } from "react";
+import { Icon } from "@/components/Icon";
+import { GUIDES } from "@/data/guides";
+import { NAV, SITE } from "@/lib/site";
+
+const trim = (path: string) => path.replace(/\/$/, "") || "/";
+
+export function isActive(pathname: string, href: string) {
+  return href === "/" ? trim(pathname) === "/" : trim(pathname).startsWith(trim(href));
+}
+
+const TITLES: Record<string, string> = {
+  ...Object.fromEntries(NAV.map((n) => [trim(n.href), n.label])),
+  ...Object.fromEntries(GUIDES.map((g) => [trim(g.href), g.title])),
+  "/": `${SITE.shortName} Jeju`,
+  "/getting-there": "Airport to venue",
+};
+
+/** What the installed app's title bar shows, and where its back button leads (none on a tab's own page). */
+export function screenOf(pathname: string) {
+  const path = trim(pathname);
+  const isTab = NAV.some((n) => trim(n.href) === path);
+  const parent = path.split("/").slice(0, -1).join("/") || "/";
+  return {
+    title: TITLES[path] ?? SITE.shortName,
+    back: isTab ? undefined : parent === "/" ? "/" : `${parent}/`,
+  };
+}
+
+/** Re-tapping the tab you're on scrolls back to the top, as in native apps. */
+function onTabClick(pathname: string, href: string) {
+  if (trim(pathname) === trim(href)) window.scrollTo({ top: 0, behavior: "smooth" });
+}
+
+/**
+ * Navigation for the installed app only (both are hidden in a browser tab, which keeps the site's
+ * own header menu): a tab bar at the bottom on phones, an icon rail on the left on wide windows.
+ * Pure CSS decides which one shows, so nothing flashes while the page hydrates.
+ */
+export function AppNav() {
+  const pathname = usePathname();
+  useTabShortcuts();
+
+  return (
+    <>
+      <nav
+        aria-label="Sections"
+        className="app-chrome fixed inset-x-0 bottom-0 z-[950] hidden border-t border-border bg-background/95 pb-[env(safe-area-inset-bottom)] backdrop-blur standalone:max-lg:block"
+      >
+        <ul className="mx-auto grid h-(--tabbar) max-w-xl grid-cols-5">
+          {NAV.map((item) => (
+            <li key={item.href}>
+              <Link
+                href={item.href}
+                onClick={() => onTabClick(pathname, item.href)}
+                aria-current={isActive(pathname, item.href) ? "page" : undefined}
+                className="flex h-full flex-col items-center justify-center gap-0.5 text-[11px] text-muted active:bg-surface aria-[current=page]:font-semibold aria-[current=page]:text-foreground"
+              >
+                <Icon name={item.icon} className="size-6" />
+                {item.label}
+              </Link>
+            </li>
+          ))}
+        </ul>
+      </nav>
+
+      <nav
+        aria-label="Sections"
+        className="app-chrome fixed inset-y-0 left-0 z-[1010] hidden w-(--rail) flex-col items-center border-r border-border bg-background py-3 standalone:lg:flex"
+      >
+        <Link href="/" className="mb-4 flex size-12 items-center justify-center font-serif text-sm font-semibold" title={SITE.guideName}>
+          QM
+        </Link>
+        <ul className="flex flex-col gap-1">
+          {NAV.map((item, i) => (
+            <li key={item.href}>
+              <Link
+                href={item.href}
+                onClick={() => onTabClick(pathname, item.href)}
+                aria-current={isActive(pathname, item.href) ? "page" : undefined}
+                title={`${item.label} (${i + 1})`}
+                className="flex w-16 flex-col items-center gap-1 rounded-md py-2 text-[11px] text-muted hover:bg-surface hover:text-foreground aria-[current=page]:bg-surface aria-[current=page]:font-semibold aria-[current=page]:text-foreground"
+              >
+                <Icon name={item.icon} className="size-5" />
+                {item.label}
+              </Link>
+            </li>
+          ))}
+        </ul>
+        <a
+          href={SITE.indico}
+          target="_blank"
+          rel="noreferrer"
+          title="Official site on Indico"
+          className="mt-auto flex w-16 flex-col items-center gap-1 rounded-md py-2 text-[11px] text-muted hover:bg-surface hover:text-foreground"
+        >
+          <Icon name="external" className="size-5" />
+          Indico
+        </a>
+      </nav>
+    </>
+  );
+}
+
+/** In the installed app, keys 1–5 switch sections (not while typing, and not with modifier keys). */
+function useTabShortcuts() {
+  const router = useRouter();
+  useEffect(() => {
+    const standalone = window.matchMedia("(display-mode: standalone)");
+    function onKey(e: KeyboardEvent) {
+      if (!standalone.matches || e.altKey || e.ctrlKey || e.metaKey || e.shiftKey || e.repeat) return;
+      const t = e.target as HTMLElement | null;
+      if (t?.closest("input, textarea, select, [contenteditable=''], [contenteditable='true']")) return;
+      if (document.querySelector("[role=dialog], [aria-modal=true]")) return;
+      const item = NAV[Number(e.key) - 1];
+      if (!item) return;
+      e.preventDefault();
+      router.push(item.href);
+    }
+    document.addEventListener("keydown", onKey);
+    return () => document.removeEventListener("keydown", onKey);
+  }, [router]);
+}

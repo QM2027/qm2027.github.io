@@ -6,10 +6,12 @@ import { SITE } from "@/lib/site";
 export function SiteFooter() {
   // The explore map fills the viewport; a footer under it would only add scrolling.
   const pathname = usePathname();
-  if (pathname.replace(/\/$/, "") === "/explore") return null;
+  const path = pathname.replace(/\/$/, "") || "/";
+  if (path === "/explore") return null;
 
+  // The installed app keeps the disclaimer on Home only; elsewhere a footer reads as a web page.
   return (
-    <footer className="mt-auto border-t border-border">
+    <footer className={`mt-auto border-t border-border ${path === "/" ? "" : "standalone:hidden"}`}>
       <div className="mx-auto max-w-7xl px-4 py-6 text-sm text-muted lg:px-8">
         <p>
           {SITE.guideName} is a companion travel guide prepared by the {SITE.shortName} organizing committee. For

@@ -9,6 +9,7 @@ export default function manifest(): MetadataRoute.Manifest {
     name: SITE.guideName,
     short_name: "QM2027 Jeju",
     description: `Offline visitor guide to Jeju for ${SITE.name} participants.`,
+    id: withBase("/"),
     start_url: withBase("/"),
     scope: withBase("/"),
     display: "standalone",
@@ -18,6 +19,13 @@ export default function manifest(): MetadataRoute.Manifest {
       { src: withBase("/icons/icon-192.png"), sizes: "192x192", type: "image/png" },
       { src: withBase("/icons/icon-512.png"), sizes: "512x512", type: "image/png" },
       { src: withBase("/icons/maskable-512.png"), sizes: "512x512", type: "image/png", purpose: "maskable" },
+    ],
+    // Long-press the app icon (Android) or right-click it in the dock/taskbar (desktop).
+    shortcuts: [
+      { name: "Program Book", short_name: "Program", url: withBase("/program/") },
+      { name: "My schedule", short_name: "Mine", url: withBase("/program/?view=mine") },
+      { name: "Map of Jeju", short_name: "Map", url: withBase("/explore/") },
+      { name: "Venue plan", short_name: "Venue", url: withBase("/venue/") },
     ],
   };
 }

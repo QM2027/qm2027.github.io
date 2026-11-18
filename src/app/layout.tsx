@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { IBM_Plex_Mono, IBM_Plex_Sans, IBM_Plex_Sans_KR, Source_Serif_4 } from "next/font/google";
 import { DevNotice } from "@/components/DevNotice";
+import { AppNav } from "@/components/pwa/AppNav";
 import { PwaSupport } from "@/components/pwa/PwaSupport";
 import { SiteFooter } from "@/components/SiteFooter";
 import { SiteNav } from "@/components/SiteNav";
@@ -17,6 +18,7 @@ export const metadata: Metadata = {
   // Origin only: Next adds the base path to metadata URLs itself.
   metadataBase: new URL(new URL(SITE_URL).origin),
   title: { default: SITE.guideName, template: `%s · ${SITE.guideName}` },
+  appleWebApp: { capable: true, title: "QM2027", statusBarStyle: "default" },
   description: `Visitor guide to Jeju for ${SITE.name} participants (${SITE.dates}, ${SITE.venue}): maps, transport, food and the venue. Official conference information is on Indico.`,
 };
 
@@ -39,10 +41,11 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       <body className="flex min-h-full flex-col font-sans has-[[data-fill-viewport]]:h-dvh">
         <SiteNav />
         <DevNotice />
-        <div className="flex min-h-0 pb-[env(safe-area-inset-bottom)] flex-1 flex-col">
+        <div className="flex min-h-0 flex-1 flex-col pb-[env(safe-area-inset-bottom)] standalone:max-lg:pb-0">
           {children}
           <SiteFooter />
         </div>
+        <AppNav />
         <PwaSupport />
       </body>
     </html>

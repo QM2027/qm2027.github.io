@@ -59,7 +59,7 @@ export function PwaSupport() {
     <div
       role="dialog"
       aria-label="Install the guide"
-      className="fixed inset-x-3 bottom-[calc(env(safe-area-inset-bottom)+0.75rem+var(--bottom-bar,0px))] z-[1500] mx-auto flex max-w-md items-start gap-3 rounded-md bg-sea p-4 text-on-sea shadow-xl md:bottom-6"
+      className="fixed inset-x-3 bottom-[calc(env(safe-area-inset-bottom)+0.75rem+var(--bottom-bar,0px)+var(--app-bottom,0px))] z-[1500] mx-auto flex max-w-md items-start gap-3 rounded-md bg-sea p-4 text-on-sea shadow-xl md:bottom-6"
     >
       <div className="flex-1 text-sm">
         <p className="font-semibold">Use the guide offline</p>

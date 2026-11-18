@@ -1,5 +1,8 @@
 @import "tailwindcss";
 
+/* Opened from the home screen / dock rather than a browser tab. */
+@custom-variant standalone (@media (display-mode: standalone));
+
 /* Neutral palette: white, greys, near-black ink, one warm accent. */
 :root {
   --background: #ffffff;
@@ -99,5 +102,44 @@ body {
   }
   body:has([data-bottom-bar]) main {
     padding-bottom: calc(var(--bottom-bar) + 1rem);
+  }
+}
+
+/* Installed app: sections move to a tab bar on phones and an icon rail on wide windows (AppNav).
+   --app-bottom is how much fixed chrome sits under the page, for prompts that float above it. */
+:root {
+  --tabbar: 3.5rem;
+  --rail: 5rem;
+}
+
+@media (display-mode: standalone) {
+  html,
+  body {
+    overscroll-behavior: none;
+  }
+  /* App chrome behaves like controls, not text: no selection or link previews on long-press. */
+  .app-chrome {
+    -webkit-user-select: none;
+    user-select: none;
+    -webkit-touch-callout: none;
+  }
+  a,
+  button {
+    touch-action: manipulation;
+  }
+}
+
+@media (display-mode: standalone) and (width < 64rem) {
+  :root {
+    --app-bottom: var(--tabbar);
+  }
+  body {
+    padding-bottom: calc(var(--tabbar) + env(safe-area-inset-bottom));
+  }
+}
+
+@media (display-mode: standalone) and (width >= 64rem) {
+  body {
+    padding-left: var(--rail);
   }
 }
