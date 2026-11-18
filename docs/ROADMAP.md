@@ -23,10 +23,10 @@
 
 ## 🚨 배포 전 필수
 
-- [ ] 장소 좌표 검증 (Kakao/Naver Map 대조) — [src/data/places.ts](../src/data/places.ts). 2026-11-18 TourAPI·OSM과 대조: 4·3평화공원(4.8 km)·여미지(470 m) 수정. 남은 확인: 사려니숲길(어느 입구), 외돌개·색달해변(주차장/해변, 색달은 지도에서 바다 위), 대조 불가 9곳(leejungseop, astro-seogwipo, bonte, seongpanak, jeonnongro, cju, seongsan-port, 병원 2)
+- [x] 장소 좌표 검증 — [src/data/places.ts](../src/data/places.ts). 2026-11-18 TourAPI·OSM과 대조: 4·3평화공원(4.8 km)·여미지(470 m) 수정, 이어서 OSM으로 12곳 수정. 서귀포천문과학문화관은 8.6 km 틀려 있었음(하원동이 맞음), 색달해변은 바다 위→모래사장, 성산항은 여객터미널, 본태·이중섭·전농로·병원 2곳은 100–250 m 보정. 사려니숲길은 **비자림로 입구**로 정함(남조로 입구는 설명에 언급). 출시 전 Kakao Map으로 한 번 훑어보기는 권장
 - [x] ICC Jeju 좌표 — 현재 값 유지 (건물이 커서 OSM 건물 중심과 250 m 차이는 허용, 2026-11-18 결정)
 - [x] 공항→ICC 교통 — Indico Conference Venue 페이지 수치(600번 ₩4,500·약 60분·06:00–21:25, 택시 ₩35,000–50,000)로 맞추고 출처 링크. **렌터카는 안내하지 않음**(외국인은 빌리기 어려움, 2026-11-18 결정): getting-there·플래너·travel·companions에서 제거
-- [ ] 러닝 코스 경로를 실제 GPX로 다시 그리기 — [src/data/runs.ts](../src/data/runs.ts). 올레8 완료. 남은 것: resort-loop·falls-beach
+- [x] 러닝 코스 경로를 실제 경로로 다시 그리기 — [src/data/runs.ts](../src/data/runs.ts). 올레8은 GPX, resort-loop·falls-beach는 OSM 경로(모두 ICC 북쪽 입구 출발)
 - [ ] 시즌 날짜(개화 예상, 들불축제·걷기대회 2027 일정) 확인 — [src/data/season.ts](../src/data/season.ts)
 - [ ] 스탬프 투어 체크인 반경 현장 테스트 — [src/data/passport.ts](../src/data/passport.ts)
 - [ ] 국내선 소요시간·환승 안내 확인 — [src/data/korea.ts](../src/data/korea.ts)
@@ -51,7 +51,7 @@
 - [x] **A. March in Jeju 시즌** `/explore/season` — 유채꽃, 왕벚꽃, 들불축제(2027 개최 여부 확인), 한라봉·천혜향 제철; 학회 날짜(3/21~27)와 겹치는지 타임라인 표시
 - [x] **D. 먹거리 가이드** `/explore/food` — 제주 음식 Must-try 체크리스트(localStorage), 식이 필터(vegetarian/vegan/halal/gluten-free/해산물 알레르기), 한국어 주문 문구
 - [x] **C. 아침 산책·러닝 코스** `/explore/run` — 3개 코스, GPX 다운로드, 학회 기간 일출·일몰
-- [x] (C 후속) 고도 프로파일 — 올레8 코스. 나머지 두 코스는 고도 데이터 없음
+- [x] (C 후속) 고도 프로파일 — 세 코스 모두 (SRTM 30 m)
 - [x] **E. Physicist's Science Trail** `/explore/science` — UNESCO 지질 명소 해설, 천문대, 학회 기간 월령·별보기 조건
 
 ### 5. 관광 확장 2차 + 도구 ✅
@@ -71,7 +71,7 @@
 - [ ] **실기기 검증**: Android Chrome 설치 → 비행기 모드로 페이지·본 지도 열람, iOS Safari 홈 화면 추가
 - [ ] 새 페이지 추가 시 `public/sw.js`의 `SHELL` 목록에도 추가 (자동화 검토)
 - [ ] Satellite meetings 날짜·장소 기입 (현재 각 사이트 링크만)
-- [ ] SEO/OG 이미지, 접근성 점검(키보드·스크린리더), Lighthouse
+- [ ] SEO/OG 이미지, 접근성 점검(키보드·스크린리더), Lighthouse — 2026-11-18 Lighthouse(모바일) 10페이지: 접근성 97–100, SEO 100, 성능 83–94. 수정: 평면도 CLS 0.31→0.003, 주황 강조색 AA 대비(#bd400c), 다크모드 주황 버튼 글자색, 음식 페이지 제목 순서. 남은 것: 평면도 방 버튼 aria-label이 보이는 글자를 포함하지 않음(label-content-name-mismatch, FloorPlan.tsx), 지도 페이지 LCP 4.7 s, 스크린리더 실사용 점검
 
 ### 7. 데이터 보강
 - [x] data.go.kr 키 발급·활용신청 (TourAPI 영문, 관광사진, 에어코리아, 기상특보·단기·중기예보). 키는 조직 시크릿 `DATA_GO_KR_KEY` (weather-data, tour-data만)
@@ -106,7 +106,7 @@
 
 - [ ] **공지 (Announcements)** — 조직위 중앙 공지를 앱에 게시. program-data처럼 별도 저장소의 JSON을 Pages로 배포하고 CSR 폴링하면 재빌드 없이 갱신 가능. 홈 상단 배너 + 목록 페이지, 읽음 표시(localStorage), 긴급/일반 구분
 - [ ] **푸시 알림** (PWA 설치 시) — Web Push. 정적 호스팅만으로는 불가 → 구독 저장·발송용 서버 필요(서버리스 함수 또는 FCM/OneSignal 등 외부 서비스). iOS는 홈 화면에 설치한 PWA(16.4+)에서만 동작. 용도: 공지, 내 일정 변경, 세션 시작 직전. 권한 요청은 설치 후·명시적 버튼으로만
-- [ ] **Happening now** — 지금 진행 중인 세션/발표와 다음 순서를 한 화면에(홈 위젯 또는 별도 탭). 기존 `/program` NOW 표시와 평면도 Now/Next 데이터 재사용
+- [x] **Happening now** — 홈 맨 위 위젯 ([src/components/HappeningNow.tsx](../src/components/HappeningNow.tsx)): 진행 중인 병렬 세션과 각 세션의 현재 발표, 포스터 세션, 휴식, 다음 시작 시각의 세션들, 내 일정의 다음 항목. 학회 전날~종료 때만 표시하고 그 밖에는 프로그램도 받지 않음. `?now=`로 테스트 (QM2025 미리보기: `?now=2025-04-08T11:20:00+02:00`)
 - [ ] **스폰서 목록** — 기업 없음(연구기관·학회·지자체 등). 로고·등급·링크, 전시 부스가 있으면 평면도와 연결. 로고 사용 허락·최신 목록은 조직위에서 받기
 - [ ] **주변 서비스 (Services nearby)** — ICC 주변 약국, 병원, ATM/환전, 편의점, 우체국, 세탁 등. `/explore` 지도에 카테고리로 넣을지 별도 목록으로 할지 결정
 - [ ] **기타 정보 (Other information)** — Wi-Fi, 분실물, 짐 보관, 클로크룸, 의무실, 기도실, 배지 정책 등 현장 실무 정보 (항목은 조직위에서 확정)
