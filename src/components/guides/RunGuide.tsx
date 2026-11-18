@@ -21,7 +21,7 @@ function downloadGpx(run: Run) {
       return ele == null ? `<trkpt lat="${lat}" lon="${lng}"/>` : `<trkpt lat="${lat}" lon="${lng}"><ele>${ele}</ele></trkpt>`;
     })
     .join("");
-  const gpx = `<?xml version="1.0" encoding="UTF-8"?><gpx version="1.1" creator="QM2027" xmlns="http://www.topografix.com/GPX/1/1"><trk><name>QM2027 – ${run.title}</name><trkseg>${pts}</trkseg></trk></gpx>`;
+  const gpx = `<?xml version="1.0" encoding="UTF-8"?><gpx version="1.1" creator="QM2027" xmlns="http://www.topografix.com/GPX/1/1"><metadata><copyright author="OpenStreetMap contributors"><license>https://opendatacommons.org/licenses/odbl/</license></copyright></metadata><trk><name>QM2027 – ${run.title}</name><trkseg>${pts}</trkseg></trk></gpx>`;
   const url = URL.createObjectURL(new Blob([gpx], { type: "application/gpx+xml" }));
   const a = Object.assign(document.createElement("a"), { href: url, download: `qm2027-${run.id}.gpx` });
   a.click();
