@@ -26,6 +26,8 @@ import { FloorPlanModal } from "./FloorPlanModal";
 import { MySchedule } from "./MySchedule";
 import { PosterBrowser } from "./PosterBrowser";
 import { ContributionList, MarksContext, type ListProps } from "./shared";
+import { SpeakerList } from "./Speakers";
+import { TopicList } from "./Topics";
 import { touches, Updates } from "./Updates";
 
 // URL state, so every view can be linked and the back button works:
@@ -33,13 +35,15 @@ import { touches, Updates } from "./Updates";
 //   ?view=posters&ps=<id>&track=…    posters, by poster session and track
 //   ?view=mine[&ids=a,b,c]          my schedule; `ids` imports a shared schedule
 //   ?view=updates[&mine=1]          changes, optionally only my items
+//   ?view=topics[&topic=…]          talks and posters by Indico track
+//   ?view=speakers                  speakers and chairs A–Z
 //   ?q=…&type=talk|poster           search
 //   ?talk=<id>                      details of a talk or poster, on top of any view
 //   ?map=<room id>                  floor plan over the details, on that room's floor (`-` for none)
 //   ?now=<ISO time>                 pin the clock, for testing "now" with a past program
 
-type View = "day" | "posters" | "mine" | "updates";
-const VIEWS: View[] = ["day", "posters", "mine", "updates"];
+type View = "day" | "posters" | "topics" | "speakers" | "mine" | "updates";
+const VIEWS: View[] = ["day", "posters", "topics", "speakers", "mine", "updates"];
 const SEARCH_PAGE = 50;
 
 export function ProgramApp() {
@@ -152,6 +156,9 @@ function ProgramBrowser({
     } else go(Object.fromEntries(keys.map((k) => [k, undefined])));
   };
   const openTalk = (id: string) => openOver({ talk: id });
+  /** A session's posters, or its day in the schedule. */
+  const showSession = (s: { id: string; start: string; poster?: boolean }) =>
+    s.poster ? go({ view: "posters", ps: s.id, track: undefined }) : go({ view: undefined, day: dayOf(s.start), topic: undefined });
   const closeTalk = () => closeOver(["talk", "map"]);
 
   // ---- my schedule: shared-link import and changes since last seen
@@ -183,6 +190,8 @@ function ProgramBrowser({
   const tabs: [View, string][] = [
     ["day", "Schedule"],
     ...(posterCount ? ([["posters", `Posters (${posterCount})`]] as [View, string][]) : []),
+    ...(program.tracks.length ? ([["topics", "Topics"]] as [View, string][]) : []),
+    ["speakers", "Speakers"],
     ["mine", `Mine (${mineCount})`],
     ["updates", `Updates${program.changes.length ? ` (${program.changes.length})` : ""}`],
   ];
@@ -286,6 +295,15 @@ function ProgramBrowser({
             onFilter={(patch) => go(patch)}
             {...listProps}
           />
+        ) : view === "topics" ? (
+          <TopicList
+            program={program}
+            open={params.get("topic") ?? undefined}
+            onPosters={(track) => go({ view: "posters", track, ps: undefined, topic: undefined })}
+            {...listProps}
+          />
+        ) : view === "speakers" ? (
+          <SpeakerList program={program} onSession={showSession} {...listProps} />
         ) : view === "mine" ? (
           <>
             {importIds.length > 0 && (
@@ -311,7 +329,7 @@ function ProgramBrowser({
               program={program}
               changedIds={changedIds}
               filesChanged={filesChanged}
-              onSession={(s) => (s.poster ? go({ view: "posters", ps: s.id, track: undefined }) : go({ view: undefined, day: dayOf(s.start) }))}
+              onSession={showSession}
               {...listProps}
             />
           </>
