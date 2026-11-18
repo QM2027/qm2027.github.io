@@ -32,6 +32,16 @@ const PROGRAM_FILES = ["program", "abstracts", "materials"];
 const INDEX_TIMEOUT_MS = 4000;
 /** Whenever the guide is in use, fetch the latest program at most this often, on any page. */
 const SYNC_MS = 5 * 60_000;
+/**
+ * The longest a background download holds an event open. A tapped Update waits for this worker's
+ * open events before the new one takes over; the download itself carries on past it.
+ */
+const BACKGROUND_MS = 8000;
+
+/** Keeps the worker alive for `work`, but releases the event after BACKGROUND_MS. */
+function background(event, work) {
+  event.waitUntil(Promise.race([work.catch(() => {}), new Promise((r) => setTimeout(r, BACKGROUND_MS))]));
+}
 
 self.addEventListener("install", (event) => {
   // Pre-cache every page and the current program so the guide works offline after the first visit,
@@ -148,7 +158,7 @@ async function syncProgram() {
 function programIndex(event) {
   const manual = event.request.cache === "reload";
   const network = fetchIndex();
-  event.waitUntil(network.then((res) => storeProgram(res.clone())).catch(() => {}));
+  background(event, network.then((res) => storeProgram(res.clone())));
   const cached = async () => (await (await caches.open(PROGRAM)).match(PROGRAM_INDEX)) ?? (await caches.match(PROGRAM_INDEX));
   return (async () => {
     try {
@@ -232,7 +242,7 @@ self.addEventListener("fetch", (event) => {
     if (url.pathname === PROGRAM_INDEX) event.respondWith(programIndex(event));
     else event.respondWith(programFile(url.pathname));
   } else if (url.origin === self.location.origin) {
-    if (Date.now() - lastSync > SYNC_MS) event.waitUntil(syncProgram());
+    if (Date.now() - lastSync > SYNC_MS) background(event, syncProgram());
     if (request.mode === "navigate" || url.pathname.endsWith(".txt") || url.pathname.endsWith(".json")) {
       // Pages and RSC payloads: fresh when online, cached when not.
       event.respondWith(networkFirst(request, PAGES));

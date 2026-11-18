@@ -62,9 +62,13 @@ export function PwaSupport() {
         <div className="flex-1 text-sm">
           <p className="font-semibold">A new version is ready</p>
           <p className="mt-1 text-on-sea/75">Reload the guide to get the latest version.</p>
-          <button onClick={applyUpdate} className="mt-3 inline-flex min-h-10 items-center gap-2 rounded-md bg-background px-4 font-semibold text-foreground">
-            <Icon name="refresh" />
-            Update
+          <button
+            onClick={applyUpdate}
+            disabled={update.updating}
+            className="mt-3 inline-flex min-h-10 items-center gap-2 rounded-md bg-background px-4 font-semibold text-foreground disabled:opacity-75"
+          >
+            <Icon name="refresh" className={update.updating ? "animate-spin" : undefined} />
+            {update.updating ? "Updating…" : "Update"}
           </button>
         </div>
         <button onClick={dismissUpdate} aria-label="Later" className="flex size-10 shrink-0 items-center justify-center rounded-full text-on-sea/75 hover:bg-on-sea/10 hover:text-on-sea">

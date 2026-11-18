@@ -7,10 +7,11 @@ import { withBase } from "@/lib/paths";
  * A new deploy's service worker waits until the visitor taps Update (see public/sw.js).
  * - ready: a new version is installed and waiting.
  * - dismissed: the visitor chose "Later"; the banner hides, the header keeps a small Update button.
+ * - updating: Update was tapped; the new worker is taking over and the page reloads.
  */
-type UpdateState = { ready: boolean; dismissed: boolean };
+type UpdateState = { ready: boolean; dismissed: boolean; updating: boolean };
 
-const SERVER: UpdateState = { ready: false, dismissed: false };
+const SERVER: UpdateState = { ready: false, dismissed: false, updating: false };
 let state: UpdateState = SERVER;
 let waiting: ServiceWorker | undefined;
 let registration: ServiceWorkerRegistration | undefined;
@@ -69,11 +70,31 @@ export function useUpdate() {
   return useSyncExternalStore(subscribe, () => state, () => SERVER);
 }
 
-/** Hands control to the waiting worker, then reloads so pages and scripts come from the same deploy. */
+/** The new worker waits for the old one's in-flight work; past this, reload anyway rather than look stuck. */
+const UPDATE_TIMEOUT_MS = 10_000;
+let reloading = false;
+
+function reload() {
+  if (reloading) return;
+  reloading = true;
+  window.location.reload();
+}
+
+/**
+ * Hands control to the waiting worker, then reloads so pages and scripts come from the same deploy.
+ * If another tab already applied the update, the worker is active and only the reload is left.
+ */
 export function applyUpdate() {
-  if (!waiting) return;
-  navigator.serviceWorker.addEventListener("controllerchange", () => window.location.reload(), { once: true });
-  waiting.postMessage({ type: "skip-waiting" });
+  if (state.updating) return;
+  const worker = registration?.waiting ?? waiting;
+  if (!worker || worker.state !== "installed") return reload();
+  set({ updating: true });
+  navigator.serviceWorker.addEventListener("controllerchange", reload, { once: true });
+  worker.addEventListener("statechange", () => {
+    if (worker.state === "activated" || worker.state === "redundant") reload();
+  });
+  worker.postMessage({ type: "skip-waiting" });
+  setTimeout(reload, UPDATE_TIMEOUT_MS);
 }
 
 export function dismissUpdate() {

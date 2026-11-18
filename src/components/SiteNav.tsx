@@ -162,15 +162,17 @@ function useCollapsedTitle(pathname: string) {
 
 /** Applies a new version the visitor put off with "Later". */
 function UpdateButton() {
+  const { updating } = useUpdate();
   return (
     <button
       type="button"
       onClick={applyUpdate}
+      disabled={updating}
       aria-label="Update to the new version"
-      className="relative flex h-9 shrink-0 items-center gap-1.5 rounded-md border border-border px-3 text-sm font-medium text-foreground hover:bg-surface"
+      className="relative flex h-9 shrink-0 items-center gap-1.5 rounded-md border border-border px-3 text-sm font-medium text-foreground hover:bg-surface disabled:opacity-75"
     >
-      <Icon name="refresh" className="size-4" />
-      Update
+      <Icon name="refresh" className={updating ? "size-4 animate-spin" : "size-4"} />
+      {updating ? "Updating…" : "Update"}
       {/* The one accent: marks it as pending, like a notification badge. */}
       <span aria-hidden className="absolute -top-1 -right-1 size-2.5 rounded-full bg-tangerine ring-2 ring-background" />
     </button>
