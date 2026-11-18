@@ -45,30 +45,30 @@ export function PwaSupport() {
     <div
       role="dialog"
       aria-label="Install the guide"
-      className="fixed inset-x-3 bottom-[calc(env(safe-area-inset-bottom)+0.75rem+var(--bottom-bar,0px))] z-[1500] mx-auto flex max-w-md items-start gap-3 rounded-md border border-border bg-surface p-4 shadow-lg md:bottom-6"
+      className="fixed inset-x-3 bottom-[calc(env(safe-area-inset-bottom)+0.75rem+var(--bottom-bar,0px))] z-[1500] mx-auto flex max-w-md items-start gap-3 rounded-md bg-sea p-4 text-on-sea shadow-xl md:bottom-6"
     >
       <div className="flex-1 text-sm">
         <p className="font-semibold">Use the guide offline</p>
         {mode === "ios" ? (
-          <p className="mt-1 text-muted">Tap the Share button, then “Add to Home Screen”. Maps you&apos;ve viewed and all guides will work without signal.</p>
+          <p className="mt-1 text-on-sea/75">Tap the Share button, then “Add to Home Screen”. Maps you&apos;ve viewed and all guides will work without signal.</p>
         ) : mode === "mac-safari" ? (
-          <p className="mt-1 text-muted">In Safari, choose File › Add to Dock. Guides and maps you&apos;ve viewed work without signal.</p>
+          <p className="mt-1 text-on-sea/75">In Safari, choose File › Add to Dock. Guides and maps you&apos;ve viewed work without signal.</p>
         ) : (
           <>
-            <p className="mt-1 text-muted">Install it on this device. Guides and maps you&apos;ve viewed work without signal.</p>
+            <p className="mt-1 text-on-sea/75">Install it on this device. Guides and maps you&apos;ve viewed work without signal.</p>
             <button
               onClick={async () => {
                 await install();
                 dismiss();
               }}
-              className="mt-2 min-h-10 rounded-md bg-sea px-4 font-semibold text-on-sea"
+              className="mt-3 min-h-10 rounded-md bg-background px-4 font-semibold text-foreground"
             >
               Install
             </button>
           </>
         )}
       </div>
-      <button onClick={dismiss} aria-label="Dismiss" className="flex size-10 shrink-0 items-center justify-center rounded-full text-muted hover:bg-background">
+      <button onClick={dismiss} aria-label="Dismiss" className="flex size-10 shrink-0 items-center justify-center rounded-full text-on-sea/75 hover:bg-on-sea/10 hover:text-on-sea">
         <Icon name="close" />
       </button>
     </div>
