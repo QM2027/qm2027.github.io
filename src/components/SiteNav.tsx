@@ -123,9 +123,43 @@ export function SiteNav() {
   );
 }
 
+/**
+ * Pages open with their own large heading, so the app's title bar starts empty and takes the
+ * heading's text only once it has scrolled up under the bar (as native apps do). Pages without one
+ * (the Explore map) show the section name straight away.
+ */
+function useCollapsedTitle(pathname: string) {
+  const [seen, setSeen] = useState<{ path: string; shown: boolean; text?: string }>();
+
+  useEffect(() => {
+    const h1 = document.querySelector("main h1");
+    const header = document.querySelector("header");
+    if (!h1 || !header) {
+      const id = requestAnimationFrame(() => setSeen({ path: pathname, shown: true }));
+      return () => cancelAnimationFrame(id);
+    }
+    const text = h1.textContent?.trim();
+    const top = Math.round(header.getBoundingClientRect().height);
+    const observer = new IntersectionObserver(
+      ([e]) => setSeen({ path: pathname, text, shown: !e.isIntersecting && e.boundingClientRect.top < top }),
+      { rootMargin: `-${top}px 0px 0px 0px` },
+    );
+    observer.observe(h1);
+    return () => observer.disconnect();
+  }, [pathname]);
+
+  // Until measured, guess from the route so the bar doesn't flash a title over the heading.
+  if (seen?.path !== pathname) return { shown: pathname.replace(/\/$/, "") === "/explore", text: undefined };
+  return seen;
+}
+
 function AppTitleBar({ pathname }: { pathname: string }) {
   const router = useRouter();
-  const { title, back } = screenOf(pathname);
+  const screen = screenOf(pathname);
+  const { back } = screen;
+  const collapsed = useCollapsedTitle(pathname);
+  // Home's heading is the dates, not a name; elsewhere echo the heading the bar replaces.
+  const title = (pathname !== "/" && collapsed.text) || screen.title;
 
   function goBack() {
     if (!back) return;
@@ -149,7 +183,12 @@ function AppTitleBar({ pathname }: { pathname: string }) {
       ) : (
         <span className="w-2 shrink-0" />
       )}
-      <p className="truncate text-base font-semibold">{title}</p>
+      <p
+        aria-hidden={!collapsed.shown}
+        className={`truncate text-base font-semibold transition-opacity duration-150 ${collapsed.shown ? "" : "opacity-0"}`}
+      >
+        {title}
+      </p>
     </div>
   );
 }
