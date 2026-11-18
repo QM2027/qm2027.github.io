@@ -43,9 +43,9 @@ export default function Home() {
                 Official conference site on Indico ↗
               </a>
             </div>
-            <p className="mt-8 font-mono text-sm text-muted">
+            <div className="mt-10">
               <Countdown />
-            </p>
+            </div>
           </div>
           <JejuOutline className="h-auto w-full text-foreground" />
         </div>
