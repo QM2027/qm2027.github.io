@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { downloadIcs } from "@/lib/ics";
 import { byBoard } from "@/lib/program-search";
-import { clock, dayLabel, dayOf, overlaps, type Contribution, type Program, type Session } from "@/lib/program";
+import { clashes, clock, dayLabel, dayOf, type Contribution, type Program, type Session, type Slot } from "@/lib/program";
 import { ContributionRow, posterSessionIcs, sessionIcs, shareLink, StarButton, talkIcs, type ListProps } from "./shared";
 import { TeX } from "./TeX";
 
@@ -18,6 +18,8 @@ type Entry = { kind: "talk"; c: Contribution; start: string; end: string } | { k
  */
 export function MySchedule({ program, changedIds, filesChanged, onSession, ...p }: Props) {
   const [shared, setShared] = useState<string>();
+  /** Talks (with sessions) and posters are shown apart; until chosen, talks unless there are none. */
+  const [part, setPart] = useState<"talks" | "posters">();
   const items = program.contributions.filter((c) => p.starred.has(c.id));
   const talks = items.filter((c) => !c.poster);
   const posters = items.filter((c) => c.poster);
@@ -34,6 +36,7 @@ export function MySchedule({ program, changedIds, filesChanged, onSession, ...p 
     );
   }
 
+  const sessionChanged = (s: Session) => program.changes.some((c) => c.sessionId === s.id || c.id === s.id);
   const posterGroups = new Map<string, Contribution[]>();
   for (const c of posters) if (c.sessionId) posterGroups.set(c.sessionId, [...(posterGroups.get(c.sessionId) ?? []), c]);
   // A saved poster session shows as its group, even with no single poster saved.
@@ -42,15 +45,17 @@ export function MySchedule({ program, changedIds, filesChanged, onSession, ...p 
     ...talks.map((c) => ({ kind: "talk" as const, c, start: c.start, end: c.end })),
     ...sessions.filter((s) => !s.poster).map((s) => ({ kind: "session" as const, s, start: s.start, end: s.end })),
   ].sort((a, b) => a.start.localeCompare(b.start) || (a.kind === "session" ? -1 : 1));
-  const days = [...new Set([...timeline.map((e) => dayOf(e.start)), ...[...posterGroups.keys()].map((id) => dayOf(p.sessionsById.get(id)!.start))])].sort();
+  const groupDay = (id: string) => dayOf(p.sessionsById.get(id)!.start);
+  const showPosters = part === "posters" || (part === undefined && !timeline.length);
+  const days = [...new Set(showPosters ? [...posterGroups.keys()].map(groupDay) : timeline.map((e) => dayOf(e.start)))].sort();
+  const postersNews = posters.some((c) => changedIds.has(c.id) || filesChanged.has(c.id));
+  const talksNews = talks.some((c) => changedIds.has(c.id) || filesChanged.has(c.id)) || sessions.some((s) => !s.poster && sessionChanged(s));
 
-  const idOf = (e: Entry) => (e.kind === "talk" ? e.c.id : e.s.id);
-  const sessionOf = (e: Entry) => (e.kind === "talk" ? e.c.sessionId : e.s.id);
-  const titleOf = (e: Entry) => (e.kind === "talk" ? e.c.title : e.s.title);
-  /** Same session (a talk and its session, or two talks of one session) is not a clash. */
-  const clashWith = (e: Entry, list: Entry[]) =>
-    list.find((o) => idOf(o) !== idOf(e) && !(sessionOf(o) && sessionOf(o) === sessionOf(e) && (o.kind === "session" || e.kind === "session")) && overlaps(o, e));
-  const sessionChanged = (s: Session) => program.changes.some((c) => c.sessionId === s.id || c.id === s.id);
+  const slotOf = (e: Entry): Slot =>
+    e.kind === "talk"
+      ? { id: e.c.id, kind: "talk", sessionId: e.c.sessionId, title: e.c.title, start: e.start, end: e.end }
+      : { id: e.s.id, kind: "session", sessionId: e.s.id, title: e.s.title, start: e.start, end: e.end };
+  const clashWith = (e: Entry, list: Entry[]) => list.map(slotOf).find((o) => clashes(slotOf(e), o));
 
   function exportIcs() {
     const events = [
@@ -89,9 +94,35 @@ export function MySchedule({ program, changedIds, filesChanged, onSession, ...p 
         {gone > 0 && ` ${gone} saved item(s) are no longer in the program.`}
       </p>
 
+      <div className="flex gap-2" role="group" aria-label="Show">
+        {(
+          [
+            ["talks", "Talks & sessions", timeline.length, talksNews],
+            ["posters", "Posters", posters.length, postersNews],
+          ] as const
+        ).map(([key, label, count, news]) => (
+          <button
+            key={key}
+            onClick={() => setPart(key)}
+            aria-pressed={(key === "posters") === showPosters}
+            className="flex min-h-10 shrink-0 items-center gap-2 rounded-md border border-border px-4 text-sm aria-pressed:border-transparent aria-pressed:bg-foreground aria-pressed:text-background"
+          >
+            {label}
+            <span className="tabular-nums opacity-70">{count}</span>
+            {news && <span className="size-2 rounded-full bg-tangerine" aria-label="Updated" />}
+          </button>
+        ))}
+      </div>
+
+      {days.length === 0 && (
+        <p className="text-muted">{showPosters ? "No posters saved yet. Tap ☆ next to a poster to add it." : "No talks or sessions saved yet."}</p>
+      )}
+
       {days.map((d) => {
-        const dayEntries = timeline.filter((e) => dayOf(e.start) === d);
-        const dayGroups = [...posterGroups].filter(([id]) => dayOf(p.sessionsById.get(id)!.start) === d);
+        const dayEntries = showPosters ? [] : timeline.filter((e) => dayOf(e.start) === d);
+        const dayGroups = showPosters
+          ? [...posterGroups].filter(([id]) => groupDay(id) === d).sort(([a], [b]) => p.sessionsById.get(a)!.start.localeCompare(p.sessionsById.get(b)!.start))
+          : [];
         return (
           <section key={d}>
             <h2 className="font-semibold">{dayLabel(d)}</h2>
@@ -99,7 +130,7 @@ export function MySchedule({ program, changedIds, filesChanged, onSession, ...p 
               <ul className="mt-2 divide-y divide-border rounded-md border border-border bg-surface px-3">
                 {dayEntries.map((e) => {
                   const clash = clashWith(e, dayEntries);
-                  const clashText = clash ? `Overlaps “${titleOf(clash)}”` : undefined;
+                  const clashText = clash ? `Overlaps “${clash.title}”` : undefined;
                   return e.kind === "talk" ? (
                     <ContributionRow
                       key={e.c.id}

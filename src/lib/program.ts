@@ -241,7 +241,32 @@ export function dayLabel(day: string) {
 export const overlaps = (a: { start: string; end: string }, b: { start: string; end: string }) =>
   Date.parse(a.start) < Date.parse(b.end) && Date.parse(b.start) < Date.parse(a.end);
 
-export const isRunning = (x: { start: string; end: string }, now: number) => Date.parse(x.start) <= now && now < Date.parse(x.end);
+/** A talk or a whole session in someone's schedule, for clash checks. */
+export type Slot = { id: string; kind: "talk" | "session"; sessionId?: string; title: string; start: string; end: string };
+
+/** Overlap in time, except a session and a talk inside it (that's the same place, not a clash). */
+export const clashes = (a: Slot, b: Slot) =>
+  a.id !== b.id && !(a.sessionId && a.sessionId === b.sessionId && (a.kind === "session" || b.kind === "session")) && overlaps(a, b);
+
+/** Saved talks and sessions as slots. Posters are left out: they're up all week, so they never clash. */
+export function savedSlots(program: Program, saved: ReadonlySet<string>): Slot[] {
+  return [
+    ...program.contributions
+      .filter((c) => !c.poster && saved.has(c.id))
+      .map((c) => ({ id: c.id, kind: "talk" as const, sessionId: c.sessionId, title: c.title, start: c.start, end: c.end })),
+    ...program.sessions
+      .filter((s) => !s.poster && saved.has(s.id))
+      .map((s) => ({ id: s.id, kind: "session" as const, sessionId: s.id, title: s.title, start: s.start, end: s.end })),
+  ];
+}
+
+/** The saved items that `id` would overlap if it were added; empty for posters and unknown ids. */
+export function clashesFor(program: Program, saved: ReadonlySet<string>, id: string): Slot[] {
+  const [slot] = savedSlots(program, new Set([id]));
+  return slot ? savedSlots(program, saved).filter((o) => clashes(slot, o)) : [];
+}
+
+export const isRunning =(x: { start: string; end: string }, now: number) => Date.parse(x.start) <= now && now < Date.parse(x.end);
 
 /** Contribution ids touched by changes, including the ones inside collapsed entries. */
 export function changedContributionIds(changes: Change[]): Set<string> {

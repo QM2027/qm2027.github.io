@@ -6,6 +6,8 @@ import { Icon, type IconName } from "@/components/Icon";
 import { INDICO_GROUPS, INDICO_TIMETABLE } from "@/data/indico-links";
 import {
   changedContributionIds,
+  clashesFor,
+  clock,
   dayLabel,
   dayOf,
   QM2027_EVENT_ID,
@@ -15,6 +17,7 @@ import {
   type Contribution,
   type Materials,
   type Program,
+  type Slot,
 } from "@/lib/program";
 import { buildSearchIndex, searchProgram, type SearchType } from "@/lib/program-search";
 import { changedFiles, useFilesSeen } from "@/lib/files-seen";
@@ -27,6 +30,7 @@ import { MySchedule } from "./MySchedule";
 import { PosterBrowser } from "./PosterBrowser";
 import { ContributionList, MarksContext, type ListProps } from "./shared";
 import { SpeakerList } from "./Speakers";
+import { TeX } from "./TeX";
 import { TopicList } from "./Topics";
 import { touches, Updates } from "./Updates";
 
@@ -173,10 +177,20 @@ function ProgramBrowser({
   // ---- files: new or replaced since the visitor last saw them
   const { seen: filesSeen, mark: markFilesSeen } = useFilesSeen();
   const filesChanged = useMemo(() => changedFiles(starred, materials, filesSeen), [starred, materials, filesSeen]);
+  /** Set when a star adds something that overlaps what's already saved. */
+  const [clash, setClash] = useState<{ id: string; with: Slot[] }>();
+  useEffect(() => {
+    if (!clash) return;
+    const t = setTimeout(() => setClash(undefined), 8000);
+    return () => clearTimeout(t);
+  }, [clash]);
   /** Starring something records its current files, so later uploads show as new. */
   const star = (id: string) => {
+    const adding = !starred.has(id);
     const files = materials?.[id];
-    if (!starred.has(id) && files && !filesSeen[id]) markFilesSeen(id, files);
+    if (adding && files && !filesSeen[id]) markFilesSeen(id, files);
+    const overlap = adding ? clashesFor(program, starred, id) : [];
+    setClash(overlap.length ? { id, with: overlap } : undefined);
     toggleStar(id);
   };
 
@@ -396,6 +410,16 @@ function ProgramBrowser({
           <MissingDetail onClose={closeTalk} />
         ))}
       {mapRoom && <FloorPlanModal roomId={mapRoom === "-" ? undefined : mapRoom} onClose={() => closeOver(["map"])} />}
+      {clash && starred.has(clash.id) && (
+        <ClashNotice
+          clash={clash.with}
+          onUndo={() => {
+            toggleStar(clash.id);
+            setClash(undefined);
+          }}
+          onClose={() => setClash(undefined)}
+        />
+      )}
 
       <p className="mt-8 text-xs text-muted">
         {stale && <b className="text-foreground">Couldn&apos;t check Indico for a while. </b>}
@@ -439,6 +463,34 @@ function ProgramBrowser({
       </div>
     </nav>
     </MarksContext.Provider>
+  );
+}
+
+/** Floats above the bottom bar (and over the details panel, where stars are tapped too). */
+function ClashNotice({ clash, onUndo, onClose }: { clash: Slot[]; onUndo: () => void; onClose: () => void }) {
+  const [first] = clash;
+  return (
+    <div
+      role="status"
+      className="fixed inset-x-3 bottom-[calc(env(safe-area-inset-bottom)+0.75rem+var(--bottom-bar,0px))] z-[1250] mx-auto flex max-w-md items-start gap-3 rounded-md border border-tangerine bg-background p-3 text-sm shadow-xl lg:bottom-6"
+    >
+      <p className="min-w-0 flex-1 py-1">
+        <b className="text-tangerine">Time clash.</b> This overlaps{" "}
+        <span className="font-medium">
+          “<TeX text={first.title} />”
+        </span>{" "}
+        <span className="tabular-nums text-muted">
+          ({clock(first.start)}–{clock(first.end)})
+        </span>
+        {clash.length > 1 && ` and ${clash.length - 1} more`}, already in your schedule.
+      </p>
+      <button onClick={onUndo} className="min-h-10 shrink-0 rounded-md border border-border px-3 font-semibold">
+        Undo
+      </button>
+      <button onClick={onClose} aria-label="Dismiss" className="flex size-10 shrink-0 items-center justify-center text-muted">
+        <Icon name="close" className="size-4" />
+      </button>
+    </div>
   );
 }
 
