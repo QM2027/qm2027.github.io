@@ -2,11 +2,11 @@
 
 import Link from "next/link";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { useState } from "react";
 import { Icon } from "@/components/Icon";
 import { DEFAULT_FLOOR, FLOORS, ROOM_KINDS, ROUTES, type Room, type RoomKind, type Route } from "@/data/venue";
 import { FloorPlan, Legend } from "./FloorPlan";
-import { clock, dayLabel, dayOf, isRunning, useProgram, type Session } from "@/lib/program";
+import { clock, dayLabel, dayOf, isRunning, useProgram } from "@/lib/program";
+import { pinnedNow, useNow } from "@/lib/use-now";
 
 const FIND_KINDS = (Object.keys(ROOM_KINDS) as RoomKind[]).filter((k) => !ROOM_KINDS[k].hidden);
 
@@ -220,42 +220,95 @@ function RoomCard({ room, floorLabel, onClose }: { room: Room; floorLabel: strin
         <p className="mt-3 text-xs text-muted">This use is the committee’s current plan and may change.</p>
       )}
       {(room.kind === "plenary" || room.kind === "parallel") && <RoomSessions room={room} />}
+      {room.kind === "poster" && <PosterSessions />}
     </div>
   );
 }
 
-/** What's on in this room now and next, from the synced Indico program. */
+/** The current talk in this room and the next one, from the program (`?now=` pins the clock). */
 function RoomSessions({ room }: { room: Room }) {
   const program = useProgram();
-  const [now] = useState(() => Date.now());
+  const now = pinnedNow(useSearchParams().get("now"), useNow());
 
-  if (program.status !== "ok" || !room.indicoRooms?.length) {
+  if (program.status !== "ok" || !room.indicoRooms?.length || now === undefined) {
     return (
       <p className="mt-4 rounded-md bg-sea/10 p-3 text-sm text-sea">
         Sessions in this room will appear here once the program is published and rooms are confirmed.
       </p>
     );
   }
-  const here = program.data.sessions.filter((s) => s.room && room.indicoRooms!.includes(s.room));
-  const current = here.find((s) => isRunning(s, now));
-  const next = here.find((s) => Date.parse(s.start) > now);
+  const inRoom = (name?: string) => Boolean(name && room.indicoRooms!.includes(name));
+  const { sessions, contributions } = program.data;
+  const sessionsById = new Map(sessions.map((s) => [s.id, s]));
+  // A talk's own room wins over its session's.
+  const talks = contributions.filter((c) => !c.poster && inRoom(c.room ?? sessionsById.get(c.sessionId ?? "")?.room));
+  const here = sessions.filter((s) => !s.poster && inRoom(s.room));
+
+  const currentTalk = talks.find((c) => isRunning(c, now));
+  const currentSession = here.find((s) => isRunning(s, now));
+  const nextTalk = talks.find((c) => Date.parse(c.start) > now);
 
   return (
     <div className="mt-4 space-y-2 text-sm">
-      {current && <SessionLine label="Now" session={current} />}
-      {next && <SessionLine label="Next" session={next} />}
-      {!current && !next && <p className="text-muted">No more sessions scheduled here.</p>}
+      {(currentTalk || currentSession) && (
+        <Line
+          label="Now"
+          when={currentTalk ?? currentSession!}
+          title={currentTalk?.title ?? currentSession!.title}
+          sub={currentTalk ? sessionsById.get(currentTalk.sessionId ?? "")?.title : undefined}
+          href={currentTalk ? `/program/?talk=${currentTalk.id}` : undefined}
+        />
+      )}
+      {nextTalk && (
+        <Line
+          label="Next"
+          when={nextTalk}
+          title={nextTalk.title}
+          sub={sessionsById.get(nextTalk.sessionId ?? "")?.title}
+          href={`/program/?talk=${nextTalk.id}`}
+        />
+      )}
+      {!currentTalk && !currentSession && !nextTalk && <p className="text-muted">No more talks scheduled here.</p>}
       <Link href="/program/" className="inline-block text-sea underline">Full program</Link>
     </div>
   );
 }
 
-function SessionLine({ label, session }: { label: string; session: Session }) {
+/** The poster area: the poster session on now or next. */
+function PosterSessions() {
+  const program = useProgram();
+  const now = pinnedNow(useSearchParams().get("now"), useNow());
+  if (program.status !== "ok" || now === undefined) return null;
+
+  const blocks = program.data.sessions.filter((s) => s.poster);
+  if (!blocks.length) return null;
+  const count = (id: string) => program.data.contributions.filter((c) => c.sessionId === id || c.slots?.includes(id)).length;
+  const current = blocks.find((s) => isRunning(s, now));
+  const next = blocks.find((s) => Date.parse(s.start) > now);
+
   return (
-    <p className="rounded-md bg-sea/10 p-3">
-      <b className="text-sea">{label}</b> · {dayLabel(dayOf(session.start))} {clock(session.start)}–{clock(session.end)}
+    <div className="mt-4 space-y-2 text-sm">
+      {current && <Line label="Now" when={current} title={current.title} sub={`${count(current.id)} posters`} href={`/program/?view=posters&ps=${current.id}`} />}
+      {next && <Line label="Next" when={next} title={next.title} sub={`${count(next.id)} posters`} href={`/program/?view=posters&ps=${next.id}`} />}
+      <Link href="/program/?view=posters" className="inline-block text-sea underline">All posters</Link>
+    </div>
+  );
+}
+
+function Line({ label, when, title, sub, href }: { label: string; when: { start: string; end: string }; title: string; sub?: string; href?: string }) {
+  const body = (
+    <>
+      <b className="text-sea">{label}</b> · {dayLabel(dayOf(when.start))} {clock(when.start)}–{clock(when.end)}
       <br />
-      {session.title}
-    </p>
+      <span className="font-medium">{title}</span>
+      {sub && <span className="block text-muted">{sub}</span>}
+    </>
+  );
+  return href ? (
+    <Link href={href} className="block rounded-md bg-sea/10 p-3 hover:bg-sea/15">
+      {body}
+    </Link>
+  ) : (
+    <p className="rounded-md bg-sea/10 p-3">{body}</p>
   );
 }

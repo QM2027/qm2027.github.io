@@ -1,6 +1,16 @@
 // Minimal iCalendar (RFC 5545) export for "add to calendar".
 
-type IcsEvent = { uid: string; title: string; start: string; end: string; location?: string; description?: string; url?: string };
+export type IcsEvent = {
+  uid: string;
+  title: string;
+  start: string;
+  end: string;
+  location?: string;
+  description?: string;
+  url?: string;
+  /** Reminder this many minutes before the start. */
+  alarmMinutes?: number;
+};
 
 const stamp = (iso: string) => new Date(iso).toISOString().replace(/[-:]/g, "").replace(/\.\d{3}/, "");
 const escape = (s: string) => s.replace(/\\/g, "\\\\").replace(/;/g, "\\;").replace(/,/g, "\\,").replace(/\r?\n/g, "\\n");
@@ -31,6 +41,7 @@ export function buildIcs(events: IcsEvent[]) {
       ...(e.location ? [`LOCATION:${escape(e.location)}`] : []),
       ...(e.description ? [`DESCRIPTION:${escape(e.description)}`] : []),
       ...(e.url ? [`URL:${e.url}`] : []),
+      ...(e.alarmMinutes ? ["BEGIN:VALARM", "ACTION:DISPLAY", `DESCRIPTION:${escape(e.title)}`, `TRIGGER:-PT${e.alarmMinutes}M`, "END:VALARM"] : []),
       "END:VEVENT",
     );
   }

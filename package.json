@@ -10,6 +10,7 @@
     "sync": "node scripts/sync-indico.mjs"
   },
   "dependencies": {
+    "katex": "^0.16.47",
     "leaflet": "^1.9.4",
     "next": "16.4.3",
     "react": "19.3.0",
