@@ -501,7 +501,7 @@ function ProgramBrowser({
     <nav
       aria-label="Program views"
       data-bottom-bar={showDays ? "2" : "1"}
-      className="fixed inset-x-0 bottom-0 z-[900] border-t border-border bg-background/95 pb-[env(safe-area-inset-bottom)] backdrop-blur lg:hidden standalone:bottom-[calc(var(--tabbar)+env(safe-area-inset-bottom))] standalone:pb-0"
+      className="pin-bottom fixed inset-x-0 bottom-0 z-[900] border-t border-border bg-background/95 pb-[env(safe-area-inset-bottom)] backdrop-blur lg:hidden standalone:bottom-[calc(var(--tabbar)+env(safe-area-inset-bottom))] standalone:pb-0"
     >
       {showDays && (
         <div className="flex gap-2 overflow-x-auto border-b border-border px-3 py-2 [scrollbar-width:none]" role="group" aria-label="Day">
@@ -540,7 +540,7 @@ function ClashNotice({ clash, onUndo, onClose }: { clash: Slot[]; onUndo: () => 
   return (
     <div
       role="status"
-      className="fixed inset-x-3 bottom-[calc(env(safe-area-inset-bottom)+0.75rem+var(--bottom-bar,0px)+var(--app-bottom,0px))] z-[1250] mx-auto flex max-w-md items-start gap-3 rounded-md border border-tangerine bg-background p-3 text-sm shadow-xl lg:bottom-6"
+      className="pin-bottom fixed inset-x-3 bottom-[calc(env(safe-area-inset-bottom)+0.75rem+var(--bottom-bar,0px)+var(--app-bottom,0px))] z-[1250] mx-auto flex max-w-md items-start gap-3 rounded-md border border-tangerine bg-background p-3 text-sm shadow-xl lg:bottom-6"
     >
       <p className="min-w-0 flex-1 py-1">
         <b className="text-tangerine">Time clash.</b> This overlaps{" "}

@@ -6,6 +6,7 @@ import { useEffect } from "react";
 import { Icon } from "@/components/Icon";
 import { GUIDES } from "@/data/guides";
 import { NAV, SITE } from "@/lib/site";
+import { useViewportPin } from "./viewport";
 
 const trim = (path: string) => path.replace(/\/$/, "") || "/";
 
@@ -44,12 +45,13 @@ function onTabClick(pathname: string, href: string) {
 export function AppNav() {
   const pathname = usePathname();
   useTabShortcuts();
+  useViewportPin();
 
   return (
     <>
       <nav
         aria-label="Sections"
-        className="app-chrome fixed inset-x-0 bottom-0 z-[950] hidden border-t border-border bg-background/95 pb-[env(safe-area-inset-bottom)] backdrop-blur standalone:max-lg:block"
+        className="app-chrome pin-bottom fixed inset-x-0 bottom-0 z-[950] hidden border-t border-border bg-background/95 pb-[env(safe-area-inset-bottom)] backdrop-blur standalone:max-lg:block"
       >
         <ul className="mx-auto grid h-(--tabbar) max-w-xl grid-cols-5">
           {NAV.map((item) => (

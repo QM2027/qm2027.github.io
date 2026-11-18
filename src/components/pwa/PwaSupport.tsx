@@ -7,7 +7,7 @@ import { applyUpdate, dismissUpdate, registerServiceWorker, useUpdate } from "./
 
 const DISMISS_KEY = "qm2027:install-dismissed";
 const BANNER =
-  "fixed inset-x-3 bottom-[calc(env(safe-area-inset-bottom)+0.75rem+var(--bottom-bar,0px)+var(--app-bottom,0px))] z-[1500] mx-auto flex max-w-md items-start gap-3 rounded-md bg-sea p-4 text-on-sea shadow-xl md:bottom-6";
+  "pin-bottom fixed inset-x-3 bottom-[calc(env(safe-area-inset-bottom)+0.75rem+var(--bottom-bar,0px)+var(--app-bottom,0px))] z-[1500] mx-auto flex max-w-md items-start gap-3 rounded-md bg-sea p-4 text-on-sea shadow-xl md:bottom-6";
 
 type PeriodicSync = { register: (tag: string, options: { minInterval: number }) => Promise<void> };
 

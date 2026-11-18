@@ -152,4 +152,8 @@ body {
   body {
     padding-left: var(--rail);
   }
+  /* Keeps bottom chrome on the screen's bottom edge when iOS offsets the viewport (pwa/viewport.ts). */
+  .pin-bottom {
+    translate: 0 var(--viewport-shift, 0px);
+  }
 }
