@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { clock, dayOf, isRunning, type Contribution, type Program, type Session } from "@/lib/program";
 import { ContributionRow, MarksLegend, StarButton, type ListProps } from "./shared";
 import { TeX } from "./TeX";
@@ -16,6 +16,19 @@ const COLS: Record<number, string> = {
 };
 const colsFor = (n: number) => COLS[Math.min(n, 6)] ?? "";
 
+/** md and up: parallel sessions sit side by side, so they open and close as one row. */
+function useWide() {
+  const [wide, setWide] = useState(false);
+  useEffect(() => {
+    const mq = window.matchMedia("(min-width: 768px)");
+    const sync = () => setWide(mq.matches);
+    sync();
+    mq.addEventListener("change", sync);
+    return () => mq.removeEventListener("change", sync);
+  }, []);
+  return wide;
+}
+
 type Props = ListProps & {
   program: Program;
   day: string;
@@ -26,6 +39,7 @@ type Props = ListProps & {
 
 export function DaySchedule({ program, day, isToday, now, onPosters, ...p }: Props) {
   const [open, setOpen] = useState<Set<string>>(new Set());
+  const wide = useWide();
   const toggle = (ids: string[], on: boolean) =>
     setOpen((cur) => {
       const next = new Set(cur);
@@ -68,8 +82,12 @@ export function DaySchedule({ program, day, isToday, now, onPosters, ...p }: Pro
         const talkSessions = row.list.filter((s) => !s.poster && (bySession.get(s.id)?.length ?? 0) > 0);
         const allOpen = talkSessions.length > 1 && talkSessions.every((s) => open.has(s.id));
         const compact = row.list.length >= 4;
+        const single = row.list.length === 1;
+        // Side by side, one tall card next to short ones reads as broken and hides where to
+        // close it, so a tap opens or closes every session in the row together.
+        const rowWide = wide && talkSessions.length > 1;
         return (
-          <div key={row.start}>
+          <div key={row.start} data-slot className="scroll-mt-24">
             {talkSessions.length > 1 && (
               <div className="mb-2 flex items-center gap-3 text-sm">
                 <span className="tabular-nums text-muted">
@@ -89,8 +107,13 @@ export function DaySchedule({ program, day, isToday, now, onPosters, ...p }: Pro
                     key={s.id}
                     session={s}
                     talks={bySession.get(s.id) ?? []}
-                    expanded={open.has(s.id) || row.list.length === 1}
-                    onToggle={() => toggle([s.id], !open.has(s.id))}
+                    expanded={single || open.has(s.id)}
+                    canToggle={!single}
+                    onToggle={(e) => {
+                      const on = !open.has(s.id);
+                      toggle(rowWide ? talkSessions.map((t) => t.id) : [s.id], on);
+                      if (!on) keepInView(e.currentTarget, rowWide);
+                    }}
                     compact={compact}
                     now={now}
                     {...p}
@@ -113,6 +136,16 @@ export function DaySchedule({ program, day, isToday, now, onPosters, ...p }: Pro
   );
 }
 
+/** Closing a long list from its bottom would leave the reader far below it: bring the card (or
+ *  the whole row) back to the top of the screen if it scrolled out above. */
+function keepInView(el: HTMLElement, row: boolean) {
+  const target = el.closest(row ? "[data-slot]" : "section");
+  if (!target) return;
+  requestAnimationFrame(() => {
+    if (target.getBoundingClientRect().top < 0) target.scrollIntoView({ block: "start" });
+  });
+}
+
 function SessionHeader({ session, live, compact }: { session: Session; live: boolean; compact?: boolean }) {
   return (
     <>
@@ -133,18 +166,28 @@ function SessionCard({
   session,
   talks,
   expanded,
+  canToggle,
   onToggle,
   compact,
   now,
   ...p
-}: ListProps & { session: Session; talks: Contribution[]; expanded: boolean; onToggle: () => void; compact: boolean; now?: number }) {
+}: ListProps & {
+  session: Session;
+  talks: Contribution[];
+  expanded: boolean;
+  canToggle: boolean;
+  onToggle: (e: React.MouseEvent<HTMLElement>) => void;
+  compact: boolean;
+  now?: number;
+}) {
   const live = now !== undefined && isRunning(session, now);
+  const toggles = canToggle && talks.length > 0;
   return (
-    <section className={`min-w-0 rounded-md border bg-surface ${compact ? "p-3" : "p-4"} ${live ? "border-tangerine ring-2 ring-tangerine/20" : "border-border"}`}>
+    <section className={`scroll-mt-24 min-w-0 rounded-md border bg-surface ${compact ? "p-3" : "p-4"} ${live ? "border-tangerine ring-2 ring-tangerine/20" : "border-border"}`}>
       <div className="flex items-start gap-1">
-        <button onClick={onToggle} aria-expanded={expanded} className="min-w-0 flex-1 text-left">
+        <button onClick={toggles ? onToggle : undefined} aria-expanded={toggles ? expanded : undefined} className="min-w-0 flex-1 text-left">
           <SessionHeader session={session} live={live} compact={compact} />
-          {talks.length > 0 && !expanded && <span className="mt-1 block text-sm text-sea">{talks.length} talks ▾</span>}
+          {toggles && <span className="mt-1 block text-sm text-sea">{expanded ? "Hide talks ▴" : `${talks.length} talks ▾`}</span>}
         </button>
         <StarButton on={p.starred.has(session.id)} title={session.title} onClick={() => p.onStar(session.id)} small={compact} />
       </div>
@@ -163,6 +206,11 @@ function SessionCard({
             />
           ))}
         </ul>
+      )}
+      {toggles && expanded && (
+        <button onClick={onToggle} className="mt-2 flex min-h-10 w-full items-center justify-center rounded-md border border-border text-sm text-sea hover:border-foreground">
+          Hide talks ▴
+        </button>
       )}
     </section>
   );
