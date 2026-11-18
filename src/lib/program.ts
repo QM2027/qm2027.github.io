@@ -76,7 +76,14 @@ export type Program = {
 
 export type Abstracts = Record<string, { abstract?: string; authors?: string[] }>;
 
-export type Material = { title: string; url: string; kind: "pdf" | "slides" | "video" | "image" | "link" | "file"; size?: number };
+export type Material = {
+  title: string;
+  url: string;
+  kind: "pdf" | "slides" | "video" | "image" | "link" | "file";
+  size?: number;
+  /** Indico's last-modified time, UTC. */
+  modified?: string;
+};
 /** Direct links to public slides and posters on Indico, by contribution id. */
 export type Materials = Record<string, Material[]>;
 

@@ -7,7 +7,7 @@ import { clock, dayLabel, dayOf, overlaps, type Contribution, type Program, type
 import { ContributionRow, posterSessionIcs, sessionIcs, shareLink, StarButton, talkIcs, type ListProps } from "./shared";
 import { TeX } from "./TeX";
 
-type Props = ListProps & { program: Program; changedIds: Set<string>; onSession: (s: Session) => void };
+type Props = ListProps & { program: Program; changedIds: Set<string>; filesChanged: Set<string>; onSession: (s: Session) => void };
 
 type Entry = { kind: "talk"; c: Contribution; start: string; end: string } | { kind: "session"; s: Session; start: string; end: string };
 
@@ -16,7 +16,7 @@ type Entry = { kind: "talk"; c: Contribution; start: string; end: string } | { k
  * inside a saved session doesn't clash with it). Saved posters are grouped per poster session:
  * posters are up all week, so they never clash with anything.
  */
-export function MySchedule({ program, changedIds, onSession, ...p }: Props) {
+export function MySchedule({ program, changedIds, filesChanged, onSession, ...p }: Props) {
   const [shared, setShared] = useState<string>();
   const items = program.contributions.filter((c) => p.starred.has(c.id));
   const talks = items.filter((c) => !c.poster);
@@ -108,7 +108,13 @@ export function MySchedule({ program, changedIds, onSession, ...p }: Props) {
                       starred
                       onStar={() => p.onStar(e.c.id)}
                       onOpen={() => p.onOpen(e.c.id)}
-                      warn={changedIds.has(e.c.id) ? "Time or room changed: check details" : clashText}
+                      warn={
+                        changedIds.has(e.c.id)
+                          ? "Time or room changed: check details"
+                          : filesChanged.has(e.c.id)
+                            ? "New or updated files"
+                            : clashText
+                      }
                     />
                   ) : (
                     <SessionRow
@@ -124,7 +130,15 @@ export function MySchedule({ program, changedIds, onSession, ...p }: Props) {
               </ul>
             )}
             {dayGroups.map(([id, list]) => (
-              <PosterGroup key={id} session={p.sessionsById.get(id)!} posters={list} changedIds={changedIds} onSession={onSession} {...p} />
+              <PosterGroup
+                key={id}
+                session={p.sessionsById.get(id)!}
+                posters={list}
+                changedIds={changedIds}
+                filesChanged={filesChanged}
+                onSession={onSession}
+                {...p}
+              />
             ))}
           </section>
         );
@@ -156,18 +170,22 @@ function PosterGroup({
   session,
   posters,
   changedIds,
+  filesChanged,
   onSession,
   ...p
-}: ListProps & { session: Session; posters: Contribution[]; changedIds: Set<string>; onSession: (s: Session) => void }) {
+}: ListProps & { session: Session; posters: Contribution[]; changedIds: Set<string>; filesChanged: Set<string>; onSession: (s: Session) => void }) {
   const sessionSaved = p.starred.has(session.id);
+  // Open the group when something in it changed, so the warning isn't hidden.
+  const news = posters.filter((c) => changedIds.has(c.id) || filesChanged.has(c.id)).length;
   return (
-    <details className="group mt-2 rounded-md border border-border bg-surface">
+    <details open={news > 0 || undefined} className="group mt-2 rounded-md border border-border bg-surface">
       <summary className="flex min-h-12 cursor-pointer list-none items-center justify-between gap-3 px-4">
         <span>
           <span className="text-sm tabular-nums text-muted">
             {clock(session.start)}–{clock(session.end)}
           </span>{" "}
           <b>{session.title}</b>
+          {news > 0 && <span className="block text-xs font-semibold text-tangerine">{news} updated</span>}
         </span>
         <span className="shrink-0 text-sm text-muted">
           {posters.length ? `${posters.length} saved` : "session saved"} <span className="inline-block transition group-open:rotate-90">›</span>
@@ -185,7 +203,7 @@ function PosterGroup({
                 onStar={() => p.onStar(c.id)}
                 onOpen={() => p.onOpen(c.id)}
                 lead={posters.some((x) => x.board) ? "board" : "none"}
-                warn={changedIds.has(c.id) ? "Changed: check details" : undefined}
+                warn={changedIds.has(c.id) ? "Changed: check details" : filesChanged.has(c.id) ? "New or updated poster file" : undefined}
               />
             ))}
           </ul>

@@ -17,6 +17,7 @@ import {
   type Program,
 } from "@/lib/program";
 import { buildSearchIndex, searchProgram, type SearchType } from "@/lib/program-search";
+import { changedFiles, useFilesSeen } from "@/lib/files-seen";
 import { useLocalSet, useLocalString } from "@/lib/use-local-set";
 import { pinnedNow, useNow } from "@/lib/use-now";
 import { ContributionDetail, MissingDetail } from "./ContributionDetail";
@@ -162,8 +163,18 @@ function ProgramBrowser({
     if (view === "updates" && newestChange && newestChange !== seenChanges) setSeenChanges(newestChange);
   }, [view, newestChange, seenChanges, setSeenChanges]);
 
+  // ---- files: new or replaced since the visitor last saw them
+  const { seen: filesSeen, mark: markFilesSeen } = useFilesSeen();
+  const filesChanged = useMemo(() => changedFiles(starred, materials, filesSeen), [starred, materials, filesSeen]);
+  /** Starring something records its current files, so later uploads show as new. */
+  const star = (id: string) => {
+    const files = materials?.[id];
+    if (!starred.has(id) && files && !filesSeen[id]) markFilesSeen(id, files);
+    toggleStar(id);
+  };
+
   const stale = now !== undefined && now - Date.parse(checkedAt) > STALE_MS;
-  const listProps = { sessionsById, starred, onStar: toggleStar, onOpen: openTalk };
+  const listProps = { sessionsById, starred, onStar: star, onOpen: openTalk };
   const marks = useMemo(
     () => ({ abstract: (id: string) => Boolean(abstracts?.[id]?.abstract), files: (id: string) => Boolean(materials?.[id]?.length) }),
     [abstracts, materials],
@@ -197,6 +208,18 @@ function ProgramBrowser({
             to items in your schedule.
           </span>
           <span className="shrink-0 font-semibold">Review</span>
+        </button>
+      )}
+      {filesChanged.size > 0 && view !== "mine" && (
+        <button
+          onClick={() => go({ view: "mine", q: undefined })}
+          className="mb-3 flex w-full items-center justify-between gap-3 rounded-md border border-tangerine bg-tangerine/10 p-3 text-left text-sm"
+        >
+          <span>
+            <b className="text-tangerine">New or updated files</b> for {filesChanged.size} item{filesChanged.size === 1 ? "" : "s"} in your
+            schedule.
+          </span>
+          <span className="shrink-0 font-semibold">Show</span>
         </button>
       )}
 
@@ -287,6 +310,7 @@ function ProgramBrowser({
             <MySchedule
               program={program}
               changedIds={changedIds}
+              filesChanged={filesChanged}
               onSession={(s) => (s.poster ? go({ view: "posters", ps: s.id, track: undefined }) : go({ view: undefined, day: dayOf(s.start) }))}
               {...listProps}
             />
@@ -316,6 +340,10 @@ function ProgramBrowser({
       {talkId &&
         (talk ? (
           <ContributionDetail
+            key={talk.id}
+            filesSeen={filesSeen[talk.id]}
+            onFilesSeen={(files) => markFilesSeen(talk.id, files)}
+            tz={program.tz}
             talk={talk}
             session={sessionsById.get(talk.sessionId ?? "")}
             details={abstracts?.[talk.id]}
@@ -323,7 +351,7 @@ function ProgramBrowser({
             files={materials?.[talk.id]}
             starred={starred.has(talk.id)}
             changed={changedIds.has(talk.id)}
-            onStar={() => toggleStar(talk.id)}
+            onStar={() => star(talk.id)}
             onClose={closeTalk}
             onShowMap={(room) => openOver({ map: room ?? "-" })}
           />

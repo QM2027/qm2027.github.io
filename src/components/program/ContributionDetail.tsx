@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { Icon } from "@/components/Icon";
 import { INDICO_TIMETABLE } from "@/data/indico-links";
+import { fileFlag } from "@/lib/files-seen";
 import { downloadIcs } from "@/lib/ics";
 import { clock, dayLabel, dayOf, refreshProgram, type Abstracts, type Contribution, type Material, type Session } from "@/lib/program";
 import { roomOf, shareLink, talkIcs, venueRoomId } from "./shared";
@@ -46,6 +47,10 @@ type Props = {
   details?: Abstracts[string];
   abstractsLoaded: boolean;
   files?: Material[];
+  /** The files as the visitor last saw them (url → modified), to mark new and replaced ones. */
+  filesSeen?: Record<string, string>;
+  onFilesSeen: (files: Material[]) => void;
+  tz: string;
   starred: boolean;
   changed: boolean;
   onStar: () => void;
@@ -54,7 +59,27 @@ type Props = {
   onShowMap: (room?: string) => void;
 };
 
-export function ContributionDetail({ talk, session, details, abstractsLoaded, files, starred, changed, onStar, onClose, onShowMap }: Props) {
+export function ContributionDetail({
+  talk,
+  session,
+  details,
+  abstractsLoaded,
+  files,
+  filesSeen,
+  onFilesSeen,
+  tz,
+  starred,
+  changed,
+  onStar,
+  onClose,
+  onShowMap,
+}: Props) {
+  // Compare with what was seen before this opening; then record what is shown now.
+  const [baseline] = useState(filesSeen);
+  useEffect(() => {
+    if (files) onFilesSeen(files);
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- record when the list itself changes
+  }, [files]);
   const [allAuthors, setAllAuthors] = useState(false);
   // Speakers replace files all week; a deleted and re-added file gets a new link. Re-check now.
   useEffect(() => {
@@ -144,7 +169,15 @@ export function ContributionDetail({ talk, session, details, abstractsLoaded, fi
             {files.map((f) => (
               <li key={f.url}>
                 <a href={f.url} target="_blank" rel="noreferrer" className="flex min-h-11 items-center justify-between gap-3 rounded-md border border-border px-4 text-sm hover:border-foreground">
-                  <span className="min-w-0 truncate">{f.title}</span>
+                  <span className="min-w-0">
+                    <span className="block truncate">{f.title}</span>
+                    {fileFlag(baseline, f) && (
+                      <span className="block text-xs font-semibold text-tangerine">
+                        {fileFlag(baseline, f) === "new" ? "New" : "Updated"}
+                        {f.modified && ` ${new Date(f.modified).toLocaleString("en-GB", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit", timeZone: tz })}`}
+                      </span>
+                    )}
+                  </span>
                   <span className="flex shrink-0 items-center gap-1 text-muted">
                     {[KIND[f.kind], size(f.size)].filter(Boolean).join(" · ")}
                     <Icon name="external" className="size-4" />
