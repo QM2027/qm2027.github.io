@@ -57,8 +57,12 @@ export function currentWeatherData(d: WeatherData | null, now = Date.now()) {
   };
 }
 
-/** Warnings in force for the venue area. Preliminary ones are listed separately by the UI. */
+/** Warnings for the venue's zone (서귀포시남부). Preliminary ones are listed separately by the UI. */
 export const venueWarnings = (items: WeatherWarning[]) => items.filter((w) => w.affectsVenue);
+/** Warnings for other parts of the island only: trips from the venue may run into them. */
+export const elsewhereWarnings = (items: WeatherWarning[]) => items.filter((w) => !w.affectsVenue);
+/** Label without the "expected" suffix that preliminary warnings carry; the UI groups them instead. */
+export const warningName = (w: WeatherWarning) => w.label.replace(/\s+expected$/i, "");
 /** Warnings for Hallasan's mountain zones (산지), where trails close first. */
 export const mountainWarnings = (items: WeatherWarning[]) => items.filter((w) => w.areas.some((a) => a.includes("산지")));
 

@@ -1,8 +1,18 @@
 "use client";
 
-import { AIR_GRADE, airGrade, mountainWarnings, venueWarnings, type WeatherWarning, type useWeatherData } from "@/lib/weather-data";
+import {
+  AIR_GRADE,
+  airGrade,
+  elsewhereWarnings,
+  mountainWarnings,
+  venueWarnings,
+  warningName,
+  type WeatherWarning,
+  type useWeatherData,
+} from "@/lib/weather-data";
 
 const time = (iso: string) => new Date(iso).toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit", timeZone: "Asia/Seoul" });
+const names = (items: WeatherWarning[]) => [...new Set(items.map(warningName))].join(", ");
 
 function WarningList({ items, where }: { items: WeatherWarning[]; where: string }) {
   const now = items.filter((w) => !w.preliminary);
@@ -12,12 +22,12 @@ function WarningList({ items, where }: { items: WeatherWarning[]; where: string 
     <div role="status" className="rounded-md border border-alert/40 p-3 text-sm">
       {now.length > 0 && (
         <p>
-          <b className="text-alert">In force {where}:</b> {now.map((w) => w.label).join(", ")}
+          <b className="text-alert">In force {where}:</b> {names(now)}
         </p>
       )}
       {soon.length > 0 && (
         <p className={now.length ? "mt-1" : ""}>
-          <b>Expected {where}:</b> {soon.map((w) => w.label).join(", ")}
+          <b>Expected {where}:</b> {names(soon)}
         </p>
       )}
     </div>
@@ -30,13 +40,20 @@ function WarningList({ items, where }: { items: WeatherWarning[]; where: string 
  */
 export function WeatherAlerts({ data, scope = "venue", air = true }: { data: ReturnType<typeof useWeatherData>; scope?: "venue" | "mountain"; air?: boolean }) {
   const { warnings, air: a } = data;
-  const items = warnings ? (scope === "venue" ? venueWarnings(warnings.items) : mountainWarnings(warnings.items)) : [];
+  const all = warnings?.items ?? [];
+  const items = scope === "venue" ? venueWarnings(all) : mountainWarnings(all);
+  const elsewhere = scope === "venue" ? elsewhereWarnings(all).filter((w) => !w.preliminary) : [];
   const grade = a && air ? airGrade(a) : null;
-  if (!items.length && !grade) return null;
+  if (!items.length && !elsewhere.length && !grade) return null;
 
   return (
     <div className="space-y-2">
       <WarningList items={items} where={scope === "venue" ? "at the venue" : "on Hallasan"} />
+      {elsewhere.length > 0 && (
+        <p className="text-sm">
+          <b>Elsewhere on Jeju:</b> <span className="text-muted">{names(elsewhere)}. Check before heading out across the island.</span>
+        </p>
+      )}
       {grade && a && (
         <p className="text-sm">
           <b className={grade >= 3 ? "text-alert" : ""}>Air: {AIR_GRADE[grade]}</b>
@@ -48,7 +65,9 @@ export function WeatherAlerts({ data, scope = "venue", air = true }: { data: Ret
         </p>
       )}
       <p className="text-xs text-muted">
-        {[items.length > 0 && "Warnings: Korea Meteorological Administration.", grade && "Air quality: AirKorea."].filter(Boolean).join(" ")}
+        {[(items.length > 0 || elsewhere.length > 0) && "Warnings: Korea Meteorological Administration.", grade && "Air quality: AirKorea."]
+          .filter(Boolean)
+          .join(" ")}
       </p>
     </div>
   );
