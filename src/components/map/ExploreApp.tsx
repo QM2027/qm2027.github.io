@@ -1,10 +1,9 @@
 "use client";
 
-import Link from "next/link";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useLayoutEffect, useMemo, useRef, useState } from "react";
+import { GuideNav } from "@/components/GuideNav";
 import { Icon } from "@/components/Icon";
-import { GUIDES } from "@/data/guides";
 import { HOURS } from "@/data/hours";
 import { CATEGORIES, COURSES, PLACES, placeById, type Category, type Place } from "@/data/places";
 import { photoCredit, photoUrl, useTourPhotos } from "@/lib/tour-data";
@@ -131,15 +130,9 @@ export function ExploreApp() {
           <PlaceDetail place={selected} origin={origin} fromMe={!!me} onClose={() => update({ place: undefined })} />
         ) : (
           <>
-            <div className="border-b border-border px-4 pt-3">
-              <nav aria-label="Guides" className="-mx-4 mb-2 flex gap-4 overflow-x-auto px-4 [scrollbar-width:none]">
-                {GUIDES.map((g) => (
-                  <Link key={g.href} href={g.href} className="flex min-h-9 shrink-0 items-center text-sm text-muted underline decoration-border underline-offset-4 hover:text-foreground">
-                    {g.title}
-                  </Link>
-                ))}
-              </nav>
-              <div role="tablist" className="flex gap-6 border-b border-border text-sm">
+            <div className="border-b border-border px-4">
+              <GuideNav />
+              <div role="tablist" className="mt-2 flex gap-6 border-b border-border text-sm">
                 {(["places", "courses"] as const).map((t) => (
                   <button
                     key={t}
