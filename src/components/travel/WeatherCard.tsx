@@ -2,13 +2,19 @@
 
 import { useFetchJson } from "@/lib/use-fetch-json";
 import { FORECAST_URL, MARCH_CLIMATE, describeWeather, type Forecast } from "@/lib/weather";
+import { useWeatherData } from "@/lib/weather-data";
+import { WeatherAlerts } from "./WeatherAlerts";
 
 export function WeatherCard() {
   const f = useFetchJson<Forecast>(FORECAST_URL);
+  const kma = useWeatherData();
 
   return (
     <section className="rounded-md border border-border bg-surface p-5">
       <h2 className="font-semibold">Weather at the venue</h2>
+      <div className="mt-3 empty:hidden">
+        <WeatherAlerts data={kma} />
+      </div>
       {f.status === "ok" ? (
         <>
           <div className="mt-3">

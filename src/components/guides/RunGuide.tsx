@@ -5,6 +5,8 @@ import { LazyMap } from "@/components/map/LazyMap";
 import { RUNS, toLatLng, type Run } from "@/data/runs";
 import { ICC, distanceKm } from "@/lib/geo";
 import { CONFERENCE_DAYS, formatClock, sunTimes } from "@/lib/sky";
+import { WeatherAlerts } from "@/components/travel/WeatherAlerts";
+import { useWeatherData } from "@/lib/weather-data";
 
 function pathKm(run: Run) {
   const pts = toLatLng(run.path);
@@ -24,10 +26,12 @@ export function RunGuide() {
   const [selectedId, setSelectedId] = useState(RUNS[0].id);
   const run = RUNS.find((r) => r.id === selectedId)!;
   const route = useMemo(() => toLatLng(run.path), [run]);
+  const kma = useWeatherData();
 
   return (
     <div className="grid gap-6 lg:grid-cols-[360px_1fr]">
       <div className="space-y-3">
+        <WeatherAlerts data={kma} />
         <ul className="space-y-3">
           {RUNS.map((r) => (
             <li key={r.id}>

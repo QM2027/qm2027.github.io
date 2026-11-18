@@ -2,6 +2,8 @@
 
 import { useState } from "react";
 import { SUMMIT_M, TRAILS, type Trail } from "@/data/hallasan";
+import { WeatherAlerts } from "@/components/travel/WeatherAlerts";
+import { useWeatherData } from "@/lib/weather-data";
 
 const W = 600;
 const H = 260;
@@ -19,10 +21,12 @@ export function HallasanGuide() {
   const trail = TRAILS.find((t) => t.id === selectedId)!;
   const waypoints = trail.profile.filter((p) => p[2]);
   const gain = trail.profile.reduce((g, [, m], i, arr) => g + Math.max(0, i ? m - arr[i - 1][1] : 0), 0);
+  const kma = useWeatherData();
 
   return (
     <div className="grid gap-6 lg:grid-cols-[1fr_380px]">
       <div className="space-y-4">
+        <WeatherAlerts data={kma} scope="mountain" air={false} />
         <div role="tablist" aria-label="Trail" className="grid grid-cols-2 gap-2 sm:grid-cols-4">
           {TRAILS.map((t) => (
             <button

@@ -215,7 +215,12 @@ self.addEventListener("fetch", (event) => {
 
   if (url.hostname.endsWith("tile.openstreetmap.org")) {
     event.respondWith(cacheFirst(request, TILES, MAX_TILES));
-  } else if (url.hostname === "api.open-meteo.com" || url.hostname === "api.frankfurter.dev") {
+  } else if (
+    url.hostname === "api.open-meteo.com" ||
+    url.hostname === "api.frankfurter.dev" ||
+    // QM2027/weather-data (KMA warnings, air quality); the UI hides sections older than a few hours.
+    (url.origin === self.location.origin && url.pathname.startsWith("/weather-data/"))
+  ) {
     event.respondWith(networkFirst(request, DATA));
   } else if (url.origin === self.location.origin && url.pathname.startsWith(PROGRAM_DATA)) {
     if (url.pathname === PROGRAM_INDEX) event.respondWith(programIndex(event));

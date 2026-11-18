@@ -10,6 +10,8 @@ import { planTrip, type Interest, type Mode } from "@/lib/planner";
 import { formatClock, sunTimes } from "@/lib/sky";
 import { useFetchJson } from "@/lib/use-fetch-json";
 import { FORECAST_URL, describeWeather, isBadWeather, type Forecast } from "@/lib/weather";
+import { outdoorsDiscouraged, useWeatherData } from "@/lib/weather-data";
+import { WeatherAlerts } from "@/components/travel/WeatherAlerts";
 
 const DURATIONS = [
   { min: 120, label: "2 hours" },
@@ -40,7 +42,10 @@ export function PlannerApp() {
   const start = params.get("start") ?? "14:00";
 
   const forecast = useFetchJson<Forecast>(weatherPref === "auto" ? FORECAST_URL : null);
-  const wet = weatherPref === "wet" || (weatherPref === "auto" && forecast.status === "ok" && isBadWeather(forecast.data));
+  const kma = useWeatherData();
+  const warned = outdoorsDiscouraged(kma);
+  const wet =
+    weatherPref === "wet" || (weatherPref === "auto" && ((forecast.status === "ok" && isBadWeather(forecast.data)) || warned));
 
   const interests = useMemo(
     () => interestParam.split(",").filter((x): x is Interest => (INTERESTS as string[]).includes(x)),
@@ -106,7 +111,7 @@ export function PlannerApp() {
         {weatherPref === "auto" && (
           <p className="rounded-md bg-surface p-3 text-sm">
             {forecast.status === "ok"
-              ? `Now at the venue: ${describeWeather(forecast.data.current.weather_code).toLowerCase()}, ${Math.round(forecast.data.current.temperature_2m)}°C, wind ${Math.round(forecast.data.current.wind_speed_10m)} m/s${wet ? ", so indoor options come first." : "."}`
+              ? `Now at the venue: ${describeWeather(forecast.data.current.weather_code).toLowerCase()}, ${Math.round(forecast.data.current.temperature_2m)}°C, wind ${Math.round(forecast.data.current.wind_speed_10m)} m/s${wet ? (warned ? ". A weather warning or poor air puts indoor options first." : ", so indoor options come first.") : "."}`
               : forecast.status === "loading"
                 ? "Checking the forecast…"
                 : "Forecast unavailable. Choose dry or rain above."}
@@ -120,6 +125,7 @@ export function PlannerApp() {
             )}
           </p>
         )}
+        {weatherPref === "auto" && <WeatherAlerts data={kma} />}
         <label className="flex items-center justify-between gap-3 text-sm font-medium">
           Leaving the venue at
           <input
