@@ -35,7 +35,7 @@ export const PLACES: Place[] = [
   { id: "jusangjeolli", name: "Jusangjeolli Cliff", nameKo: "대포동 주상절리대", category: "sight", lat: 33.2378, lng: 126.4253, durationMin: 40, summary: "Hexagonal basalt columns formed as a lava flow cooled against the sea. 10 minutes' walk from the venue.", tags: ["walkable", "geology", "UNESCO Geopark", "photo"] },
   { id: "saekdal", name: "Jungmun Saekdal Beach", nameKo: "중문색달해수욕장", category: "nature", lat: 33.2445, lng: 126.4119, durationMin: 45, summary: "Black-and-white sand beach below the resort cliffs; popular with surfers year-round.", tags: ["walkable", "sunset", "family", "photo"] },
   { id: "cheonjeyeon", name: "Cheonjeyeon Falls", nameKo: "천제연폭포", category: "nature", lat: 33.2523, lng: 126.4183, durationMin: 60, summary: "Three-tier waterfall in a subtropical gorge, crossed by the arched Seonimgyo Bridge.", tags: ["walkable", "photo"] },
-  { id: "yeomiji", name: "Yeomiji Botanical Garden", nameKo: "여미지식물원", category: "nature", lat: 33.2496, lng: 126.4178, durationMin: 75, indoor: true, summary: "Large glasshouse garden next to the venue. Works on a rainy day.", tags: ["walkable", "family", "accessible"] },
+  { id: "yeomiji", name: "Yeomiji Botanical Garden", nameKo: "여미지식물원", category: "nature", lat: 33.2526, lng: 126.4143, durationMin: 75, indoor: true, summary: "Large glasshouse garden next to the venue. Works on a rainy day.", tags: ["walkable", "family", "accessible"] },
   { id: "teddy", name: "Teddy Bear Museum", nameKo: "테디베어뮤지엄", category: "culture", lat: 33.2502, lng: 126.4122, durationMin: 60, indoor: true, summary: "Light-hearted museum in the Jungmun complex; easy with children.", tags: ["walkable", "family", "accessible"] },
   { id: "olle8", name: "Olle Trail Route 8", nameKo: "올레 8코스", category: "nature", lat: 33.2398, lng: 126.4176, durationMin: 120, summary: "The coastal Olle trail passes ICC Jeju. Good for an early walk or run.", tags: ["walkable", "running"] },
 
@@ -77,7 +77,7 @@ export const PLACES: Place[] = [
   // Jeju City
   { id: "dongmun", name: "Dongmun Market & Night Market", nameKo: "동문시장 야시장", category: "food", lat: 33.5116, lng: 126.5262, durationMin: 75, summary: "Jeju City's main market. The night-market stalls open around 18:00.", tags: ["evening", "souvenirs", "family", "accessible"] },
   { id: "jeonnongro", name: "Jeonnong-ro Cherry Blossoms", nameKo: "전농로 왕벚꽃거리", category: "nature", lat: 33.5034, lng: 126.521, durationMin: 30, march: "King cherry blossoms usually open in the last week of March.", summary: "Street lined with Jeju's native king cherry trees.", tags: ["cherry blossom", "accessible", "photo"] },
-  { id: "peace-park", name: "Jeju 4·3 Peace Park", nameKo: "제주4·3평화공원", category: "culture", lat: 33.4507, lng: 126.6704, durationMin: 90, indoor: true, summary: "Memorial and museum for the Jeju 4·3 tragedy (1947–54), essential for understanding the island's modern history.", tags: ["accessible"] },
+  { id: "peace-park", name: "Jeju 4·3 Peace Park", nameKo: "제주4·3평화공원", category: "culture", lat: 33.4498, lng: 126.6178, durationMin: 90, indoor: true, summary: "Memorial and museum for the Jeju 4·3 tragedy (1947–54), essential for understanding the island's modern history.", tags: ["accessible"] },
 
   // Transport
   { id: "cju", name: "Jeju International Airport (CJU)", nameKo: "제주국제공항", category: "transport", lat: 33.507, lng: 126.493, durationMin: 0, summary: "Arrivals on the first floor. The Airport Limousine 600 stop is outside Gate 5 (verify)." },
