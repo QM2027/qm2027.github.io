@@ -1,5 +1,7 @@
 import Link from "next/link";
+import { Suspense } from "react";
 import { Countdown } from "@/components/Countdown";
+import { HappeningNow } from "@/components/HappeningNow";
 import { JejuOutline } from "@/components/JejuOutline";
 import { GUIDES } from "@/data/guides";
 import { INDICO_GROUPS } from "@/data/indico-links";
@@ -17,6 +19,9 @@ const CONTENTS = [
 export default function Home() {
   return (
     <main className="w-full">
+      <Suspense fallback={null}>
+        <HappeningNow />
+      </Suspense>
       <section className="border-b border-border">
         <div className="mx-auto grid max-w-7xl items-center gap-8 px-4 py-10 sm:py-14 lg:grid-cols-[1fr_1.1fr] lg:px-8 lg:py-20">
           <div>
