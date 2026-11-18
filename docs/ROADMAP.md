@@ -36,6 +36,7 @@
 - [ ] 택시 카드 주소(ICC, 서귀포의료원) 확인 — [src/components/TaxiCard.tsx](../src/components/TaxiCard.tsx)
 - [ ] GitHub 저장소 Settings → Pages → Source를 "GitHub Actions"로 설정
 - [ ] 커스텀 도메인 전환 시: Pages 설정에 도메인 등록 + `public/CNAME` 추가 (basePath는 워크플로가 자동 처리)
+- [ ] 데이터 저장소(program-data, weather-data, tour-data) cron 살아있는지 확인 — 공개 저장소는 **60일간 활동(커밋 등)이 없으면 schedule 워크플로가 자동 비활성화**되는데, 커밋 없이 Pages만 배포하는 구조라 걸리기 쉬움. 1월 말쯤 각 저장소에 커밋 1개로 연장하고, 3/15(5분 cron 시작) 전에 Actions 탭에서 활성 상태·최근 실행 재확인. 약관상 문제는 없음(저장소 프로젝트의 빌드·게시 용도, 5분은 허용 최소 간격)
 
 ## 📋 다음 작업 (우선순위 순)
 
