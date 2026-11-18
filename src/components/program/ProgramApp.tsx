@@ -13,6 +13,7 @@ import {
   useProgram,
   type Abstracts,
   type Contribution,
+  type Materials,
   type Program,
 } from "@/lib/program";
 import { buildSearchIndex, searchProgram, type SearchType } from "@/lib/program-search";
@@ -45,7 +46,7 @@ export function ProgramApp() {
   if (program.status === "error" || program.data.contributions.length === 0) {
     return <NotPublished checkedAt={program.status === "ok" ? program.checkedAt : undefined} />;
   }
-  return <ProgramBrowser program={program.data} abstracts={program.abstracts} checkedAt={program.checkedAt} />;
+  return <ProgramBrowser program={program.data} abstracts={program.abstracts} materials={program.materials} checkedAt={program.checkedAt} />;
 }
 
 function NotPublished({ checkedAt }: { checkedAt?: string }) {
@@ -73,7 +74,17 @@ function NotPublished({ checkedAt }: { checkedAt?: string }) {
   );
 }
 
-function ProgramBrowser({ program, abstracts, checkedAt }: { program: Program; abstracts?: Abstracts; checkedAt: string }) {
+function ProgramBrowser({
+  program,
+  abstracts,
+  materials,
+  checkedAt,
+}: {
+  program: Program;
+  abstracts?: Abstracts;
+  materials?: Materials;
+  checkedAt: string;
+}) {
   const params = useSearchParams();
   const router = useRouter();
   const pathname = usePathname();
@@ -291,6 +302,7 @@ function ProgramBrowser({ program, abstracts, checkedAt }: { program: Program; a
             session={sessionsById.get(talk.sessionId ?? "")}
             details={abstracts?.[talk.id]}
             abstractsLoaded={abstracts !== undefined}
+            files={materials?.[talk.id]}
             starred={starred.has(talk.id)}
             changed={changedIds.has(talk.id)}
             onStar={() => toggleStar(talk.id)}

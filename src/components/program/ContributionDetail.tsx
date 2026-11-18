@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 import { Icon } from "@/components/Icon";
 import { INDICO_TIMETABLE } from "@/data/indico-links";
 import { downloadIcs } from "@/lib/ics";
-import { clock, dayLabel, dayOf, type Abstracts, type Contribution, type Session } from "@/lib/program";
+import { clock, dayLabel, dayOf, refreshProgram, type Abstracts, type Contribution, type Material, type Session } from "@/lib/program";
 import { roomOf, shareLink, talkIcs, venueRoomId } from "./shared";
 import { TeX } from "./TeX";
 
@@ -34,19 +34,31 @@ function Panel({ label, onClose, children }: { label: string; onClose: () => voi
 
 const btn = "flex min-h-11 items-center gap-1 rounded-md border border-border px-4 text-sm";
 
+const KIND: Record<Material["kind"], string> = { pdf: "PDF", slides: "Slides", video: "Video", image: "Image", link: "Link", file: "File" };
+
+function size(bytes?: number) {
+  if (!bytes) return undefined;
+  return bytes >= 1e6 ? `${(bytes / 1e6).toFixed(1)} MB` : `${Math.max(1, Math.round(bytes / 1e3))} KB`;
+}
+
 type Props = {
   talk: Contribution;
   session?: Session;
   details?: Abstracts[string];
   abstractsLoaded: boolean;
+  files?: Material[];
   starred: boolean;
   changed: boolean;
   onStar: () => void;
   onClose: () => void;
 };
 
-export function ContributionDetail({ talk, session, details, abstractsLoaded, starred, changed, onStar, onClose }: Props) {
+export function ContributionDetail({ talk, session, details, abstractsLoaded, files, starred, changed, onStar, onClose }: Props) {
   const [allAuthors, setAllAuthors] = useState(false);
+  // Speakers replace files all week; a deleted and re-added file gets a new link. Re-check now.
+  useEffect(() => {
+    refreshProgram();
+  }, [talk.id]);
   const [shared, setShared] = useState<string>();
   const room = roomOf(talk, session);
   const venueId = venueRoomId(room, talk.poster);
@@ -123,6 +135,26 @@ export function ContributionDetail({ talk, session, details, abstractsLoaded, st
           {shared ?? "Share"}
         </button>
       </div>
+
+      {files && files.length > 0 && (
+        <section className="mt-5">
+          <h3 className="text-sm font-semibold">Files</h3>
+          <ul className="mt-2 space-y-2">
+            {files.map((f) => (
+              <li key={f.url}>
+                <a href={f.url} target="_blank" rel="noreferrer" className="flex min-h-11 items-center justify-between gap-3 rounded-md border border-border px-4 text-sm hover:border-foreground">
+                  <span className="min-w-0 truncate">{f.title}</span>
+                  <span className="flex shrink-0 items-center gap-1 text-muted">
+                    {[KIND[f.kind], size(f.size)].filter(Boolean).join(" · ")}
+                    <Icon name="external" className="size-4" />
+                  </span>
+                </a>
+              </li>
+            ))}
+          </ul>
+          <p className="mt-2 text-xs text-muted">If a file doesn&apos;t open, it was probably replaced: the Indico page has the latest.</p>
+        </section>
+      )}
 
       {details?.abstract ? (
         <div className="mt-5 leading-relaxed whitespace-pre-line">

@@ -7,8 +7,8 @@ const TILES = `tiles-${VERSION}`;
 const DATA = `data-${VERSION}`;
 const PROGRAM = `program-${VERSION}`;
 const MAX_TILES = 600;
-/** Hashed program files kept for offline use: a few versions of the program and abstracts. */
-const MAX_PROGRAM_FILES = 6;
+/** Hashed program files kept for offline use: a few versions of the program, abstracts and materials. */
+const MAX_PROGRAM_FILES = 9;
 
 const BASE = new URL(self.registration.scope).pathname; // "/" or "/<repo>/"
 const SHELL = [
