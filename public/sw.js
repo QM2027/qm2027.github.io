@@ -5,6 +5,9 @@ const PAGES = `pages-${VERSION}`;
 const ASSETS = `assets-${VERSION}`;
 const TILES = `tiles-${VERSION}`;
 const DATA = `data-${VERSION}`;
+// Place photos copied to QM2027/tour-data's Pages; kept for offline place cards.
+const PHOTOS = `photos-${VERSION}`;
+const MAX_PHOTOS = 200;
 // Deliberately not tied to VERSION: changing the caching strategy must never drop the offline
 // program. It holds index.json and exactly the files that index names, nothing else.
 const PROGRAM = "program-v3";
@@ -49,7 +52,7 @@ self.addEventListener("message", (event) => {
 });
 
 self.addEventListener("activate", (event) => {
-  const keep = [PAGES, ASSETS, TILES, DATA, PROGRAM];
+  const keep = [PAGES, ASSETS, TILES, DATA, PHOTOS, PROGRAM];
   event.waitUntil(
     caches
       .keys()
@@ -215,11 +218,14 @@ self.addEventListener("fetch", (event) => {
 
   if (url.hostname.endsWith("tile.openstreetmap.org")) {
     event.respondWith(cacheFirst(request, TILES, MAX_TILES));
+  } else if (url.origin === self.location.origin && url.pathname.startsWith("/tour-data/img/")) {
+    event.respondWith(cacheFirst(request, PHOTOS, MAX_PHOTOS));
   } else if (
     url.hostname === "api.open-meteo.com" ||
     url.hostname === "api.frankfurter.dev" ||
     // QM2027/weather-data (KMA warnings, air quality); the UI hides sections older than a few hours.
-    (url.origin === self.location.origin && url.pathname.startsWith("/weather-data/"))
+    (url.origin === self.location.origin && url.pathname.startsWith("/weather-data/")) ||
+    (url.origin === self.location.origin && url.pathname.startsWith("/tour-data/"))
   ) {
     event.respondWith(networkFirst(request, DATA));
   } else if (url.origin === self.location.origin && url.pathname.startsWith(PROGRAM_DATA)) {

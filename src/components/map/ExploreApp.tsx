@@ -5,7 +5,9 @@ import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useMemo, useState } from "react";
 import { Icon } from "@/components/Icon";
 import { GUIDES } from "@/data/guides";
+import { HOURS } from "@/data/hours";
 import { CATEGORIES, COURSES, PLACES, placeById, type Category, type Place } from "@/data/places";
+import { photoCredit, photoUrl, useTourPhotos } from "@/lib/tour-data";
 import {
   ICC,
   directionLinks,
@@ -254,6 +256,8 @@ function PlaceDetail({
 }) {
   const km = distanceKm(origin, place);
   const links = directionLinks(place.nameKo, place);
+  const photo = useTourPhotos()[place.id]?.[0];
+  const hours = HOURS[place.id];
 
   return (
     <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain p-4">
@@ -270,7 +274,34 @@ function PlaceDetail({
         </button>
       </div>
 
+      {photo && (
+        <figure className="mt-3">
+          {/* eslint-disable-next-line @next/next/no-img-element -- static export; files are already resized */}
+          <img
+            key={photo.galContentId}
+            src={photoUrl(photo.srcSmall)}
+            srcSet={`${photoUrl(photo.srcSmall)} 480w, ${photoUrl(photo.src)} 1200w`}
+            sizes="(min-width: 768px) 400px, 100vw"
+            width={photo.width}
+            height={photo.height}
+            alt={place.name}
+            loading="lazy"
+            className="aspect-[3/2] w-full rounded-md bg-surface object-cover"
+          />
+          <figcaption className="mt-1 text-xs text-muted">{photoCredit(photo)}</figcaption>
+        </figure>
+      )}
+
       <p className="mt-3 leading-relaxed">{place.summary}</p>
+      {hours && (
+        <div className="mt-3 text-sm">
+          <p>
+            <b>Hours in March:</b> {hours.text}
+            {hours.closed && <span className="text-muted"> · Closed {hours.closed.charAt(0).toLowerCase() + hours.closed.slice(1)}</span>}
+          </p>
+          {hours.note && <p className="text-muted">{hours.note}</p>}
+        </div>
+      )}
       {place.march && <p className="mt-3 border-l-2 border-tangerine bg-surface p-3 text-sm">{place.march}</p>}
       {place.tags?.includes("photo") && (
         <p className="mt-3 text-sm text-muted">Photo spot. Share yours with <b className="text-foreground">#QM2027Jeju</b></p>

@@ -1,3 +1,4 @@
+import { HOURS, toMin } from "@/data/hours";
 import { PLACES, type Category, type Place } from "@/data/places";
 import { ICC, distanceKm, travelMinutes, type LatLng } from "./geo";
 
@@ -19,7 +20,7 @@ export type Stop = { place: Place; travel: number; arrive: number; leave: number
 const MAX_WALK_KM = 2.5;
 
 /**
- * Rough closing time in minutes after midnight. Real hours vary, so this only keeps
+ * Rough closing time in minutes after midnight, for places without known hours. It only keeps
  * plans from sending people to a museum at 19:00.
  */
 export function closingMin(p: Place) {
@@ -27,6 +28,16 @@ export function closingMin(p: Place) {
   if (p.category === "food") return 21 * 60;
   if (p.category === "culture" || p.indoor || p.category === "sight") return 18 * 60;
   return 24 * 60; // open-air nature; the UI warns about sunset separately
+}
+
+/** Whether a visit arriving at `arrive` (minutes after midnight) fits the place's hours. */
+export function openFor(p: Place, arrive: number) {
+  const h = HOURS[p.id];
+  if (!h) return arrive + p.durationMin <= closingMin(p);
+  if (h.open && arrive < toMin(h.open)) return false;
+  if (h.lastEntry && arrive > toMin(h.lastEntry)) return false;
+  if (h.close && arrive + p.durationMin > toMin(h.close)) return false;
+  return true;
 }
 
 /** Taxis and rental cars both need time to find, park or flag down. */
@@ -74,7 +85,7 @@ export function planTrip(input: PlanInput): { stops: Stop[]; returnTravel: numbe
       const travel = legMinutes(here, p, input.mode);
       const back = legMinutes(p, ICC, input.mode);
       if (t + travel + p.durationMin + back > input.minutes) continue;
-      if (input.startMin + t + travel + p.durationMin > closingMin(p)) continue;
+      if (!openFor(p, input.startMin + t + travel)) continue;
       const value = (score(p, input) * p.durationMin) / (travel + p.durationMin);
       if (!best || value > best.value) best = { place: p, travel, value };
     }

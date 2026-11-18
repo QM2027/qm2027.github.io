@@ -175,8 +175,8 @@ export function PlannerApp() {
           </p>
         )}
         <p className="text-xs text-muted">
-          Times are rough estimates from straight-line distance, and museums are assumed to close around 18:00.
-          Check opening hours and the last bus. The link in your
+          Travel times are rough estimates from straight-line distance. Opening hours are March hours from the
+          Korea Tourism Organization where known; check them and the last bus before you go. The link in your
           address bar shares this plan.
         </p>
       </div>
