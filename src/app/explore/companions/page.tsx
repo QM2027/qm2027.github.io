@@ -19,13 +19,13 @@ const STEP_FREE = PLACES.filter((p) => p.tags?.includes("accessible")).sort(byDi
 const PRESETS = [
   { href: "/explore/plan/?t=240&mode=walk&family=1", title: "Half day on foot", text: "Botanical garden, teddy bears and the beach, all walkable from the venue." },
   { href: "/explore/plan/?t=240&mode=taxi&family=1&like=culture", title: "Half day by taxi", text: "Museums and markets in Seogwipo, back for the evening." },
-  { href: "/explore/plan/?t=480&mode=car&family=1", title: "Full day with a car", text: "East coast: lava tube, aquarium and haenyeo museum." },
+  { href: "/explore/plan/?t=480&mode=taxi&family=1", title: "Full day by taxi", text: "East coast: lava tube, aquarium and haenyeo museum." },
 ];
 
 const TIPS = [
   ["Strollers", "Coastal paths and waterfalls often have steps. The resort roads in Jungmun are smooth, and most museums lend strollers or wheelchairs."],
   ["Supplies", "Convenience stores (GS25, CU, 7-Eleven) stock diapers, formula and baby food. For more, try the large E-mart and Lotte Mart stores in Seogwipo and Jeju City."],
-  ["Taxis & car seats", "Taxis don't carry child seats. Rental companies offer them on request, so book ahead."],
+  ["Taxis & car seats", "Taxis don't carry child seats, so bring a travel seat if your child needs one."],
   ["Kids' prices", "Children usually pay less for attractions and buses, and under-3s often go free. Carry a passport copy for age proof."],
   ["Medical", "Pharmacies (약국) are common. For emergencies call 119, or use the 24-hour ER at Seogwipo Medical Center."],
 ];

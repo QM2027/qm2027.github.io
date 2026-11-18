@@ -1,22 +1,23 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { TaxiCard } from "@/components/TaxiCard";
-import { INDICO_ACCOMMODATION } from "@/data/indico-links";
+import { INDICO_ACCOMMODATION, INDICO_VENUE } from "@/data/indico-links";
 
 export const metadata: Metadata = {
   title: "Getting there",
-  description: "From Jeju International Airport (CJU) to ICC Jeju: bus, taxi and car options compared.",
+  description: "From Jeju International Airport (CJU) to ICC Jeju: bus and taxi compared.",
 };
 
-// Fares and times are approximate and must be checked before launch.
+// Fares and times follow the Indico venue page (INDICO_VENUE), which takes precedence. No rental
+// car option: renting is hard for many foreign visitors (permit rules), so the guide doesn't suggest it.
 const OPTIONS = [
   {
     title: "Airport Limousine Bus 600",
-    time: "60–75 min",
-    cost: "≈ ₩5,500",
+    time: "≈ 60 min",
+    cost: "≈ ₩4,500",
     best: "Best value",
     steps: [
-      "Exit arrivals (1F) and find the Limousine 600 stop",
+      "Exit arrivals (1F) and find the Limousine 600 stop; buses run 06:00–21:25, every 16–40 min",
       "Pay by T-money card or credit card on boarding",
       "Get off at “ICC Jeju” (or the stop for your Jungmun hotel)",
     ],
@@ -24,23 +25,12 @@ const OPTIONS = [
   {
     title: "Taxi",
     time: "≈ 50 min",
-    cost: "≈ ₩45,000–55,000",
+    cost: "≈ ₩35,000–50,000",
     best: "Door to door",
     steps: [
       "Use the taxi rank outside arrivals, or book with the Kakao T app",
       "Show the driver the Korean card below",
       "Most taxis accept foreign credit cards",
-    ],
-  },
-  {
-    title: "Rental car",
-    time: "≈ 50 min",
-    cost: "from ≈ ₩40,000 / day",
-    best: "Best for exploring",
-    steps: [
-      "Take a shuttle from the airport to the rental car house",
-      "An International Driving Permit (1949 Geneva convention) is required",
-      "Speed cameras are common; the limit is often 60–80 km/h",
     ],
   },
 ];
@@ -59,7 +49,7 @@ export default function GettingTherePage() {
         .
       </p>
 
-      <ol className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+      <ol className="mt-8 grid gap-4 sm:grid-cols-2">
         {OPTIONS.map((o) => (
           <li key={o.title} className="flex flex-col rounded-md border border-border bg-surface p-5">
             <div className="flex items-center justify-between">
@@ -76,7 +66,13 @@ export default function GettingTherePage() {
           </li>
         ))}
       </ol>
-      <p className="mt-3 text-xs text-muted">Fares and times are estimates and will be confirmed closer to the conference.</p>
+      <p className="mt-3 text-xs text-muted">
+        Fares and times from the{" "}
+        <a href={INDICO_VENUE} target="_blank" rel="noreferrer" className="underline">
+          Indico venue page
+        </a>
+        , which has the latest details and takes precedence.
+      </p>
 
       <div className="mt-8">
         <TaxiCard />

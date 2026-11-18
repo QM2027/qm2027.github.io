@@ -56,3 +56,5 @@ export const INDICO_GROUPS: IndicoGroup[] = [
 
 export const INDICO_TIMETABLE = `${EVENT}/timetable/`;
 export const INDICO_ACCOMMODATION = `${EVENT}/page/41208-accommodation`;
+/** Airport transfer, fares and times: the official figures. */
+export const INDICO_VENUE = `${EVENT}/page/41212-conference-venue`;

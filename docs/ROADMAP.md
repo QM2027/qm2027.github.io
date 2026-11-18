@@ -24,13 +24,13 @@
 ## 🚨 배포 전 필수
 
 - [ ] 장소 좌표 검증 (Kakao/Naver Map 대조) — [src/data/places.ts](../src/data/places.ts). 2026-11-18 TourAPI·OSM과 대조: 4·3평화공원(4.8 km)·여미지(470 m) 수정. 남은 확인: 사려니숲길(어느 입구), 외돌개·색달해변(주차장/해변, 색달은 지도에서 바다 위), 대조 불가 9곳(leejungseop, astro-seogwipo, bonte, seongpanak, jeonnongro, cju, seongsan-port, 병원 2)
-- [ ] ICC Jeju 좌표 검증 — [src/lib/geo.ts](../src/lib/geo.ts) `ICC`. OSM 건물 위치(33.2435, 126.4249)와 약 250 m 차이: 정문 기준으로 확정 필요 (거리 계산·러닝 출발점)
-- [ ] 공항버스 600 요금·소요시간·승차 위치, 택시·렌터카 요금 확인 — [src/app/getting-there/page.tsx](../src/app/getting-there/page.tsx)
+- [x] ICC Jeju 좌표 — 현재 값 유지 (건물이 커서 OSM 건물 중심과 250 m 차이는 허용, 2026-11-18 결정)
+- [x] 공항→ICC 교통 — Indico Conference Venue 페이지 수치(600번 ₩4,500·약 60분·06:00–21:25, 택시 ₩35,000–50,000)로 맞추고 출처 링크. **렌터카는 안내하지 않음**(외국인은 빌리기 어려움, 2026-11-18 결정): getting-there·플래너·travel·companions에서 제거
 - [ ] 러닝 코스 경로를 실제 GPX로 다시 그리기 — [src/data/runs.ts](../src/data/runs.ts). 올레8 완료. 남은 것: resort-loop·falls-beach
 - [ ] 시즌 날짜(개화 예상, 들불축제·걷기대회 2027 일정) 확인 — [src/data/season.ts](../src/data/season.ts)
 - [ ] 스탬프 투어 체크인 반경 현장 테스트 — [src/data/passport.ts](../src/data/passport.ts)
 - [ ] 국내선 소요시간·환승 안내 확인 — [src/data/korea.ts](../src/data/korea.ts)
-- [ ] 한라산 탐방로 거리·고도·예약 규정·입산 통제시간 확인 — [src/data/hallasan.ts](../src/data/hallasan.ts)
+- [ ] 한라산 탐방 정보 — 예약 규정·통제시간 등은 Indico Hallasan 페이지 기준, 사용자가 직접 확인 — [src/data/hallasan.ts](../src/data/hallasan.ts)
 - [ ] `/travel` 실용정보(택스리펀드 기준, 비자/K-ETA, 제주 무사증) 확인 — [src/app/travel/page.tsx](../src/app/travel/page.tsx)
 - [ ] 음식 설명·식이 분류, 한국어 문구 원어민 검수 — [src/data/food.ts](../src/data/food.ts)
 - [ ] 택시 카드 주소(ICC, 서귀포의료원) 확인 — [src/components/TaxiCard.tsx](../src/components/TaxiCard.tsx)
@@ -78,7 +78,7 @@
 - [x] [QM2027/tour-data](https://github.com/QM2027/tour-data) — 주 1회, 장소 29곳 정보·영업시간, 사진 96장(Pages로 복사·리사이즈, 공공누리 1유형), 축제. 장소 카드에 사진·3월 영업시간 표시
 - [x] [QM2027/weather-data](https://github.com/QM2027/weather-data) — 매시, 기상특보(행사장 구역 서귀포시남부 / 한라산 제주도산지 / 제주 기타)·미세먼지(강정동)·기상청 예보(Forecast 형태). /travel·플래너·러닝·한라산에 표시. 행사장 구역이 서귀포시남부인지 확인 필요
 - [ ] 축제: 2027년 회차가 TourAPI에 올라오면 확인 (현재 유채꽃축제 2026년 회차만, 들불축제 없음). 사이트에 축제 표시는 아직 안 함
-- [ ] 버스 노선·정류장 고정 데이터 + 카카오맵 실시간 링크 (실시간 도착 API는 쓰지 않음)
+- [x] ~~버스 노선·정류장 고정 데이터~~ — 하지 않음: 교통 정보는 Indico에 있음 (사이트는 링크와 카카오맵/네이버지도 안내만)
 - [ ] 물때(국립해양조사원) — 용머리해안 출입 판단, 학회 기간분만 1회
 - [ ] 예보도 기상청으로 바꿀 여지 유지 (weather-data에 이미 `forecast` 있음, 일별 풍속·값은 null 가능) — 지금은 Open-Meteo(비상업 무료, CC BY 링크 필수). 전환 시: 단기예보(~3일)+기상특보를 GitHub Actions가 1시간마다 받아 JSON으로 Pages 배포(키는 Secrets), 사이트는 그 JSON만 CSR로 읽음. cron 스크립트가 기상청 값(SKY·PTY)을 WMO 코드로 바꿔 [src/lib/weather.ts](../src/lib/weather.ts)의 `Forecast` 형태 그대로 내보내면 화면 코드는 URL만 교체. 지금 5일 예보를 쓰므로 4–5일째는 중기예보 API도 필요
 - [ ] 제주관광공사 / 제주컨벤션뷰로 MICE 지원 문의 (사진 라이선스, 문화공연, 웰컴키트, 쿠폰) — 조직위 담당

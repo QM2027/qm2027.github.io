@@ -39,7 +39,6 @@ const PRACTICAL: { title: string; items: string[] }[] = [
       "Buses accept T-money cards, which convenience stores sell and top up. Credit card tap-to-pay often works too.",
       "Use Kakao Map or Naver Map for routes; Google Maps can't do walking or driving directions in Korea.",
       "Kakao T books taxis with a foreign card. Taxis are plentiful in Jungmun and at the airport.",
-      "Driving requires an International Driving Permit (1949 Geneva convention).",
     ],
   },
   {

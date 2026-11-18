@@ -21,7 +21,6 @@ const DURATIONS = [
 const MODES: { id: Mode; label: string }[] = [
   { id: "walk", label: "On foot" },
   { id: "taxi", label: "Taxi / bus" },
-  { id: "car", label: "Rental car" },
 ];
 const INTERESTS: Interest[] = ["sight", "nature", "culture", "food"];
 
@@ -35,7 +34,8 @@ export function PlannerApp() {
   const pathname = usePathname();
 
   const minutes = Number(choice(params.get("t"), ["120", "240", "480"], "240"));
-  const mode = choice(params.get("mode"), ["walk", "taxi", "car"], "taxi");
+  // No rental car: renting is hard for many foreign visitors. Old ?mode=car links fall back to taxi.
+  const mode = choice(params.get("mode"), ["walk", "taxi"], "taxi");
   const interestParam = params.get("like") ?? "";
   const weatherPref = choice(params.get("weather"), ["auto", "dry", "wet"], "auto");
   const family = params.get("family") === "1";
