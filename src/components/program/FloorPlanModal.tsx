@@ -59,7 +59,7 @@ export function FloorPlanModal({ roomId, onClose }: { roomId?: string; onClose: 
         </div>
 
         <div className="mt-3 overflow-hidden rounded-md border border-border bg-surface p-2">
-          <FloorPlan floor={floor} selected={room?.id} highlight={null} onSelect={setSelected} />
+          <FloorPlan floor={floor} selected={room?.id} highlight={null} onSelect={setSelected} spotlight />
         </div>
         <div className="mt-2">
           <Legend />

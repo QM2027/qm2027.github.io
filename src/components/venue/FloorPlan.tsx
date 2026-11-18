@@ -1,6 +1,6 @@
 "use client";
 
-import type { KeyboardEvent, ReactNode } from "react";
+import { useLayoutEffect, useRef, useState, type CSSProperties, type KeyboardEvent, type ReactNode } from "react";
 import { KIND_GROUPS, ROOM_KINDS, type Floor, type KindGroup, type Part, type Point, type Room, type RoomKind, type Route } from "@/data/venue";
 
 type Props = {
@@ -9,10 +9,12 @@ type Props = {
   highlight: RoomKind | null;
   route?: Route;
   onSelect: (id: string) => void;
+  /** Fade everything but the selected room, for "where is this room" views. */
+  spotlight?: boolean;
 };
 
 /** One floor of ICC Jeju as an interactive SVG, in the pixel space of the traced plan. */
-export function FloorPlan({ floor, selected, highlight, route, onSelect }: Props) {
+export function FloorPlan({ floor, selected, highlight, route, onSelect, spotlight }: Props) {
   const areas = floor.rooms.filter((r) => r.d || r.w !== undefined);
   // Background spaces first so halls draw on top of them.
   areas.sort((a, b) => Number(b.kind === "other") - Number(a.kind === "other"));
@@ -32,7 +34,11 @@ export function FloorPlan({ floor, selected, highlight, route, onSelect }: Props
       }
     },
   });
-  const dimmed = (r: Room) => (highlight && r.kind !== highlight ? 0.25 : 1);
+  const focus = floor.rooms.find((r) => r.id === selected);
+  // Spotlight: everything but the selected room goes grey and pale.
+  const faded = (r: Room) => Boolean(spotlight && focus && r.id !== focus.id);
+  const dimmed = (r: Room) => (highlight && r.kind !== highlight ? 0.25 : faded(r) ? 0.35 : 1);
+  const grey = (r: Room, style?: CSSProperties): CSSProperties | undefined => (faded(r) ? { ...style, filter: "grayscale(1)" } : style);
 
   return (
     <svg viewBox={`0 0 ${floor.width} ${floor.height}`} className="h-auto w-full" role="img" aria-label={`Floor plan ${floor.label}`}>
@@ -69,15 +75,10 @@ export function FloorPlan({ floor, selected, highlight, route, onSelect }: Props
         const meta = ROOM_KINDS[r.kind];
         const active = r.id === selected;
         const subtle = r.kind === "other";
-        const shape = (extra: Record<string, unknown>) =>
-          r.d ? (
-            <path d={r.d} fillRule={r.evenodd ? "evenodd" : undefined} {...extra} />
-          ) : (
-            <rect x={r.x} y={r.y} width={r.w} height={r.h} rx="3" {...extra} />
-          );
+        const shape = (extra: Record<string, unknown>) => <RoomShape room={r} {...extra} />;
         const [lx, ly] = labelAt(r);
         return (
-          <g key={r.id} {...interactive(r)} className="cursor-pointer outline-none [&:focus-visible>.shape]:stroke-[4]" opacity={dimmed(r)}>
+          <g key={r.id} {...interactive(r)} className="cursor-pointer outline-none [&:focus-visible>.shape]:stroke-[4]" opacity={dimmed(r)} style={grey(r)}>
             {shape({
               className: "shape",
               fill: meta.color,
@@ -114,7 +115,7 @@ export function FloorPlan({ floor, selected, highlight, route, onSelect }: Props
             {...interactive(r)}
             className="cursor-pointer outline-none"
             opacity={dimmed(r)}
-            style={active ? { filter: "drop-shadow(0 0 1.5px var(--foreground))" } : undefined}
+            style={grey(r, active ? { filter: "drop-shadow(0 0 1.5px var(--foreground))" } : undefined)}
           >
             {r.parts!.map((p, i) => (
               <PartShape key={i} part={p} color={ROOM_KINDS[r.kind].color} />
@@ -135,13 +136,77 @@ export function FloorPlan({ floor, selected, highlight, route, onSelect }: Props
       })}
 
       {points.map((r) => (
-        <g key={r.id} {...interactive(r)} className="cursor-pointer outline-none" opacity={dimmed(r)}>
+        <g key={r.id} {...interactive(r)} className="cursor-pointer outline-none" opacity={dimmed(r)} style={grey(r)}>
           {r.spots!.map(([x, y], i) => (
             <Marker key={i} kind={r.kind} x={x} y={y} active={r.id === selected} />
           ))}
         </g>
       ))}
+
+      {focus && <Selection key={focus.id} room={focus} floor={floor} pin={spotlight} />}
     </svg>
+  );
+}
+
+function RoomShape({ room: r, ...extra }: { room: Room } & Record<string, unknown>) {
+  return r.d ? (
+    <path d={r.d} fillRule={r.evenodd ? "evenodd" : undefined} {...extra} />
+  ) : (
+    <rect x={r.x} y={r.y} width={r.w} height={r.h} rx="3" {...extra} />
+  );
+}
+
+/**
+ * The selected room's outline drawn over everything else: ink on a background halo, so it reads
+ * over any room colour, plus a short pulse on arrival (skipped with reduced motion).
+ */
+function Selection({ room: r, floor, pin }: { room: Room; floor: Floor; pin?: boolean }) {
+  const ref = useRef<SVGGElement>(null);
+  const [box, setBox] = useState<DOMRect>();
+  useLayoutEffect(() => setBox(ref.current?.getBBox()), []);
+
+  const outline = (extra: Record<string, unknown>) =>
+    r.spots ? (
+      r.spots.map(([x, y], i) => <circle key={i} cx={x} cy={y} r="15" {...extra} />)
+    ) : r.d || r.w !== undefined ? (
+      <RoomShape room={r} {...extra} />
+    ) : null;
+  // Pins sit on top of the room (or below it when there is no room above), sized to the floor so
+  // they stay visible when the plan is drawn small. Point facilities get one pin per spot.
+  const size = floor.width / 22;
+  const tips: { x: number; y: number; up: boolean }[] = [];
+  if (pin && r.spots) {
+    for (const [x, y] of r.spots) {
+      const up = y - 11 < size * 1.4;
+      tips.push({ x, y: up ? y + 11 : y - 11, up });
+    }
+  }
+  else if (pin && box) {
+    const up = box.y < size * 1.3;
+    tips.push({ x: box.x + box.width / 2, y: up ? box.y + box.height + 2 : box.y - 2, up });
+  }
+  return (
+    <g className="pointer-events-none">
+      <g ref={ref} fill="none" strokeLinejoin="round">
+        {outline({ stroke: "var(--foreground)", strokeWidth: 16, className: "plan-pulse", opacity: 0 })}
+        {outline({ stroke: "var(--background)", strokeWidth: 9 })}
+        {outline({ stroke: "var(--foreground)", strokeWidth: 4.5 })}
+      </g>
+      {tips.map((t, i) => (
+        <Pin key={i} {...t} size={size} />
+      ))}
+    </g>
+  );
+}
+
+/** Map pin with its tip at (x, y), pointing down (or up, flipped). */
+function Pin({ x, y, size, up }: { x: number; y: number; size: number; up: boolean }) {
+  const k = size / 24;
+  return (
+    <g transform={`translate(${x} ${y}) scale(${k} ${up ? -k : k})`}>
+      <path d="M0 0 C-3 -9 -10 -13 -10 -22 A10 10 0 1 1 10 -22 C10 -13 3 -9 0 0 Z" fill="var(--foreground)" stroke="var(--background)" strokeWidth="2.5" />
+      <circle cx="0" cy="-22" r="4" fill="var(--background)" />
+    </g>
   );
 }
 

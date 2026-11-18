@@ -84,6 +84,21 @@ body {
   font-size: 11px;
 }
 
+/* Floor plan: a few soft rings around the room just selected. */
+@media (prefers-reduced-motion: no-preference) {
+  .plan-pulse {
+    animation: plan-pulse 1.1s ease-out 3;
+  }
+}
+@keyframes plan-pulse {
+  from {
+    opacity: 0.35;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
 /* OSM's default style is beige land and yellow roads; render it in greys instead. */
 .leaflet-tile-pane {
   filter: grayscale(1) brightness(1.04) contrast(0.92);
