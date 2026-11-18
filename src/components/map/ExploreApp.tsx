@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { useMemo, useState } from "react";
+import { useLayoutEffect, useMemo, useRef, useState } from "react";
 import { Icon } from "@/components/Icon";
 import { GUIDES } from "@/data/guides";
 import { HOURS } from "@/data/hours";
@@ -84,6 +84,25 @@ export function ExploreApp() {
 
   const route = useMemo(() => (course ? places.map((x) => x.place) : []), [course, places]);
   const selected = selectedId ? placeById(selectedId) : undefined;
+
+  // The list unmounts while a place is open; put it back where it was, with that place in view.
+  const listRef = useRef<HTMLDivElement>(null);
+  const listScroll = useRef(0);
+  const lastOpened = useRef<string | undefined>(undefined);
+  useLayoutEffect(() => {
+    if (selectedId) {
+      lastOpened.current = selectedId;
+      return;
+    }
+    const list = listRef.current;
+    if (!list) return;
+    list.scrollTop = listScroll.current;
+    const row = lastOpened.current && list.querySelector<HTMLElement>(`[data-place="${lastOpened.current}"]`);
+    if (row) {
+      row.scrollIntoView({ block: "nearest" });
+      row.focus({ preventScroll: true });
+    }
+  }, [selectedId]);
 
   return (
     <div data-fill-viewport className="flex min-h-0 flex-1 flex-col md:grid md:grid-cols-[minmax(320px,380px)_1fr] lg:grid-cols-[420px_1fr] max-md:landscape:flex-row">
@@ -185,7 +204,11 @@ export function ExploreApp() {
               {course ? "Stops in order" : `${places.length} places · distance from ${me ? "you" : "ICC Jeju"}`}
             </p>
 
-            <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain">
+            <div
+              ref={listRef}
+              onScroll={(e) => (listScroll.current = e.currentTarget.scrollTop)}
+              className="min-h-0 flex-1 overflow-y-auto overscroll-contain"
+            >
               {tab === "courses" && !course ? (
                 <ul className="grid gap-3 p-4 sm:grid-cols-2 md:grid-cols-1">
                   {COURSES.map((c) => (
@@ -209,6 +232,7 @@ export function ExploreApp() {
                   {places.map(({ place, km }, i) => (
                     <li key={place.id}>
                       <button
+                        data-place={place.id}
                         onClick={() => update({ place: place.id })}
                         className="flex w-full items-start gap-3 px-4 py-3 text-left hover:bg-surface"
                       >
