@@ -7,6 +7,7 @@ import { NAV, SITE } from "@/lib/site";
 import { Icon } from "./Icon";
 import { isActive, screenOf } from "./pwa/AppNav";
 import { install, useInstall } from "./pwa/install";
+import { applyUpdate, useUpdate } from "./pwa/update";
 
 /**
  * In a browser: top bar links on tablet/desktop, hamburger menu on phones.
@@ -16,6 +17,9 @@ export function SiteNav() {
   const pathname = usePathname();
   const [menuOpen, setMenuOpen] = useState(false);
   const { mode: installMode } = useInstall();
+  const update = useUpdate();
+  // After "Later" on the update banner, a small Update button stays in the bar until it is used.
+  const updateLater = update.ready && update.dismissed;
 
   // Escape closes the menu; widening past md hides it, so reset it there too.
   useEffect(() => {
@@ -33,12 +37,12 @@ export function SiteNav() {
 
   return (
     <header className="app-chrome sticky top-0 z-[1000] border-b border-border bg-background/95 pt-[env(safe-area-inset-top)] backdrop-blur">
-      <AppTitleBar pathname={pathname} />
+      <AppTitleBar pathname={pathname} updateLater={updateLater} />
       <div className="mx-auto flex h-14 standalone:hidden max-w-7xl items-center justify-between px-4 lg:px-8">
         <Link href="/" className="flex items-baseline gap-2">
           <span className="font-serif text-lg font-semibold">QM2027</span>
           {/* Narrow phones can't fit the subtitle beside the Install button. */}
-          <span className={`font-mono text-xs tracking-wider text-muted uppercase ${installMode ? "max-[399px]:hidden" : ""}`}>
+          <span className={`font-mono text-xs tracking-wider text-muted uppercase ${installMode || updateLater ? "max-[399px]:hidden" : ""}`}>
             Jeju visitor guide
           </span>
         </Link>
@@ -63,7 +67,10 @@ export function SiteNav() {
               Official site <Icon name="external" className="size-4" />
             </a>
           </nav>
-          {installMode && (
+          {/* A pending update takes the Install button's place; installing can wait a visit. */}
+          {updateLater ? (
+            <UpdateButton />
+          ) : installMode && (
             <button
               type="button"
               onClick={() => install()}
@@ -153,7 +160,24 @@ function useCollapsedTitle(pathname: string) {
   return seen;
 }
 
-function AppTitleBar({ pathname }: { pathname: string }) {
+/** Applies a new version the visitor put off with "Later". */
+function UpdateButton() {
+  return (
+    <button
+      type="button"
+      onClick={applyUpdate}
+      aria-label="Update to the new version"
+      className="relative flex h-9 shrink-0 items-center gap-1.5 rounded-md border border-border px-3 text-sm font-medium text-foreground hover:bg-surface"
+    >
+      <Icon name="refresh" className="size-4" />
+      Update
+      {/* The one accent: marks it as pending, like a notification badge. */}
+      <span aria-hidden className="absolute -top-1 -right-1 size-2.5 rounded-full bg-tangerine ring-2 ring-background" />
+    </button>
+  );
+}
+
+function AppTitleBar({ pathname, updateLater }: { pathname: string; updateLater: boolean }) {
   const router = useRouter();
   const screen = screenOf(pathname);
   const { back } = screen;
@@ -185,10 +209,15 @@ function AppTitleBar({ pathname }: { pathname: string }) {
       )}
       <p
         aria-hidden={!collapsed.shown}
-        className={`truncate text-base font-semibold transition-opacity duration-150 ${collapsed.shown ? "" : "opacity-0"}`}
+        className={`min-w-0 truncate text-base font-semibold transition-opacity duration-150 ${collapsed.shown ? "" : "opacity-0"}`}
       >
         {title}
       </p>
+      {updateLater && (
+        <div className="ml-auto pl-2 pr-2">
+          <UpdateButton />
+        </div>
+      )}
     </div>
   );
 }
