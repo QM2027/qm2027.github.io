@@ -1,8 +1,10 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect } from "react";
+import mark from "@/assets/brand/qm2027-mark.png";
 import { Icon } from "@/components/Icon";
 import { GUIDES } from "@/data/guides";
 import { NAV, SITE } from "@/lib/site";
@@ -74,8 +76,8 @@ export function AppNav() {
         aria-label="Sections"
         className="app-chrome fixed inset-y-0 left-0 z-[1010] hidden w-(--rail) flex-col items-center border-r border-border bg-background py-3 standalone:lg:flex"
       >
-        <Link href="/" className="mb-4 flex size-12 items-center justify-center font-serif text-sm font-semibold" title={SITE.guideName}>
-          QM
+        <Link href="/" className="mb-4 flex size-12 items-center justify-center" title={SITE.guideName}>
+          <Image src={mark} alt="Quark Matter 2027, home" loading="eager" className="h-auto w-11" />
         </Link>
         <ul className="flex flex-col gap-1">
           {NAV.map((item, i) => (

@@ -1,8 +1,10 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import logo from "@/assets/brand/qm2027-logo.png";
 import { NAV, SITE } from "@/lib/site";
 import { Icon } from "./Icon";
 import { isActive, screenOf } from "./pwa/AppNav";
@@ -39,10 +41,13 @@ export function SiteNav() {
     <header className="app-chrome sticky top-0 z-[1000] border-b border-border bg-background/95 pt-[env(safe-area-inset-top)] backdrop-blur">
       <AppTitleBar pathname={pathname} updateLater={updateLater} />
       <div className="mx-auto flex h-14 standalone:hidden max-w-7xl items-center justify-between px-4 lg:px-8">
-        <Link href="/" className="flex items-baseline gap-2">
-          <span className="font-serif text-lg font-semibold">QM2027</span>
-          {/* Narrow phones can't fit the subtitle beside the Install button. */}
-          <span className={`font-mono text-xs tracking-wider text-muted uppercase ${installMode || updateLater ? "max-[399px]:hidden" : ""}`}>
+        <Link href="/" className="flex items-center gap-3">
+          <Image src={logo} alt="Quark Matter 2027" loading="eager" className="h-7 w-auto" />
+          {/* The subtitle gives way where the bar runs out of room: on the narrowest phones, and
+              beside the Install/Update button on most phones and between md and lg (next to the links). */}
+          <span
+            className={`font-mono text-xs tracking-wider text-muted uppercase max-[339px]:hidden ${installMode || updateLater ? "max-[439px]:hidden md:max-lg:hidden" : ""}`}
+          >
             Jeju visitor guide
           </span>
         </Link>

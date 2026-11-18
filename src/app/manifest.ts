@@ -16,9 +16,10 @@ export default function manifest(): MetadataRoute.Manifest {
     background_color: "#ffffff",
     theme_color: "#111111",
     icons: [
-      { src: withBase("/icons/icon-192.png"), sizes: "192x192", type: "image/png" },
-      { src: withBase("/icons/icon-512.png"), sizes: "512x512", type: "image/png" },
-      { src: withBase("/icons/maskable-512.png"), sizes: "512x512", type: "image/png", purpose: "maskable" },
+      // New file names when the artwork changes: the service worker serves /icons/ cache-first.
+      { src: withBase("/icons/qm2027-192.png"), sizes: "192x192", type: "image/png" },
+      { src: withBase("/icons/qm2027-512.png"), sizes: "512x512", type: "image/png" },
+      { src: withBase("/icons/qm2027-maskable-512.png"), sizes: "512x512", type: "image/png", purpose: "maskable" },
     ],
     // Long-press the app icon (Android) or right-click it in the dock/taskbar (desktop).
     shortcuts: [
