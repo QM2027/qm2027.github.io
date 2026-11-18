@@ -216,6 +216,7 @@ function AppTitleBar({ pathname, updateLater }: { pathname: string; updateLater:
   const router = useRouter();
   const screen = screenOf(pathname);
   const { back } = screen;
+  const home = pathname.replace(/\/$/, "") === "";
   const collapsed = useCollapsedTitle(pathname);
   // Home's heading is the dates, not a name; elsewhere echo the heading the bar replaces.
   const title = (pathname !== "/" && collapsed.text) || screen.title;
@@ -247,9 +248,15 @@ function AppTitleBar({ pathname, updateLater }: { pathname: string; updateLater:
       ) : (
         <span className="w-2 shrink-0" />
       )}
+      {/* Home carries the logo on phones, where there's no rail to hold the mark. */}
+      {home && (
+        <Link href="/" className="flex items-center lg:hidden">
+          <Image src={logo} alt="Quark Matter 2027" loading="eager" className="h-7 w-auto" />
+        </Link>
+      )}
       <p
         aria-hidden={!collapsed.shown}
-        className={`min-w-0 truncate text-base font-semibold transition-opacity duration-150 ${collapsed.shown ? "" : "opacity-0"}`}
+        className={`min-w-0 truncate text-base font-semibold transition-opacity duration-150 ${home ? "max-lg:hidden" : ""} ${collapsed.shown ? "" : "opacity-0"}`}
       >
         {shownTitle}
       </p>
