@@ -23,6 +23,12 @@ export const HOURS: Record<string, PlaceHours> = {
   yeomiji: { text: "09:00–18:00, tickets until 17:30", open: "09:00", close: "18:00", lastEntry: "17:30", note: "The outdoor garden closes at sunset." },
   teddy: { text: "09:00–18:00, last entry 17:30", open: "09:00", close: "18:00", lastEntry: "17:30" },
   cheonjiyeon: { text: "09:00–22:00, tickets until 21:20", open: "09:00", close: "22:00", lastEntry: "21:20" },
+  // Added by hand from operator and tourism listings, not TourAPI; confirm before launch.
+  eongdeongmul: { text: "Open 24 hours" },
+  "alive-museum": { text: "09:00–19:00, last entry 18:00", open: "09:00", close: "19:00", lastEntry: "18:00" },
+  "jungmun-market": { text: "About 09:00–17:00 on market days", open: "09:00", close: "17:00", closed: "Except on dates ending in 3 or 8" },
+  "jungmun-yacht": { text: "Several sailings a day, about 09:40–16:10", open: "09:40", lastEntry: "16:10", note: "Times change with the sea; book and check on the day." },
+  "camellia-hill": { text: "08:30–18:30, last entry 17:30", open: "08:30", close: "18:30", lastEntry: "17:30" },
   jeongbang: { text: "09:00–17:20", open: "09:00", close: "17:20" },
   oedolgae: { text: "Open 24 hours" },
   "olle-market": { text: "07:00–20:00 (shops vary)", open: "07:00", close: "20:00" },

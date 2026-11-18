@@ -66,6 +66,7 @@ export function planTrip(input: PlanInput): { stops: Stop[]; returnTravel: numbe
   const pool = PLACES.filter(
     (p) =>
       p.durationMin > 0 &&
+      !p.skipPlanner &&
       p.durationMin <= input.minutes &&
       p.category !== "transport" &&
       p.category !== "health" &&

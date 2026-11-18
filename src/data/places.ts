@@ -18,6 +18,8 @@ export type Place = {
   march?: string;
   /** Free-form tags. Filters use "family" (good with children) and "accessible" (step-free main route). */
   tags?: string[];
+  /** Needs a booking or opens only on some dates, so the free-time planner leaves it out. */
+  skipPlanner?: boolean;
 };
 
 export const CATEGORIES: Record<Category, { label: string; color: string }> = {
@@ -38,6 +40,15 @@ export const PLACES: Place[] = [
   { id: "yeomiji", name: "Yeomiji Botanical Garden", nameKo: "여미지식물원", category: "nature", lat: 33.2526, lng: 126.4143, durationMin: 75, indoor: true, summary: "Large glasshouse garden next to the venue. Works on a rainy day.", tags: ["walkable", "family", "accessible"] },
   { id: "teddy", name: "Teddy Bear Museum", nameKo: "테디베어뮤지엄", category: "culture", lat: 33.2502, lng: 126.4122, durationMin: 60, indoor: true, summary: "Light-hearted museum in the Jungmun complex; easy with children.", tags: ["walkable", "family", "accessible"] },
   { id: "olle8", name: "Olle Trail Route 8", nameKo: "올레 8코스", category: "nature", lat: 33.2397, lng: 126.4233, durationMin: 120, summary: "The coastal Olle trail passes ICC Jeju. Good for an early walk or run.", tags: ["walkable", "running"] },
+  { id: "eongdeongmul", name: "Eongdeongmul Valley", nameKo: "엉덩물계곡", category: "nature", lat: 33.2482, lng: 126.4134, durationMin: 30, march: "Canola flowers cover the valley slopes, usually at their best in March.", summary: "Small valley between the resort hotels and Jungmun Beach, crossed by a deck path and a footbridge. Free, open at all hours, and on Olle Route 8.", tags: ["walkable", "canola", "photo"] },
+  { id: "beritnae", name: "Beritnae Oreum", nameKo: "베릿내오름", category: "nature", lat: 33.2487, lng: 126.4199, durationMin: 45, summary: "Wooded hill on the east rim of the Cheonjeyeon gorge; the name means \"stream where the stars come down\". A quiet stretch of Olle Route 8 with steps and boardwalks, free of charge.", tags: ["walkable", "oreum"] },
+  { id: "alive-museum", name: "Alive Museum Jungmun", nameKo: "박물관은 살아있다 제주중문점", category: "culture", lat: 33.2549, lng: 126.4087, durationMin: 60, indoor: true, summary: "Trick-art museum where you pose inside optical-illusion paintings. Easy with children on a rainy day.", tags: ["walkable", "family", "photo"] },
+  { id: "jungmun-market", name: "Jungmun Five-day Market", nameKo: "중문향토오일시장", category: "food", lat: 33.2511, lng: 126.4249, durationMin: 45, summary: "Local market that sets up only on dates ending in 3 or 8; during the conference, that is Tuesday 23 March. Produce, street snacks, fish and tangerines.", tags: ["walkable", "souvenirs"], skipPlanner: true },
+  { id: "jungmun-yacht", name: "Jungmun Yacht Tour", nameKo: "중문 퍼시픽마리나 요트투어", category: "sight", lat: 33.244, lng: 126.416, durationMin: 75, summary: "About an hour on a catamaran from the marina below the resort, past the Jusangjeolli cliffs. Book ahead; sailings are cancelled in rough sea.", tags: ["walkable", "family", "photo", "reservation"], skipPlanner: true },
+  { id: "yakcheonsa", name: "Yakcheonsa Temple", nameKo: "약천사", category: "culture", lat: 33.2462, lng: 126.4494, durationMin: 60, summary: "Large Buddhist temple above the sea in Daepo-dong, 5 minutes by taxi from ICC. The main hall (1996) houses a 4.5 m Vairocana Buddha. Free entry; temple stays can be booked.", tags: ["photo"] },
+
+  // Near Jungmun
+  { id: "camellia-hill", name: "Camellia Hill", nameKo: "카멜리아힐", category: "nature", lat: 33.2896, lng: 126.3699, durationMin: 75, march: "The late camellia varieties are usually still in flower in March.", summary: "Camellia arboretum with hundreds of varieties and garden paths, 15 minutes by car from Jungmun.", tags: ["family", "photo"] },
 
   // Seogwipo city
   { id: "cheonjiyeon", name: "Cheonjiyeon Falls", nameKo: "천지연폭포", category: "nature", lat: 33.2469, lng: 126.5543, durationMin: 45, summary: "22 m waterfall at the end of a lit path. Open in the evening.", tags: ["evening", "family", "accessible"] },
@@ -101,8 +112,15 @@ export const COURSES: Course[] = [
     id: "jungmun-walk",
     title: "Jungmun on foot",
     length: "2–3 h after sessions",
-    blurb: "Basalt columns, a waterfall gorge and the beach at sunset, all without a car.",
-    stops: ["jusangjeolli", "olle8", "saekdal", "cheonjeyeon"],
+    blurb: "Basalt columns, the beach, a canola valley and a waterfall gorge, all without a car.",
+    stops: ["jusangjeolli", "olle8", "saekdal", "eongdeongmul", "cheonjeyeon", "beritnae"],
+  },
+  {
+    id: "jungmun-rain",
+    title: "Jungmun on a rainy day",
+    length: "3 h · on foot or short taxi hops",
+    blurb: "Teddy bears, a glasshouse garden and trick art, all indoors within 2 km of the venue.",
+    stops: ["teddy", "yeomiji", "alive-museum"],
   },
   {
     id: "seogwipo-evening",
