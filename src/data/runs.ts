@@ -16,6 +16,11 @@ export type Run = {
   ele?: (number | null)[];
   /** Path is A..Z..A over the same points (see outAndBack). */
   outAndBack?: boolean;
+  /**
+   * Traced from third-party GPX (docs/olle_gpx/): shown on the map only, never offered
+   * as a GPX download.
+   */
+  noDownload?: boolean;
 };
 
 /** Out and back along the same points: A..Z then Z..A. */
@@ -60,6 +65,7 @@ export const RUNS: Run[] = [
     path: outAndBack(OLLE8_EAST),
     ele: outAndBack(OLLE8_EAST_ELE),
     outAndBack: true,
+    noDownload: true,
   },
   {
     id: "falls-beach",

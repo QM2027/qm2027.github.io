@@ -56,9 +56,15 @@ export function RunGuide() {
             </li>
           ))}
         </ul>
-        <button onClick={() => downloadGpx(run)} className="min-h-11 w-full rounded-md bg-sea font-semibold text-on-sea">
-          Download GPX: {run.title}
-        </button>
+        {run.noDownload ? (
+          <p className="rounded-md border border-border p-3 text-sm text-muted">
+            No GPX download for this route. It follows the marked Olle trail, so the ribbons are your guide.
+          </p>
+        ) : (
+          <button onClick={() => downloadGpx(run)} className="min-h-11 w-full rounded-md bg-sea font-semibold text-on-sea">
+            Download GPX: {run.title}
+          </button>
+        )}
         <p className="text-xs text-muted">Routes are approximate. Follow signs and Olle ribbons on the ground.</p>
       </div>
 

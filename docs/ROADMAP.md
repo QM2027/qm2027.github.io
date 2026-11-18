@@ -26,7 +26,7 @@
 - [ ] 장소 좌표 검증 (Kakao/Naver Map 대조) — [src/data/places.ts](../src/data/places.ts). 2026-11-18 TourAPI·OSM과 대조: 4·3평화공원(4.8 km)·여미지(470 m) 수정. 남은 확인: 사려니숲길(어느 입구), 외돌개·색달해변(주차장/해변, 색달은 지도에서 바다 위; 올레8은 2026-11-18 올레 GPX 위 ICC 최근접점으로 이동), 대조 불가 9곳(leejungseop, astro-seogwipo, bonte, seongpanak, jeonnongro, cju, seongsan-port, 병원 2)
 - [ ] ICC Jeju 좌표 검증 — [src/lib/geo.ts](../src/lib/geo.ts) `ICC`. OSM 건물 위치(33.2435, 126.4249)와 약 250 m 차이: 정문 기준으로 확정 필요 (거리 계산·러닝 출발점)
 - [ ] 공항버스 600 요금·소요시간·승차 위치, 택시·렌터카 요금 확인 — [src/app/getting-there/page.tsx](../src/app/getting-there/page.tsx)
-- [ ] 러닝 코스 경로를 실제 GPX로 다시 그리기 — [src/data/runs.ts](../src/data/runs.ts). 2026-11-18 올레8(ICC→대포포구 왕복)은 블로그 올레 GPX(docs/olle_gpx/, gitignore)에서 [scripts/olle-slice.mjs](../scripts/olle-slice.mjs)로 추출. 남은 것: resort-loop·falls-beach (올레 구간 아님, 손으로 그린 상태)
+- [ ] 러닝 코스 경로를 실제 GPX로 다시 그리기 — [src/data/runs.ts](../src/data/runs.ts). 2026-11-18 올레8(ICC→대포포구 왕복)은 블로그 올레 GPX(docs/olle_gpx/, gitignore)에서 [scripts/olle-slice.mjs](../scripts/olle-slice.mjs)로 추출. 블로그 GPX 유래 경로는 지도 표시만, GPX 다운로드 제공 안 함 (`noDownload`). 남은 것: resort-loop·falls-beach (올레 구간 아님, 손으로 그린 상태)
 - [ ] 시즌 날짜(개화 예상, 들불축제·걷기대회 2027 일정) 확인 — [src/data/season.ts](../src/data/season.ts)
 - [ ] 스탬프 투어 체크인 반경 현장 테스트 — [src/data/passport.ts](../src/data/passport.ts)
 - [ ] 국내선 소요시간·환승 안내 확인 — [src/data/korea.ts](../src/data/korea.ts)
