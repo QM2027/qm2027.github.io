@@ -32,14 +32,20 @@ const SYNC_MS = 5 * 60_000;
 
 self.addEventListener("install", (event) => {
   // Pre-cache every page and the current program so the guide works offline after the first visit,
-  // even if the visitor never opened the program.
+  // even if the visitor never opened the program. A first install activates right away; an update
+  // waits until the visitor taps "Update" (see PwaSupport), so an open page never loses the
+  // scripts it was built with mid-session.
   event.waitUntil(
     Promise.allSettled([
       caches.open(PAGES).then((c) => Promise.allSettled(SHELL.map((url) => c.add(url)))),
       precacheAssets(),
       syncProgram(),
-    ]).then(() => self.skipWaiting()),
+    ]),
   );
+});
+
+self.addEventListener("message", (event) => {
+  if (event.data?.type === "skip-waiting") self.skipWaiting();
 });
 
 self.addEventListener("activate", (event) => {
