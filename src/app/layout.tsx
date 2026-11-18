@@ -1,10 +1,12 @@
 import type { Metadata, Viewport } from "next";
 import { IBM_Plex_Mono, IBM_Plex_Sans, IBM_Plex_Sans_KR, Source_Serif_4 } from "next/font/google";
 import { DevNotice } from "@/components/DevNotice";
+import { PrefsSync } from "@/components/Edition";
 import { AppNav } from "@/components/pwa/AppNav";
 import { PwaSupport } from "@/components/pwa/PwaSupport";
 import { SiteFooter } from "@/components/SiteFooter";
 import { SiteNav } from "@/components/SiteNav";
+import { PREFS_SCRIPT } from "@/lib/edition-script";
 import { SITE, SITE_URL } from "@/lib/site";
 import "./globals.css";
 
@@ -37,8 +39,14 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
     <html
       lang="en"
       className={`${serif.variable} ${sans.variable} ${sansKr.variable} ${mono.variable} h-full antialiased`}
+      // The preview script below adds data-edition / data-notice before React hydrates.
+      suppressHydrationWarning
     >
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: PREFS_SCRIPT }} />
+      </head>
       <body className="flex min-h-full flex-col font-sans has-[[data-fill-viewport]]:h-dvh">
+        <PrefsSync />
         <SiteNav />
         <DevNotice />
         <div className="flex min-h-0 flex-1 flex-col pb-[env(safe-area-inset-bottom)] standalone:max-lg:pb-0">

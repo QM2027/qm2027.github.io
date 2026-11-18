@@ -23,3 +23,14 @@ export const NAV = [
   { href: "/travel/", label: "Travel", icon: "route" },
   { href: "/program/", label: "Program", icon: "calendar" },
 ] as const;
+
+/** Tabs of the conference-app edition (preview, `?edition=app`). `also`: paths the tab stands for. */
+export const NAV_APP = [
+  { href: "/", label: "Home", icon: "home" },
+  { href: "/program/", label: "Program", icon: "calendar" },
+  { href: "/venue/", label: "Venue", icon: "building" },
+  { href: "/jeju/", label: "Jeju", icon: "map", also: ["/explore/", "/travel/", "/getting-there/"] },
+  { href: "/info/", label: "Info", icon: "doc" },
+] as const;
+
+export type NavItem = { href: string; label: string; also?: readonly string[] };

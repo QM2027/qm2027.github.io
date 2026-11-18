@@ -5,9 +5,9 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import logo from "@/assets/brand/qm2027-logo.png";
-import { NAV, SITE } from "@/lib/site";
+import { NAV, NAV_APP, SITE } from "@/lib/site";
 import { Icon } from "./Icon";
-import { isActive, screenOf } from "./pwa/AppNav";
+import { isActiveItem, screenOf } from "./pwa/AppNav";
 import { install, useInstall } from "./pwa/install";
 import { applyUpdate, useUpdate } from "./pwa/update";
 
@@ -46,9 +46,14 @@ export function SiteNav() {
           {/* The subtitle gives way where the bar runs out of room: on the narrowest phones, and
               beside the Install/Update button on most phones and between md and lg (next to the links). */}
           <span
-            className={`font-mono text-xs tracking-wider text-muted uppercase max-[339px]:hidden ${installMode || updateLater ? "max-[439px]:hidden md:max-lg:hidden" : ""}`}
+            className={`guide-only font-mono text-xs tracking-wider text-muted uppercase max-[339px]:hidden ${installMode || updateLater ? "max-[439px]:hidden md:max-lg:hidden" : ""}`}
           >
             Jeju visitor guide
+          </span>
+          <span
+            className={`app-only font-mono text-xs tracking-wider text-muted uppercase max-[339px]:hidden ${installMode || updateLater ? "max-[439px]:hidden md:max-lg:hidden" : ""}`}
+          >
+            Conference app
           </span>
         </Link>
         <div className="flex h-full items-center gap-2 md:gap-6">
@@ -57,8 +62,18 @@ export function SiteNav() {
               <Link
                 key={item.href}
                 href={item.href}
-                aria-current={isActive(pathname, item.href) ? "page" : undefined}
-                className="flex items-center border-b-2 border-transparent text-sm text-muted hover:text-foreground aria-[current=page]:border-foreground aria-[current=page]:text-foreground"
+                aria-current={isActiveItem(pathname, item) ? "page" : undefined}
+                className="guide-only flex items-center border-b-2 border-transparent text-sm text-muted hover:text-foreground aria-[current=page]:border-foreground aria-[current=page]:text-foreground"
+              >
+                {item.label}
+              </Link>
+            ))}
+            {NAV_APP.map((item) => (
+              <Link
+                key={item.href}
+                href={item.href}
+                aria-current={isActiveItem(pathname, item) ? "page" : undefined}
+                className="app-only flex items-center border-b-2 border-transparent text-sm text-muted hover:text-foreground aria-[current=page]:border-foreground aria-[current=page]:text-foreground"
               >
                 {item.label}
               </Link>
@@ -105,11 +120,24 @@ export function SiteNav() {
         <nav id="site-menu" aria-label="Menu" className="border-t border-border bg-background md:hidden standalone:hidden">
           <ul className="mx-auto max-w-7xl px-4 py-2">
             {NAV.map((item) => (
-              <li key={item.href}>
+              <li key={item.href} className="guide-only">
                 <Link
                   href={item.href}
                   onClick={() => setMenuOpen(false)}
-                  aria-current={isActive(pathname, item.href) ? "page" : undefined}
+                  aria-current={isActiveItem(pathname, item) ? "page" : undefined}
+                  className="flex items-center gap-3 py-3 text-muted hover:text-foreground aria-[current=page]:text-foreground aria-[current=page]:font-medium"
+                >
+                  <Icon name={item.icon} className="size-5" />
+                  {item.label}
+                </Link>
+              </li>
+            ))}
+            {NAV_APP.map((item) => (
+              <li key={item.href} className="app-only">
+                <Link
+                  href={item.href}
+                  onClick={() => setMenuOpen(false)}
+                  aria-current={isActiveItem(pathname, item) ? "page" : undefined}
                   className="flex items-center gap-3 py-3 text-muted hover:text-foreground aria-[current=page]:text-foreground aria-[current=page]:font-medium"
                 >
                   <Icon name={item.icon} className="size-5" />

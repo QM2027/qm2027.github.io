@@ -22,6 +22,8 @@ const SHELL = [
   "explore/plan/", "explore/season/", "explore/food/", "explore/run/",
   "explore/science/", "explore/hallasan/", "explore/companions/",
   "explore/passport/", "explore/korea/",
+  // Tabs of the conference-app edition (preview, ?edition=app).
+  "jeju/", "info/",
 ].map((p) => BASE + p);
 // QM2027/program-data is published at the host root, next to this site. index.json names the
 // current hashed files; those never change once published.

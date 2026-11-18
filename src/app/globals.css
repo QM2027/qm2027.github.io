@@ -3,6 +3,13 @@
 /* Opened from the home screen / dock rather than a browser tab. */
 @custom-variant standalone (@media (display-mode: standalone));
 
+/* Preview switches set by the inline script in the root layout (src/lib/edition-script.ts). */
+html[data-edition="app"] .guide-only,
+html:not([data-edition="app"]) .app-only,
+html[data-notice="off"] .dev-notice {
+  display: none !important;
+}
+
 /* Neutral palette: white, greys, near-black ink, one warm accent. */
 :root {
   --background: #ffffff;

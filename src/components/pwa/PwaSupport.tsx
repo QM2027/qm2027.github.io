@@ -83,7 +83,8 @@ export function PwaSupport() {
   return (
     <div role="dialog" aria-label="Install the guide" className={BANNER}>
       <div className="flex-1 text-sm">
-        <p className="font-semibold">Use the guide offline</p>
+        <p className="guide-only font-semibold">Use the guide offline</p>
+        <p className="app-only font-semibold">Use the app offline</p>
         {mode === "ios" ? (
           <p className="mt-1 text-on-sea/75">Tap the Share button, then “Add to Home Screen”. Maps you&apos;ve viewed and all guides will work without signal.</p>
         ) : mode === "mac-safari" ? (

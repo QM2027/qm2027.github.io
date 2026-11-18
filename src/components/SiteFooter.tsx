@@ -13,7 +13,15 @@ export function SiteFooter() {
   return (
     <footer className={`mt-auto border-t border-border ${path === "/" ? "" : "standalone:hidden"}`}>
       <div className="mx-auto max-w-7xl px-4 py-6 text-sm text-muted lg:px-8">
-        <p>
+        <p className="app-only">
+          The {SITE.shortName} conference app, by the organizing committee. The program is synced from Indico;
+          registration, abstracts and official documents are on the{" "}
+          <a href={SITE.indico} target="_blank" rel="noreferrer" className="text-sea underline">
+            Indico site
+          </a>
+          .
+        </p>
+        <p className="guide-only">
           {SITE.guideName} is a companion travel guide prepared by the {SITE.shortName} organizing committee. For
           registration, the program, deadlines and official announcements, see the{" "}
           <a href={SITE.indico} target="_blank" rel="noreferrer" className="text-sea underline">

@@ -26,12 +26,13 @@ import { pinnedNow, useNow } from "@/lib/use-now";
 /** From the day before the first session (arrivals, registration) to the end of the last one. */
 const WINDOW = { from: Date.parse(SITE.start) - 24 * 3600_000, to: Date.parse(SITE.end) };
 
-export function HappeningNow() {
+/** `limit`: show at most this many running sessions, then a link to the rest (the app edition's home). */
+export function HappeningNow({ limit }: { limit?: number } = {}) {
   const pinned = useSearchParams().get("now");
   const now = pinnedNow(pinned, useNow());
   if (now === undefined) return null;
   if (!pinned && (now < WINDOW.from || now > WINDOW.to)) return null;
-  return <Live now={now} />;
+  return <Live now={now} limit={limit} />;
 }
 
 type Running = { session: Session; talk?: Contribution; nextTalk?: Contribution };
@@ -92,7 +93,7 @@ export function happening(program: Program, now: number, saved: ReadonlySet<stri
   return { running, posters, pause: breaks.find((b) => isRunning(b, now)), next, mine };
 }
 
-function Live({ now }: { now: number }) {
+function Live({ now, limit = Infinity }: { now: number; limit?: number }) {
   const program = useProgram();
   const [saved] = useLocalSet("qm2027:my-schedule");
   if (program.status !== "ok") return null;
@@ -146,10 +147,15 @@ function Live({ now }: { now: number }) {
 
         {h.running.length > 0 && (
           <ul className="mt-5 grid border-t border-border md:grid-cols-2 md:gap-x-10 lg:grid-cols-3">
-            {h.running.map((r) => (
+            {h.running.slice(0, limit).map((r) => (
               <RunningSession key={r.session.id} r={r} today={today} />
             ))}
           </ul>
+        )}
+        {h.running.length > limit && (
+          <Link href={`/program/?day=${today}`} className="mt-3 inline-block text-sm underline decoration-border underline-offset-4 hover:decoration-foreground">
+            {h.running.length - limit} more {h.running.length - limit === 1 ? "session" : "sessions"} running now
+          </Link>
         )}
 
         {h.posters.map((s) => (

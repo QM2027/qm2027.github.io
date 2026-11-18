@@ -3,18 +3,12 @@ import Link from "next/link";
 import { CurrencyConverter } from "@/components/travel/CurrencyConverter";
 import { PhraseBook } from "@/components/travel/PhraseBook";
 import { WeatherCard } from "@/components/travel/WeatherCard";
+import { EMERGENCY } from "@/data/emergency";
 
 export const metadata: Metadata = {
   title: "Travel toolkit",
   description: "Live Jeju weather, currency converter, emergency numbers, Korean phrase cards and practical tips.",
 };
-
-const EMERGENCY = [
-  { n: "119", what: "Fire & ambulance" },
-  { n: "112", what: "Police" },
-  { n: "1330", what: "Tourist hotline (English, 24 h)" },
-  { n: "1345", what: "Immigration contact center" },
-];
 
 const LINKS = [
   { href: "/getting-there/", title: "Airport → venue", text: "Bus, taxi and car compared, plus a taxi card." },

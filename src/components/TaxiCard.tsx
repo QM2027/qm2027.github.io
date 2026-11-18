@@ -17,7 +17,8 @@ export function TaxiCard() {
   const ko = custom.trim() || dest.ko;
 
   return (
-    <div className="rounded-md border border-border bg-surface p-4 sm:p-6">
+    // #taxi: linked from the app edition's home. scroll-mt clears the sticky header.
+    <div id="taxi" className="scroll-mt-24 rounded-md border border-border bg-surface p-4 sm:p-6">
       <h2 className="text-lg font-semibold">Show-the-driver card</h2>
       <p className="mt-1 text-sm text-muted">
         Pick a destination or paste your hotel’s Korean name (it’s in your booking confirmation), then tap

@@ -1,0 +1,139 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Edition comparison</title>
+<!--
+  The visitor guide and the conference-app edition side by side, for discussion.
+  Each frame is named "qm2027:edition=…&notice=…"; the site's inline script reads that name (see
+  src/lib/edition-script.ts), so the frames keep their edition while you click around in them
+  and never touch this browser's own setting.
+-->
+<style>
+  :root {
+    --bg: #ffffff; --fg: #111111; --muted: #666666; --border: #e2e2e2; --surface: #f5f5f5; --accent: #bd400c;
+    color-scheme: light dark;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root { --bg: #0e0e0e; --fg: #ececec; --muted: #9a9a9a; --border: #2b2b2b; --surface: #191919; --accent: #ff7a3d; }
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--fg); font: 15px/1.5 system-ui, sans-serif; }
+  header { position: sticky; top: 0; z-index: 1; background: var(--bg); border-bottom: 1px solid var(--border); padding: 12px 16px; display: flex; flex-wrap: wrap; gap: 12px 24px; align-items: center; }
+  h1 { margin: 0; font: 500 12px/1 ui-monospace, monospace; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); }
+  .group { display: flex; flex-wrap: wrap; gap: 4px; align-items: center; }
+  .group > span { font: 12px ui-monospace, monospace; color: var(--muted); margin-right: 4px; }
+  button { font: inherit; font-size: 14px; color: var(--fg); background: none; border: 1px solid var(--border); border-radius: 6px; padding: 6px 10px; cursor: pointer; }
+  button:hover { background: var(--surface); }
+  button[aria-pressed="true"] { border-color: var(--fg); background: var(--fg); color: var(--bg); }
+  label { display: flex; gap: 6px; align-items: center; font-size: 14px; }
+  #hint { flex-basis: 100%; margin: 0; font-size: 13px; color: var(--muted); }
+  main { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px; padding: 20px 16px 40px; }
+  main.phone { justify-content: center; grid-template-columns: repeat(2, 390px); }
+  figure { margin: 0; min-width: 0; }
+  figcaption { font: 500 12px ui-monospace, monospace; letter-spacing: .08em; text-transform: uppercase; margin-bottom: 8px; display: flex; justify-content: space-between; gap: 8px; }
+  figcaption a { color: var(--muted); text-transform: none; letter-spacing: 0; }
+  .viewport { border: 1px solid var(--border); overflow: hidden; position: relative; }
+  iframe { border: 0; display: block; transform-origin: 0 0; background: var(--bg); }
+  @media (max-width: 860px) {
+    main, main.phone { grid-template-columns: minmax(0, 1fr); justify-items: center; }
+    main.phone figure { width: min(390px, 100%); }
+  }
+</style>
+</head>
+<body>
+<header>
+  <h1>QM2027 · Visitor guide vs conference app</h1>
+  <div class="group" id="phases"><span>When</span></div>
+  <div class="group" id="sizes"><span>Size</span></div>
+  <label><input type="checkbox" id="notice"> Hide “Not fully developed” bar</label>
+  <p id="hint"></p>
+</header>
+<main id="frames"></main>
+<script>
+  // Times are pinned with ?now=. The conference week uses the QM2025 program that program-data
+  // publishes until the QM2027 timetable is out, so those presets also force ?phase=week.
+  const PHASES = [
+    { id: "live", label: "Live", q: "", hint: "Today’s real date." },
+    { id: "prep", label: "Before (Dec)", q: "now=2026-12-01T10:00:00%2B09:00", hint: "1 Dec 2026: registration open, next deadlines ahead." },
+    { id: "departure", label: "Before (Mar)", q: "now=2027-03-05T10:00:00%2B09:00", hint: "5 Mar 2027: registration closed, trip preparation." },
+    { id: "arrival", label: "Arrival", q: "now=2025-04-05T17:00:00%2B02:00&phase=week", hint: "The day before the opening, shown with the QM2025 program." },
+    { id: "week", label: "During", q: "now=2025-04-08T11:20:00%2B02:00&phase=week", hint: "Mid-morning on day 3, shown with the QM2025 program." },
+    { id: "after", label: "After", q: "now=2027-04-01T10:00:00%2B09:00", hint: "1 Apr 2027: the conference is over." },
+  ];
+  const SIZES = [
+    { id: "phone", label: "Phone", w: 390, h: 844 },
+    { id: "desktop", label: "Desktop", w: 1280, h: 800 },
+  ];
+  const EDITIONS = [
+    { id: "guide", label: "Visitor guide (live)" },
+    { id: "app", label: "Conference app (preview)" },
+  ];
+
+  const state = { phase: "week", size: "phone", notice: true };
+  try { Object.assign(state, JSON.parse(sessionStorage.getItem("compare") || "{}")); } catch (_) {}
+
+  const $ = (id) => document.getElementById(id);
+  function buttons(container, items, key) {
+    for (const it of items) {
+      const b = document.createElement("button");
+      b.type = "button";
+      b.textContent = it.label;
+      b.dataset.id = it.id;
+      b.onclick = () => { state[key] = it.id; render(); };
+      container.append(b);
+    }
+  }
+  buttons($("phases"), PHASES, "phase");
+  buttons($("sizes"), SIZES, "size");
+  $("notice").onchange = (e) => { state.notice = !e.target.checked; render(); };
+
+  function fit() {
+    const size = SIZES.find((s) => s.id === state.size);
+    for (const vp of document.querySelectorAll(".viewport")) {
+      const scale = Math.min(1, vp.parentElement.clientWidth / size.w);
+      vp.style.width = size.w * scale + "px";
+      vp.style.height = size.h * scale + "px";
+      vp.firstElementChild.style.transform = `scale(${scale})`;
+    }
+  }
+
+  function render() {
+    try { sessionStorage.setItem("compare", JSON.stringify(state)); } catch (_) {}
+    for (const b of document.querySelectorAll("#phases button")) b.setAttribute("aria-pressed", String(b.dataset.id === state.phase));
+    for (const b of document.querySelectorAll("#sizes button")) b.setAttribute("aria-pressed", String(b.dataset.id === state.size));
+    $("notice").checked = !state.notice;
+    const phase = PHASES.find((p) => p.id === state.phase) || PHASES[0];
+    const size = SIZES.find((s) => s.id === state.size);
+    $("hint").textContent = phase.hint + " Links inside each frame keep its edition.";
+
+    const frames = $("frames");
+    frames.className = state.size;
+    frames.replaceChildren();
+    for (const ed of EDITIONS) {
+      const prefs = new URLSearchParams();
+      if (ed.id === "app") prefs.set("edition", "app");
+      if (!state.notice) prefs.set("notice", "off");
+      const src = "./" + (phase.q ? "?" + phase.q : "");
+      // The same view in a tab of its own (this sets that tab's remembered edition).
+      const own = "./?" + [phase.q, "edition=" + ed.id, state.notice ? "notice=on" : "notice=off"].filter(Boolean).join("&");
+
+      const fig = document.createElement("figure");
+      fig.innerHTML = `<figcaption><span>${ed.label}</span><a href="${own}" target="_blank" rel="noopener">Open in a tab ↗</a></figcaption><div class="viewport"><iframe title="${ed.label}"></iframe></div>`;
+      const iframe = fig.querySelector("iframe");
+      iframe.name = "qm2027:" + prefs.toString();
+      iframe.width = size.w;
+      iframe.height = size.h;
+      iframe.src = src;
+      frames.append(fig);
+    }
+    fit();
+  }
+
+  addEventListener("resize", fit);
+  render();
+</script>
+</body>
+</html>
