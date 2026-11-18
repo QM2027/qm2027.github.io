@@ -107,6 +107,19 @@
 - [ ] **Code of Conduct** — 행동 강령 게시 (가이드 성격 유지 시 Indico 링크, 메인 앱이면 본문 게시). 원문은 조직위 확정본 사용
 - [ ] **옴부즈퍼슨 안내** — 담당자, 연락 방법, 신고 절차. CoC 페이지와 함께 두고 홈/메뉴에서 쉽게 찾게. 연락처는 조직위 확정 후 기입
 
+### 10. 학회 종료 후 아카이브 (2027-03-27 이후)
+목표: 데이터를 고정하고, 모든 Action이 멈추거나 데이터 저장소(program-data, weather-data, tour-data)의 Pages 배포가 사라져도 사이트가 그대로 동작하게 main repo 하나로 **패킹**.
+
+- [ ] Indico에서 마지막 동기화(최종 프로그램·초록 반영) 확인 후 데이터 고정
+- [ ] program-data의 최종 `index.json`·해시 파일(program, abstracts), tour-data 최종 JSON을 main repo `public/`에 커밋하고, 사이트가 외부 데이터 저장소 대신 이 파일을 읽게 경로 교체
+- [ ] 폴링 중단(index.json 5분 폴링, 탭 복귀 갱신), Updates·"내 항목 변경" 배너·NOW 표시 등 실시간 기능을 종료 상태로 정리
+- [ ] 실시간 날씨(Open-Meteo/기상청)·플래너 예보 제거 또는 3월 평년 기후만 표시
+- [ ] 데이터 저장소들의 cron 워크플로 비활성화(Actions → Disable workflow) 후 저장소 archive
+- [ ] `DATA_GO_KR_KEY` 조직 시크릿 삭제, data.go.kr 활용신청 해지
+- [ ] main repo 배포 워크플로가 외부 저장소·시크릿 없이 빌드되는지 확인 (빌드 타임 외부 fetch 제거)
+- [ ] `public/sw.js` 캐시 버전 올려 설치된 PWA가 고정 데이터로 갱신되게, 오프라인 열람 재확인
+- [ ] 홈·푸터에 "학회 종료, 기록 보관용" 안내, Indico 링크는 유지
+
 ## 💡 서버가 필요한 기능 (필요 시 Vercel 전환)
 - 푸시 알림 → 9단계로 이동
 - talk Q&A / 평점
