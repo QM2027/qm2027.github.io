@@ -380,7 +380,6 @@ function ProgramBrowser({
           <TopicList
             program={program}
             open={params.get("topic") ?? undefined}
-            onPosters={(track) => go({ view: "posters", track, ps: undefined, topic: undefined })}
             {...listProps}
           />
         ) : view === "speakers" ? (
