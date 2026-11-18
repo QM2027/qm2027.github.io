@@ -1,6 +1,6 @@
-// The Olle 8 route is traced from an Olle GPX (scripts/olle-slice.mjs, trkpt 122..75 of
-// course 8, local copy in docs/olle_gpx/). The other two are still hand-drawn and
-// approximate. Keep runners on marked paths either way.
+// The Olle 8 route is traced from a GPX of the course (scripts/olle-slice.mjs, trkpt
+// 122..75, --fill); elevations the trace lacked come from SRTM 30 m. The other two are
+// still hand-drawn and approximate. Keep runners on marked paths either way.
 
 import { ICC, type LatLng } from "@/lib/geo";
 
@@ -16,10 +16,7 @@ export type Run = {
   ele?: (number | null)[];
   /** Path is A..Z..A over the same points (see outAndBack). */
   outAndBack?: boolean;
-  /**
-   * Traced from third-party GPX (docs/olle_gpx/): shown on the map only, never offered
-   * as a GPX download.
-   */
+  /** Shown on the map only, never offered as a GPX download. */
   noDownload?: boolean;
 };
 
@@ -42,7 +39,7 @@ const OLLE8_EAST: [number, number][] = [
   [33.23769, 126.4365], [33.23813, 126.43676], [33.2382, 126.43674], [33.23889, 126.43669],
   [33.23887, 126.43689], [33.23898, 126.4372], [33.2391, 126.43769], [33.23911, 126.43841],
 ];
-const OLLE8_EAST_ELE: (number | null)[] = [null, 28, 28, 27, 27, 22, 17, 17, 17, 18, 15, 10, 9, null, null, null, null, null, null, null, null, null, null, 11, 11, 10, null, null, null, null, null, null, null, null, null, 9, 7, 7, 6, 6, 9, 12, 13, 14, 19, 17, 14, 10, 7];
+const OLLE8_EAST_ELE: (number | null)[] = [25, 28, 28, 27, 27, 22, 17, 17, 17, 18, 15, 10, 9, 9, 10, 9, 9, 10, 9, 8, 11, 12, 14, 11, 11, 10, 11, 10, 9, 11, 10, 8, 7, 8, 9, 9, 7, 7, 6, 6, 9, 12, 13, 14, 19, 17, 14, 10, 7];
 
 export const RUNS: Run[] = [
   {
