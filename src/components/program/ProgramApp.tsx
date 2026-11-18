@@ -12,6 +12,7 @@ import {
   dayOf,
   isRunning,
   overlaps,
+  QM2027_EVENT_ID,
   useProgram,
   type Contribution,
   type Program,
@@ -124,6 +125,12 @@ function ProgramBrowser({ program }: { program: Program }) {
 
   return (
     <div>
+      {program.eventId !== QM2027_EVENT_ID && (
+        <p className="mb-3 rounded-md border border-border bg-surface p-3 text-sm">
+          <b>Preview.</b> The QM2027 timetable isn&apos;t on Indico yet, so this shows the program of a past
+          conference (Indico event {program.eventId}) to try the features. Times are that event&apos;s local time.
+        </p>
+      )}
       <div className="sticky top-14 z-20 -mx-4 space-y-3 bg-background/95 px-4 py-3 backdrop-blur lg:-mx-8 lg:px-8">
         <input
           type="search"

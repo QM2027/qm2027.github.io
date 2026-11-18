@@ -61,6 +61,9 @@ export const PROGRAM_URL =
   process.env.NEXT_PUBLIC_PROGRAM_URL ??
   (process.env.NODE_ENV === "development" ? "https://qm2027.github.io/program-data/program.json" : "/program-data/program.json");
 
+/** program-data may publish a past conference for testing; the UI labels that as a preview. */
+export const QM2027_EVENT_ID = "1622375";
+
 const REFRESH_MS = 5 * 60_000;
 
 type ProgramState = { status: "loading" } | { status: "ok"; data: Program } | { status: "error" };
