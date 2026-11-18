@@ -3,62 +3,43 @@
 import { useEffect, useState } from "react";
 import { Icon } from "@/components/Icon";
 import { withBase } from "@/lib/paths";
-
-type InstallEvent = Event & { prompt: () => Promise<void> };
+import { closeInstallHelp, install, useInstall } from "./install";
 
 const DISMISS_KEY = "qm2027:install-dismissed";
 
-/** Registers the service worker and offers "add to home screen" once per device. */
+/**
+ * Registers the service worker and offers "add to home screen" once per device.
+ * The header's Install button reopens the same banner where there is no native prompt.
+ */
 export function PwaSupport() {
-  const [deferred, setDeferred] = useState<InstallEvent>();
-  const [ios, setIos] = useState(false);
-  const [hidden, setHidden] = useState(true);
+  const { mode, helpOpen } = useInstall();
+  const [auto, setAuto] = useState(false);
 
   useEffect(() => {
     if (process.env.NODE_ENV === "production" && "serviceWorker" in navigator) {
       navigator.serviceWorker.register(withBase("/sw.js"), { scope: withBase("/") }).catch(() => {});
     }
-
-    let dismissed = false;
-    try {
-      dismissed = localStorage.getItem(DISMISS_KEY) === "1";
-    } catch {}
-    const standalone =
-      window.matchMedia("(display-mode: standalone)").matches ||
-      (navigator as Navigator & { standalone?: boolean }).standalone === true;
-    if (dismissed || standalone) return;
-
-    const onPrompt = (e: Event) => {
-      e.preventDefault();
-      setDeferred(e as InstallEvent);
-      setHidden(false);
-    };
-    window.addEventListener("beforeinstallprompt", onPrompt);
-
-    // iOS Safari has no install prompt; show instructions instead.
-    const isIos = /iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
-    if (isIos) {
-      // Deferred so the banner doesn't flash during hydration.
-      const id = setTimeout(() => {
-        setIos(true);
-        setHidden(false);
-      }, 1500);
-      return () => {
-        clearTimeout(id);
-        window.removeEventListener("beforeinstallprompt", onPrompt);
-      };
-    }
-    return () => window.removeEventListener("beforeinstallprompt", onPrompt);
   }, []);
 
+  useEffect(() => {
+    if (mode !== "prompt" && mode !== "ios") return;
+    try {
+      if (localStorage.getItem(DISMISS_KEY) === "1") return;
+    } catch {}
+    // Deferred on iOS so the banner doesn't flash during hydration.
+    const id = setTimeout(() => setAuto(true), mode === "ios" ? 1500 : 0);
+    return () => clearTimeout(id);
+  }, [mode]);
+
   function dismiss() {
-    setHidden(true);
+    setAuto(false);
+    closeInstallHelp();
     try {
       localStorage.setItem(DISMISS_KEY, "1");
     } catch {}
   }
 
-  if (hidden) return null;
+  if (!mode || !(auto || helpOpen)) return null;
 
   return (
     <div
@@ -68,14 +49,16 @@ export function PwaSupport() {
     >
       <div className="flex-1 text-sm">
         <p className="font-semibold">Use the guide offline</p>
-        {ios ? (
+        {mode === "ios" ? (
           <p className="mt-1 text-muted">Tap the Share button, then “Add to Home Screen”. Maps you&apos;ve viewed and all guides will work without signal.</p>
+        ) : mode === "mac-safari" ? (
+          <p className="mt-1 text-muted">In Safari, choose File › Add to Dock. Guides and maps you&apos;ve viewed work without signal.</p>
         ) : (
           <>
             <p className="mt-1 text-muted">Install it on this device. Guides and maps you&apos;ve viewed work without signal.</p>
             <button
               onClick={async () => {
-                await deferred?.prompt();
+                await install();
                 dismiss();
               }}
               className="mt-2 min-h-10 rounded-md bg-sea px-4 font-semibold text-on-sea"
