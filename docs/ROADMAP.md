@@ -75,8 +75,8 @@
 - [ ] 제주관광공사 / 제주컨벤션뷰로 MICE 지원 문의 (사진 라이선스, 문화공연, 웰컴키트, 쿠폰) — 조직위 담당
 
 ### 8. Indico 연동 ✅ (QM2025 데이터로 검증, QM2027 시간표 공개 대기)
-- [x] [QM2027/program-data](https://github.com/QM2027/program-data) — timetable + contributions export 병합(포스터 포함), `overrides.json` 보정, Pages로 `program.json`만 배포(커밋 없음, 이전 스냅샷 = 라이브 파일, 변경 내역 diff)
-- [x] 사이트는 `/program-data/program.json`을 CSR로 로드 (`no-cache`, 탭 복귀·5분마다 갱신) — 프로그램 변경에 사이트 재빌드 불필요. cron 6h, 3/15–28은 5분 + 수동 실행
+- [x] [QM2027/program-data](https://github.com/QM2027/program-data) — timetable + contributions export 병합(포스터 포함), `overrides.json` 보정, Pages로 `index.json` + 해시 파일(program, abstracts)만 배포(커밋 없음, 이전 스냅샷 = 라이브 파일). 이벤트 시간대 변환, 포스터는 세션 배치로 판정, 축소 방지, 세션 단위 변경 묶음
+- [x] 사이트는 `/program-data/index.json`을 CSR로 폴링(`no-cache`, 탭 복귀·5분마다), 해시 파일은 버전당 한 번, 초록은 나중에 — 프로그램 변경에 사이트 재빌드 불필요. cron 6h, 3/15–28은 5분 + 수동 실행
 - [x] `/program`: 일자별 세션(병렬 세션 나란히), NOW 표시, 발표 상세 패널, Indico 링크
 - [x] My schedule (localStorage), 시간 겹침·변경 경고, `.ics` 내보내기
 - [x] 검색 (제목·발표자·소속·초록, 클라이언트 필터 — 의존성 없음)

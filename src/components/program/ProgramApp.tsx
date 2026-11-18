@@ -7,13 +7,17 @@ import { Icon } from "@/components/Icon";
 import { INDICO_GROUPS, INDICO_TIMETABLE } from "@/data/indico-links";
 import { downloadIcs } from "@/lib/ics";
 import {
+  changedContributionIds,
   clock,
   dayLabel,
   dayOf,
   isRunning,
   overlaps,
   QM2027_EVENT_ID,
+  STALE_MS,
   useProgram,
+  type Abstracts,
+  type Change,
   type Contribution,
   type Program,
   type Session,
@@ -51,7 +55,7 @@ export function ProgramApp() {
   if (program.status === "error" || program.data.contributions.length === 0) {
     return <NotPublished syncedAt={program.status === "ok" ? program.data.syncedAt : undefined} />;
   }
-  return <ProgramBrowser program={program.data} />;
+  return <ProgramBrowser program={program.data} abstracts={program.abstracts} checkedAt={program.checkedAt} />;
 }
 
 function NotPublished({ syncedAt }: { syncedAt?: string }) {
@@ -79,7 +83,7 @@ function NotPublished({ syncedAt }: { syncedAt?: string }) {
   );
 }
 
-function ProgramBrowser({ program }: { program: Program }) {
+function ProgramBrowser({ program, abstracts, checkedAt }: { program: Program; abstracts?: Abstracts; checkedAt: string }) {
   const params = useSearchParams();
   const router = useRouter();
   const pathname = usePathname();
@@ -114,14 +118,22 @@ function ProgramBrowser({ program }: { program: Program }) {
     if (q.length < 2) return [];
     return program.contributions
       .filter((c) =>
-        [c.title, c.abstract, sessionsById.get(c.sessionId ?? "")?.title, ...c.speakers.flatMap((s) => [s.name, s.affiliation])]
-          .some((f) => f?.toLowerCase().includes(q)),
+        [
+          c.title,
+          c.track,
+          c.board,
+          abstracts?.[c.id]?.abstract,
+          ...(abstracts?.[c.id]?.authors ?? []),
+          sessionsById.get(c.sessionId ?? "")?.title,
+          ...c.speakers.flatMap((s) => [s.name, s.affiliation]),
+        ].some((f) => f?.toLowerCase().includes(q)),
       )
       .slice(0, 100);
-  }, [q, program, sessionsById]);
+  }, [q, program, sessionsById, abstracts]);
 
   const mine = program.contributions.filter((c) => starred.has(c.id));
-  const changedIds = new Set(program.changes.filter((c) => c.kind !== "added").map((c) => c.id));
+  const changedIds = useMemo(() => changedContributionIds(program.changes), [program]);
+  const stale = now !== undefined && now - Date.parse(checkedAt) > STALE_MS;
 
   return (
     <div>
@@ -136,7 +148,7 @@ function ProgramBrowser({ program }: { program: Program }) {
           type="search"
           value={query}
           onChange={(e) => setQuery(e.target.value)}
-          placeholder="Search talks, speakers, abstracts…"
+          placeholder={abstracts ? "Search talks, posters, speakers, abstracts…" : "Search talks, posters, speakers…"}
           className="min-h-11 w-full rounded-md border border-border bg-surface px-4"
           aria-label="Search the program"
         />
@@ -191,7 +203,7 @@ function ProgramBrowser({ program }: { program: Program }) {
         ) : view === "mine" ? (
           <MySchedule items={mine} sessionsById={sessionsById} starred={starred} onStar={toggleStar} onOpen={openTalk} changedIds={changedIds} />
         ) : view === "updates" ? (
-          <Updates program={program} onOpen={openTalk} />
+          <Updates program={program} sessionsById={sessionsById} onOpen={openTalk} onDay={(d) => update({ view: undefined, day: d })} />
         ) : (
           <DaySchedule program={program} day={day} now={now} sessionsById={sessionsById} starred={starred} onStar={toggleStar} onOpen={openTalk} />
         )}
@@ -201,6 +213,8 @@ function ProgramBrowser({ program }: { program: Program }) {
         <TalkDetail
           talk={talk}
           session={sessionsById.get(talk.sessionId ?? "")}
+          details={abstracts?.[talk.id]}
+          abstractsLoaded={abstracts !== undefined}
           starred={starred.has(talk.id)}
           changed={changedIds.has(talk.id)}
           onStar={() => toggleStar(talk.id)}
@@ -208,8 +222,10 @@ function ProgramBrowser({ program }: { program: Program }) {
         />
       )}
       <p className="mt-8 text-xs text-muted">
-        Synced from Indico {new Date(program.syncedAt).toLocaleString("en-GB")}. Times are local (KST). If anything here
-        differs, Indico is authoritative.
+        {stale && <b className="text-foreground">Couldn&apos;t check Indico for a while. </b>}
+        Checked against Indico {new Date(checkedAt).toLocaleString("en-GB")}
+        {program.syncedAt && `, last changed ${new Date(program.syncedAt).toLocaleString("en-GB")}`}. Times are local
+        {program.eventId === QM2027_EVENT_ID ? " (KST)" : ""}. If anything here differs, Indico is authoritative.
       </p>
     </div>
   );
@@ -242,7 +258,9 @@ function TalkRow({ c, session, starred, onStar, onOpen, showDay, warn }: { c: Co
       <button onClick={onOpen} className="min-w-0 flex-1 py-1.5 text-left">
         <span className="block font-medium leading-snug hover:text-sea">{c.title}</span>
         <span className="block truncate text-sm text-muted">
-          {[showDay && dayLabel(dayOf(c.start)), c.speakers.map((s) => s.name).join(", "), c.room ?? session?.room].filter(Boolean).join(" · ")}
+          {[showDay && dayLabel(dayOf(c.start)), c.poster && (c.board ? `Poster ${c.board}` : "Poster"), c.speakers.map((s) => s.name).join(", "), c.room ?? session?.room]
+            .filter(Boolean)
+            .join(" · ")}
         </span>
         {warn && <span className="mt-1 inline-block rounded bg-tangerine/15 px-1.5 text-xs text-tangerine">{warn}</span>}
       </button>
@@ -289,7 +307,8 @@ function DaySchedule({ program, day, now, ...p }: ListProps & { program: Program
           <div key={row.start} className="grid gap-3 md:grid-cols-[repeat(auto-fit,minmax(320px,1fr))]">
             {row.list.map((s) => {
               const talks = program.contributions.filter((c) => c.sessionId === s.id);
-              const expanded = open.has(s.id) || row.list.length === 1;
+              // A poster session holds hundreds of posters: open it only on request.
+              const expanded = open.has(s.id) || (row.list.length === 1 && !s.poster);
               const live = now !== undefined && isRunning(s, now);
               return (
                 <section key={s.id} className={`rounded-md border bg-surface p-4 ${live ? "border-tangerine ring-2 ring-tangerine/20" : "border-border"}`}>
@@ -305,7 +324,11 @@ function DaySchedule({ program, day, now, ...p }: ListProps & { program: Program
                     </span>
                     <span className="mt-1 block font-semibold">{s.title}</span>
                     {s.conveners.length > 0 && <span className="block text-sm text-muted">Chair: {s.conveners.join(", ")}</span>}
-                    {talks.length > 0 && !expanded && <span className="mt-1 block text-sm text-sea">{talks.length} talks ▾</span>}
+                    {talks.length > 0 && !expanded && (
+                      <span className="mt-1 block text-sm text-sea">
+                        {talks.length} {s.poster ? "posters" : "talks"} ▾
+                      </span>
+                    )}
                   </button>
                   {expanded && talks.length > 0 && (
                     <ul className="mt-2 divide-y divide-border">
@@ -346,7 +369,8 @@ function MySchedule({ items, changedIds, ...p }: ListProps & { items: Contributi
             {items
               .filter((c) => dayOf(c.start) === d)
               .map((c) => {
-                const clash = items.find((o) => o.id !== c.id && overlaps(o, c));
+                // Posters are up all week: they never clash with anything.
+                const clash = c.poster ? undefined : items.find((o) => o.id !== c.id && !o.poster && overlaps(o, c));
                 return (
                   <TalkRow
                     key={c.id}
@@ -366,33 +390,87 @@ function MySchedule({ items, changedIds, ...p }: ListProps & { items: Contributi
   );
 }
 
-function Updates({ program, onOpen }: { program: Program; onOpen: (id: string) => void }) {
+const CHANGE_LABEL: Record<Change["kind"], string> = {
+  added: "added",
+  removed: "removed",
+  moved: "moved",
+  speaker: "new speaker",
+  scheduled: "scheduled",
+  unscheduled: "unscheduled",
+};
+
+function where(x: { start?: string; room?: string; board?: string }) {
+  return [x.start && `${dayLabel(dayOf(x.start))} ${clock(x.start)}`, x.room, x.board && `board ${x.board}`].filter(Boolean).join(" ");
+}
+
+function Updates({
+  program,
+  sessionsById,
+  onOpen,
+  onDay,
+}: {
+  program: Program;
+  sessionsById: Map<string, Session>;
+  onOpen: (id: string) => void;
+  onDay: (day: string) => void;
+}) {
   if (!program.changes.length) return <p className="text-muted">No changes since the program was published.</p>;
+  const known = new Set(program.contributions.map((c) => c.id));
   return (
     <ul className="divide-y divide-border rounded-md border border-border bg-surface px-4">
-      {program.changes.map((c) => (
-        <li key={`${c.id}${c.detectedAt}`} className="py-3">
-          <p className="text-xs text-muted">
-            {new Date(c.detectedAt).toLocaleString("en-GB")} ·{" "}
-            <b className={c.kind === "removed" ? "text-tangerine" : "text-sea"}>{c.kind}</b>
-          </p>
-          {c.kind === "removed" ? (
-            <p className="font-medium line-through decoration-muted">{c.title}</p>
-          ) : (
-            <button onClick={() => onOpen(c.id)} className="text-left font-medium hover:text-sea">{c.title}</button>
-          )}
-          {c.kind === "moved" && c.from && (
-            <p className="text-sm text-muted">
-              {dayLabel(dayOf(c.from.start))} {clock(c.from.start)} {c.from.room} → <b className="text-foreground">{dayLabel(dayOf(c.start))} {clock(c.start)} {c.room}</b>
+      {program.changes.map((c) => {
+        const session = c.count ? sessionsById.get(c.id) : undefined;
+        const label = c.count ? `${c.count} ${session?.poster ? "posters" : "contributions"} ${CHANGE_LABEL[c.kind]}` : CHANGE_LABEL[c.kind];
+        const start = c.start;
+        return (
+          <li key={`${c.id}${c.kind}${c.detectedAt}`} className="py-3">
+            <p className="text-xs text-muted">
+              {new Date(c.detectedAt).toLocaleString("en-GB")} ·{" "}
+              <b className={c.kind === "removed" ? "text-tangerine" : "text-sea"}>{label}</b>
             </p>
-          )}
-        </li>
-      ))}
+            {c.count && start ? (
+              <button onClick={() => onDay(dayOf(start))} className="text-left font-medium hover:text-sea">{c.title}</button>
+            ) : known.has(c.id) ? (
+              <button onClick={() => onOpen(c.id)} className="text-left font-medium hover:text-sea">{c.title}</button>
+            ) : (
+              <p className={`font-medium ${c.kind === "removed" ? "line-through decoration-muted" : ""}`}>{c.title}</p>
+            )}
+            {c.kind === "moved" && c.from && (
+              <p className="text-sm text-muted">
+                {where(c.from)} → <b className="text-foreground">{where(c)}</b>
+              </p>
+            )}
+            {c.kind === "speaker" && (
+              <p className="text-sm text-muted">
+                {c.from?.speakers || "No speaker"} → <b className="text-foreground">{c.speakers || "no speaker"}</b>
+              </p>
+            )}
+          </li>
+        );
+      })}
     </ul>
   );
 }
 
-function TalkDetail({ talk, session, starred, changed, onStar, onClose }: { talk: Contribution; session?: Session; starred: boolean; changed: boolean; onStar: () => void; onClose: () => void }) {
+function TalkDetail({
+  talk,
+  session,
+  details,
+  abstractsLoaded,
+  starred,
+  changed,
+  onStar,
+  onClose,
+}: {
+  talk: Contribution;
+  session?: Session;
+  details?: Abstracts[string];
+  abstractsLoaded: boolean;
+  starred: boolean;
+  changed: boolean;
+  onStar: () => void;
+  onClose: () => void;
+}) {
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => e.key === "Escape" && onClose();
     window.addEventListener("keydown", onKey);
@@ -409,6 +487,7 @@ function TalkDetail({ talk, session, starred, changed, onStar, onClose }: { talk
       >
         <div className="flex items-start justify-between gap-3">
           <p className="text-sm tabular-nums text-muted">
+            {talk.poster && `Poster${talk.board ? ` ${talk.board}` : ""} · `}
             {dayLabel(dayOf(talk.start))} · {clock(talk.start)}–{clock(talk.end)}
             {(talk.room ?? session?.room) && ` · ${talk.room ?? session?.room}`}
           </p>
@@ -417,7 +496,7 @@ function TalkDetail({ talk, session, starred, changed, onStar, onClose }: { talk
           </button>
         </div>
         <h2 className="mt-2 text-xl font-semibold leading-snug">{talk.title}</h2>
-        {session && <p className="mt-1 text-sm text-muted">{session.title}</p>}
+        <p className="mt-1 text-sm text-muted">{[session?.title, talk.track].filter(Boolean).join(" · ")}</p>
         {changed && <p className="mt-3 rounded-md bg-tangerine/10 p-3 text-sm text-tangerine">This talk&apos;s time or room changed recently.</p>}
         {talk.speakers.length > 0 && (
           <ul className="mt-4 space-y-1">
@@ -429,6 +508,7 @@ function TalkDetail({ talk, session, starred, changed, onStar, onClose }: { talk
             ))}
           </ul>
         )}
+        {details?.authors && <p className="mt-2 text-sm text-muted">With {details.authors.join(", ")}</p>}
         <div className="mt-4 flex flex-wrap gap-2">
           <button onClick={onStar} aria-pressed={starred} className="min-h-11 rounded-md border border-border px-4 text-sm aria-pressed:border-tangerine aria-pressed:text-tangerine">
             {starred ? "★ In my schedule" : "☆ Add to my schedule"}
@@ -445,10 +525,10 @@ function TalkDetail({ talk, session, starred, changed, onStar, onClose }: { talk
             </a>
           )}
         </div>
-        {talk.abstract ? (
-          <p className="mt-5 leading-relaxed whitespace-pre-line">{talk.abstract}</p>
+        {details?.abstract ? (
+          <p className="mt-5 leading-relaxed whitespace-pre-line">{details.abstract}</p>
         ) : (
-          <p className="mt-5 text-sm text-muted">No abstract on Indico.</p>
+          <p className="mt-5 text-sm text-muted">{abstractsLoaded ? "No abstract on Indico." : "Loading abstract…"}</p>
         )}
       </aside>
     </div>

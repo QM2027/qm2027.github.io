@@ -1,14 +1,16 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useSyncExternalStore } from "react";
 
-// Shape written by scripts/sync.mjs in QM2027/program-data. Times are ISO strings in the
-// event's own time zone, so slicing gives event-local wall-clock values.
+// Data published by QM2027/program-data (schema 2, see its README). Times are ISO strings in
+// the event's time zone, so slicing gives event-local wall-clock values.
 
 export type Person = { name: string; affiliation?: string };
 
 export type Session = {
   id: string;
+  /** Indico session id, shared by the blocks of one session. */
+  group?: string;
   title: string;
   start: string;
   end: string;
@@ -21,90 +23,177 @@ export type Session = {
 
 export type Contribution = {
   id: string;
+  /** Indico's short contribution number. */
+  friendlyId?: number;
   title: string;
   start: string;
   end: string;
   room?: string;
   sessionId?: string;
+  /** Every block of a multi-block poster session; `sessionId` is the first. */
+  slots?: string[];
   speakers: Person[];
-  abstract?: string;
   board?: string;
   track?: string;
-  /** Posters take the time of their poster session block. */
+  /** Posters take the time of their poster session's block. */
   poster?: boolean;
   url?: string;
 };
 
+export type Unscheduled = Omit<Contribution, "start" | "end" | "sessionId" | "slots"> & { session?: string };
+
+export type ChangeKind = "added" | "removed" | "moved" | "speaker" | "scheduled" | "unscheduled";
+
 export type Change = {
+  /** A contribution id, or a session id when `count` is set. */
   id: string;
   title: string;
-  kind: "added" | "moved" | "removed";
+  kind: ChangeKind;
   detectedAt: string;
-  start: string;
+  start?: string;
   room?: string;
-  from?: { start: string; room?: string };
+  board?: string;
+  speakers?: string;
+  from?: { start?: string; room?: string; board?: string; speakers?: string };
+  sessionId?: string;
+  /** Set when many changes in one session were collapsed into this entry. */
+  count?: number;
+  ids?: string[];
 };
 
 export type Program = {
+  schema: 2;
   eventId: string;
+  tz: string;
   syncedAt: string;
   sessions: Session[];
   contributions: Contribution[];
+  unscheduled: Unscheduled[];
   breaks: { title: string; start: string; end: string }[];
+  tracks: string[];
   changes: Change[];
 };
 
-// Published by QM2027/program-data as its own Pages site, on the same origin as this one in
-// production. Set NEXT_PUBLIC_PROGRAM_URL to test with another file. In development the live
-// file is used (GitHub Pages sends CORS headers).
-export const PROGRAM_URL =
-  process.env.NEXT_PUBLIC_PROGRAM_URL ??
-  (process.env.NODE_ENV === "development" ? "https://qm2027.github.io/program-data/program.json" : "/program-data/program.json");
+export type Abstracts = Record<string, { abstract?: string; authors?: string[] }>;
+
+type Index = {
+  schema: number;
+  eventId: string;
+  syncedAt: string;
+  /** Last successful check against Indico, refreshed at least hourly. */
+  checkedAt: string;
+  program: string;
+  abstracts: string;
+};
+
+// Published as its own Pages site, on the same origin as this one in production. Set
+// NEXT_PUBLIC_PROGRAM_BASE to test with other files. In development the live files are used
+// (GitHub Pages sends CORS headers).
+export const PROGRAM_BASE =
+  process.env.NEXT_PUBLIC_PROGRAM_BASE ??
+  (process.env.NODE_ENV === "development" ? "https://qm2027.github.io/program-data" : "/program-data");
 
 /** program-data may publish a past conference for testing; the UI labels that as a preview. */
 export const QM2027_EVENT_ID = "1622375";
 
 const REFRESH_MS = 5 * 60_000;
+/** The UI warns when the program hasn't been checked against Indico for this long. */
+export const STALE_MS = 2 * 60 * 60_000;
 
-type ProgramState = { status: "loading" } | { status: "ok"; data: Program } | { status: "error" };
+export type ProgramState =
+  | { status: "loading" }
+  | { status: "error" }
+  | { status: "ok"; data: Program; checkedAt: string; abstracts?: Abstracts };
+
+// One store for the whole app, so the program page and the venue map share a single download.
+// index.json is tiny and polled; the hashed files it names never change, so they are fetched
+// once per version (the service worker keeps them for offline use).
+
+let state: ProgramState = { status: "loading" };
+const listeners = new Set<() => void>();
+let current: { program?: string; abstracts?: string } = {};
+let inflight: Promise<void> | undefined;
+let users = 0;
+let timer: ReturnType<typeof setInterval> | undefined;
+
+function set(next: ProgramState) {
+  state = next;
+  for (const l of listeners) l();
+}
+
+async function getJson<T>(name: string, init?: RequestInit): Promise<T> {
+  const res = await fetch(`${PROGRAM_BASE}/${name}`, init);
+  if (!res.ok) throw new Error(`${name}: HTTP ${res.status}`);
+  return res.json();
+}
+
+async function refresh(): Promise<void> {
+  try {
+    const index = await getJson<Index>("index.json", { cache: "no-cache" });
+    if (index.schema !== 2) throw new Error(`unknown schema ${index.schema}`);
+
+    if (index.program !== current.program || state.status !== "ok") {
+      const data = await getJson<Program>(index.program);
+      current = { program: index.program, abstracts: current.abstracts };
+      set({ status: "ok", data, checkedAt: index.checkedAt, abstracts: state.status === "ok" ? state.abstracts : undefined });
+    } else if (state.checkedAt !== index.checkedAt) {
+      set({ ...state, checkedAt: index.checkedAt });
+    }
+
+    if (index.abstracts !== current.abstracts) {
+      // After the program has rendered; search and details work without abstracts meanwhile.
+      await new Promise((r) => (typeof requestIdleCallback === "function" ? requestIdleCallback(r, { timeout: 2000 }) : setTimeout(r, 300)));
+      const abstracts = await getJson<Abstracts>(index.abstracts);
+      current = { ...current, abstracts: index.abstracts };
+      if (state.status === "ok") set({ ...state, abstracts });
+    }
+  } catch {
+    // Keep what is shown; only a first load that fails is an error.
+    if (state.status === "loading") set({ status: "error" });
+  }
+}
+
+function load() {
+  inflight ??= refresh().finally(() => (inflight = undefined));
+  return inflight;
+}
+
+const onVisible = () => {
+  if (document.visibilityState === "visible") load();
+};
+
+function start() {
+  if (users++ > 0) return;
+  load();
+  document.addEventListener("visibilitychange", onVisible);
+  timer = setInterval(onVisible, REFRESH_MS);
+}
+
+function stop() {
+  if (--users > 0) return;
+  document.removeEventListener("visibilitychange", onVisible);
+  clearInterval(timer);
+}
+
+function subscribe(l: () => void) {
+  listeners.add(l);
+  return () => {
+    listeners.delete(l);
+  };
+}
+
+const serverState: ProgramState = { status: "loading" };
 
 /**
- * Loads the program and keeps it current: revalidates on every load (`no-cache` asks the
- * server for a new version via ETag), when the tab comes back into view and every five
- * minutes while it is visible. A failed refresh keeps the program already shown.
+ * The program, kept current: index.json is revalidated on mount, when the tab comes back into
+ * view and every five minutes while it is visible. A failed refresh keeps what is shown.
  */
 export function useProgram(): ProgramState {
-  const [state, setState] = useState<ProgramState>({ status: "loading" });
-
   useEffect(() => {
-    let ctrl: AbortController | undefined;
-    const load = () => {
-      ctrl?.abort();
-      const c = (ctrl = new AbortController());
-      fetch(PROGRAM_URL, { cache: "no-cache", signal: c.signal })
-        .then((r) => (r.ok ? r.json() : Promise.reject(r.status)))
-        .then((data: Program) =>
-          setState((cur) => (cur.status === "ok" && cur.data.syncedAt === data.syncedAt ? cur : { status: "ok", data })),
-        )
-        .catch(() => {
-          if (!c.signal.aborted) setState((cur) => (cur.status === "ok" ? cur : { status: "error" }));
-        });
-    };
-    const refreshIfVisible = () => {
-      if (document.visibilityState === "visible") load();
-    };
-
-    load();
-    document.addEventListener("visibilitychange", refreshIfVisible);
-    const timer = setInterval(refreshIfVisible, REFRESH_MS);
-    return () => {
-      ctrl?.abort();
-      clearInterval(timer);
-      document.removeEventListener("visibilitychange", refreshIfVisible);
-    };
+    start();
+    return stop;
   }, []);
-
-  return state;
+  return useSyncExternalStore(subscribe, () => state, () => serverState);
 }
 
 export const dayOf = (iso: string) => iso.slice(0, 10);
@@ -118,3 +207,13 @@ export const overlaps = (a: { start: string; end: string }, b: { start: string; 
   Date.parse(a.start) < Date.parse(b.end) && Date.parse(b.start) < Date.parse(a.end);
 
 export const isRunning = (x: { start: string; end: string }, now: number) => Date.parse(x.start) <= now && now < Date.parse(x.end);
+
+/** Contribution ids touched by changes, including the ones inside collapsed entries. */
+export function changedContributionIds(changes: Change[]): Set<string> {
+  const ids = new Set<string>();
+  for (const c of changes) {
+    if (c.kind === "added") continue;
+    for (const id of c.ids ?? [c.id]) ids.add(id);
+  }
+  return ids;
+}
