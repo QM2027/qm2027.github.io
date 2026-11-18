@@ -40,7 +40,7 @@
 ## 📋 다음 작업 (우선순위 순)
 
 ### 3. 회의장 인터랙티브 평면도 `/venue` (도식 버전 완료)
-- [x] ICC Jeju 층별 평면도 원본 확보 — [docs/floorplans/](floorplans/)의 jpg 5장(1F 백록·영주, 3F 삼다·한라, 5F)이 구할 수 있는 최선. 더 나은 원본은 기대하지 않음
+- [x] ICC Jeju 층별 평면도 원본 확보 — `docs/floorplans/`의 jpg 5장(1F 백록·영주, 3F 삼다·한라, 5F)이 구할 수 있는 최선. 로컬 참고용, 커밋 금지(.gitignore)
 - [ ] 위 jpg를 따라 [src/data/venue.ts](../src/data/venue.ts) 도형 트레이싱 (진행 중)
 - [x] 층 전환 탭, 방 클릭 시 정보 표시, 시설 찾기(하이라이트), URL 공유
 - [x] (도식) 등록데스크, 포스터 구역, 커피브레이크, 화장실, 수유실/Child care, 엘리베이터 표시

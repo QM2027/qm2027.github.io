@@ -40,3 +40,6 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 /public/dev-program/
+
+# ICC floor-plan source images: local reference only, never commit
+/docs/floorplans/
