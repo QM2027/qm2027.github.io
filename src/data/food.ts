@@ -21,6 +21,7 @@ export type Dish = {
 
 export const DISHES: Dish[] = [
   { id: "black-pork", name: "Jeju black pork BBQ", nameKo: "흑돼지구이", text: "Thick-cut pork from Jeju's native black pig, grilled at the table and dipped in anchovy sauce (멜젓).", fits: ["no-seafood", "gluten-free"], where: "Everywhere; Jungmun and Seogwipo have many grill houses" },
+  { id: "dombe-gogi", name: "Dombe-gogi", nameKo: "돔베고기", text: "Boiled pork, sliced hot and served on the wooden cutting board (돔베 in Jeju dialect). Wrap it with kimchi or dip it in anchovy sauce. A Jeju feast dish.", fits: ["no-seafood"], where: "Pork restaurants and gogi-guksu shops in Jeju City and Seogwipo" },
   { id: "gogi-guksu", name: "Gogi-guksu", nameKo: "고기국수", text: "Thick wheat noodles in a rich pork-bone broth, topped with sliced pork. Jeju's comfort food.", fits: ["no-seafood"], where: "Noodle shops in Jeju City and Seogwipo" },
   { id: "galchi", name: "Hairtail stew / grilled hairtail", nameKo: "갈치조림 / 갈치구이", text: "Silver hairtail (cutlassfish) braised in spicy sauce or grilled whole. Usually served for 2 or more.", fits: ["no-pork", "gluten-free"], where: "Seogwipo harbour area", spicy: true },
   { id: "okdom", name: "Grilled tilefish", nameKo: "옥돔구이", text: "Half-dried red tilefish grilled until crisp. A Jeju breakfast classic.", fits: ["no-pork", "gluten-free"], where: "Set-menu restaurants, hotel breakfasts" },
