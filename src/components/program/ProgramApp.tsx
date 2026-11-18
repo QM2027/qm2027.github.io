@@ -143,8 +143,11 @@ function ProgramBrowser({
   const [starred, toggleStar, addStars, replaceStars] = useLocalSet("qm2027:my-schedule");
   const [seenChanges, setSeenChanges] = useLocalString("qm2027:changes-seen");
 
+  // Moves between places (views, days, a session's posters, starting a search) push, so the browser's
+  // back button retraces them; refinements in place (filters, editing the search text) replace.
   function go(patch: Record<string, string | undefined>, mode: "replace" | "push" = "replace") {
-    const next = new URLSearchParams(params);
+    // The live URL, not `params`: a delayed call (the search box's) may hold a render's stale copy.
+    const next = new URLSearchParams(window.location.search);
     for (const [k, v] of Object.entries(patch)) {
       if (v) next.set(k, v);
       else next.delete(k);
@@ -172,13 +175,27 @@ function ProgramBrowser({
   // ---- search: typed text is local; the URL follows after a pause
   const [query, setQuery] = useState(() => params.get("q") ?? "");
   const deferredQuery = useDeferredValue(query);
+  const urlQuery = params.get("q") ?? "";
+  /** The last search text this page wrote to the URL, to tell it apart from back/forward. */
+  const sentQuery = useRef(urlQuery);
   useEffect(() => {
     const t = setTimeout(() => {
-      if ((params.get("q") ?? "") !== query.trim()) go({ q: query.trim() || undefined });
+      const q = query.trim();
+      const current = new URLSearchParams(window.location.search).get("q") ?? "";
+      if (current === q) return;
+      sentQuery.current = q;
+      // Starting a search is a step back can undo; refining or clearing it is not.
+      go({ q: q || undefined }, current ? "replace" : "push");
     }, 400);
     return () => clearTimeout(t);
     // eslint-disable-next-line react-hooks/exhaustive-deps -- only the typed text should trigger this
   }, [query]);
+  // Back or forward changed the search in the URL: show that text in the box.
+  useEffect(() => {
+    if (urlQuery === sentQuery.current) return;
+    sentQuery.current = urlQuery;
+    setQuery(urlQuery);
+  }, [urlQuery]);
   const searching = deferredQuery.trim().length >= 2;
   const results = useMemo(() => (searching ? searchProgram(index, deferredQuery, type) : []), [index, deferredQuery, type, searching]);
 
@@ -202,7 +219,9 @@ function ProgramBrowser({
   const openTalk = (id: string) => openOver({ talk: id });
   /** A session's posters, or its day in the schedule. */
   const showSession = (s: { id: string; start: string; poster?: boolean }) =>
-    s.poster ? go({ view: "posters", ps: s.id, track: undefined }) : go({ view: undefined, day: dayOf(s.start), topic: undefined });
+    s.poster
+      ? go({ view: "posters", ps: s.id, track: undefined }, "push")
+      : go({ view: undefined, day: dayOf(s.start), topic: undefined }, "push");
   const closeTalk = () => closeOver(["talk", "map"]);
 
   // ---- my schedule: shared-link import and changes since last seen
@@ -258,12 +277,14 @@ function ProgramBrowser({
   const showDays = !searching && view === "day";
   const selectView = (v: View) => {
     setQuery("");
-    go({ view: v === "day" ? undefined : v, q: undefined, type: undefined, ids: undefined, mine: undefined, topic: undefined });
+    sentQuery.current = "";
+    const same = !searching && v === view;
+    go({ view: v === "day" ? undefined : v, q: undefined, type: undefined, ids: undefined, mine: undefined, topic: undefined }, same ? "replace" : "push");
     window.scrollTo({ top: 0 });
   };
   const dayButtons = (className: string) =>
     days.map((d) => (
-      <button key={d} onClick={() => go({ day: d })} aria-pressed={d === day} className={className}>
+      <button key={d} onClick={() => d !== day && go({ day: d }, "push")} aria-pressed={d === day} className={className}>
         {dayLabel(d)}
         {d === todayKey && " · today"}
       </button>
@@ -311,7 +332,7 @@ function ProgramBrowser({
       )}
       {myNewChanges.length > 0 && view !== "updates" && (
         <button
-          onClick={() => go({ view: "updates", mine: "1", q: undefined })}
+          onClick={() => go({ view: "updates", mine: "1", q: undefined }, "push")}
           className="mb-3 flex w-full items-center justify-between gap-3 rounded-md border border-tangerine bg-tangerine/10 p-3 text-left text-sm"
         >
           <span>
@@ -325,7 +346,7 @@ function ProgramBrowser({
       )}
       {filesChanged.size > 0 && view !== "mine" && (
         <button
-          onClick={() => go({ view: "mine", q: undefined })}
+          onClick={() => go({ view: "mine", q: undefined }, "push")}
           className="mb-3 flex w-full items-center justify-between gap-3 rounded-md border border-tangerine bg-tangerine/10 p-3 text-left text-sm"
         >
           <span>
@@ -441,7 +462,7 @@ function ProgramBrowser({
             mineOnly={params.get("mine") === "1"}
             onMineOnly={(on) => go({ mine: on ? "1" : undefined })}
             onOpen={openTalk}
-            onDay={(d) => go({ view: undefined, mine: undefined, day: d })}
+            onDay={(d) => go({ view: undefined, mine: undefined, day: d }, "push")}
           />
         ) : (
           <DaySchedule
@@ -449,7 +470,7 @@ function ProgramBrowser({
             day={day}
             isToday={day === todayKey}
             now={now}
-            onPosters={(ps) => go({ view: "posters", ps, track: undefined })}
+            onPosters={(ps) => go({ view: "posters", ps, track: undefined }, "push")}
             {...listProps}
           />
         )}
