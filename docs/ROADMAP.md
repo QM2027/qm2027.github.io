@@ -75,8 +75,8 @@
 - [ ] 제주관광공사 / 제주컨벤션뷰로 MICE 지원 문의 (사진 라이선스, 문화공연, 웰컴키트, 쿠폰) — 조직위 담당
 
 ### 8. Indico 연동 ✅ (QM2025 데이터로 검증, QM2027 시간표 공개 대기)
-- [x] [scripts/sync-indico.mjs](../scripts/sync-indico.mjs) — 타임테이블 export → `public/data/program.json` (실패 시 기존 스냅샷 유지, 내용이 바뀔 때만 기록, 변경 내역 diff)
-- [x] [.github/workflows/sync-indico.yml](../.github/workflows/sync-indico.yml) — cron(6h, 3/15–28은 30분) + 수동 실행, 변경 시 커밋 → `gh workflow run deploy.yml`
+- [x] [QM2027/program-data](https://github.com/QM2027/program-data) — timetable + contributions export 병합(포스터 포함), `overrides.json` 보정, Pages로 `program.json`만 배포(커밋 없음, 이전 스냅샷 = 라이브 파일, 변경 내역 diff)
+- [x] 사이트는 `/program-data/program.json`을 CSR로 로드 (`no-cache`, 탭 복귀·5분마다 갱신) — 프로그램 변경에 사이트 재빌드 불필요. cron 6h, 3/15–28은 5분 + 수동 실행
 - [x] `/program`: 일자별 세션(병렬 세션 나란히), NOW 표시, 발표 상세 패널, Indico 링크
 - [x] My schedule (localStorage), 시간 겹침·변경 경고, `.ics` 내보내기
 - [x] 검색 (제목·발표자·소속·초록, 클라이언트 필터 — 의존성 없음)
@@ -86,7 +86,6 @@
 - [ ] 초록 수식(KaTeX) 렌더링 — 실제 초록 형식 확인 후 결정
 - [ ] 포스터 보드 번호 검색 (`board` 필드는 저장 중)
 - [ ] 첫 실제 동기화 후 화면 점검 (방 이름, 세션 색상, 초록 형식)
-- [ ] **시간표 적용 시**: 저장소 Settings → Actions → General → Workflow permissions를 "Read and write"로 변경하고, [sync-indico.yml](../.github/workflows/sync-indico.yml)의 `schedule` 주석 해제 (현재 자동 실행 꺼둠)
 
 ## 💡 서버가 필요한 기능 (필요 시 Vercel 전환)
 - 일정 변경 푸시 알림

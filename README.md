@@ -22,16 +22,23 @@ Local build with the GitHub Pages base path (Git Bash on Windows needs `MSYS_NO_
 NEXT_PUBLIC_BASE_PATH=/qm2027_pwa npm run build
 ```
 
-## Program sync
+## Program
 
-`npm run sync` pulls the public Indico timetable into `public/data/program.json`. It keeps the
-previous snapshot on any error and only rewrites the file when the program changed. The
-`Sync Indico timetable` workflow runs it on a schedule, commits changes and triggers a deploy.
+The program (talks and posters) is not part of this repository. [QM2027/program-data](https://github.com/QM2027/program-data)
+fetches it from Indico and publishes `https://qm2027.github.io/program-data/program.json`.
+The program page and the venue "Now / Next" load that file in the browser
+([src/lib/program.ts](src/lib/program.ts)), so program updates go live without rebuilding
+this site. Updates are checked on every load, when the tab comes back into view, and every
+5 minutes. The service worker keeps the last copy for offline use.
 
-To try the program UI with real data from a past conference:
+`npm run dev` uses the live file. To try the UI with real data from a past conference, build
+it in program-data and point the site at it:
 
 ```bash
-EVENT_ID=1334113 node scripts/sync-indico.mjs --out public/data/program.json   # QM2025 — don't commit
+# in program-data
+EVENT_ID=1334113 node scripts/sync.mjs --out ../../qm2027_pwa/public/dev-program.json
+# here
+NEXT_PUBLIC_PROGRAM_URL=/dev-program.json npm run dev
 ```
 
 ## Deploy

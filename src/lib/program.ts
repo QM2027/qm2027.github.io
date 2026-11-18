@@ -1,10 +1,9 @@
 "use client";
 
-import { withBase } from "./paths";
-import { useFetchJson } from "./use-fetch-json";
+import { useEffect, useState } from "react";
 
-// Shape written by scripts/sync-indico.mjs. Times are ISO strings in the event's own
-// time zone, so slicing gives event-local wall-clock values.
+// Shape written by scripts/sync.mjs in QM2027/program-data. Times are ISO strings in the
+// event's own time zone, so slicing gives event-local wall-clock values.
 
 export type Person = { name: string; affiliation?: string };
 
@@ -30,6 +29,9 @@ export type Contribution = {
   speakers: Person[];
   abstract?: string;
   board?: string;
+  track?: string;
+  /** Posters take the time of their poster session block. */
+  poster?: boolean;
   url?: string;
 };
 
@@ -52,10 +54,54 @@ export type Program = {
   changes: Change[];
 };
 
-export const PROGRAM_URL = withBase("/data/program.json");
+// Published by QM2027/program-data as its own Pages site, on the same origin as this one in
+// production. Set NEXT_PUBLIC_PROGRAM_URL to test with another file. In development the live
+// file is used (GitHub Pages sends CORS headers).
+export const PROGRAM_URL =
+  process.env.NEXT_PUBLIC_PROGRAM_URL ??
+  (process.env.NODE_ENV === "development" ? "https://qm2027.github.io/program-data/program.json" : "/program-data/program.json");
 
-export function useProgram() {
-  return useFetchJson<Program>(PROGRAM_URL);
+const REFRESH_MS = 5 * 60_000;
+
+type ProgramState = { status: "loading" } | { status: "ok"; data: Program } | { status: "error" };
+
+/**
+ * Loads the program and keeps it current: revalidates on every load (`no-cache` asks the
+ * server for a new version via ETag), when the tab comes back into view and every five
+ * minutes while it is visible. A failed refresh keeps the program already shown.
+ */
+export function useProgram(): ProgramState {
+  const [state, setState] = useState<ProgramState>({ status: "loading" });
+
+  useEffect(() => {
+    let ctrl: AbortController | undefined;
+    const load = () => {
+      ctrl?.abort();
+      const c = (ctrl = new AbortController());
+      fetch(PROGRAM_URL, { cache: "no-cache", signal: c.signal })
+        .then((r) => (r.ok ? r.json() : Promise.reject(r.status)))
+        .then((data: Program) =>
+          setState((cur) => (cur.status === "ok" && cur.data.syncedAt === data.syncedAt ? cur : { status: "ok", data })),
+        )
+        .catch(() => {
+          if (!c.signal.aborted) setState((cur) => (cur.status === "ok" ? cur : { status: "error" }));
+        });
+    };
+    const refreshIfVisible = () => {
+      if (document.visibilityState === "visible") load();
+    };
+
+    load();
+    document.addEventListener("visibilitychange", refreshIfVisible);
+    const timer = setInterval(refreshIfVisible, REFRESH_MS);
+    return () => {
+      ctrl?.abort();
+      clearInterval(timer);
+      document.removeEventListener("visibilitychange", refreshIfVisible);
+    };
+  }, []);
+
+  return state;
 }
 
 export const dayOf = (iso: string) => iso.slice(0, 10);

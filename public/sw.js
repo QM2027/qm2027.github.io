@@ -13,13 +13,14 @@ const SHELL = [
   "explore/plan/", "explore/season/", "explore/food/", "explore/run/",
   "explore/science/", "explore/hallasan/", "explore/companions/",
   "explore/passport/", "explore/korea/",
-  "data/program.json",
 ].map((p) => BASE + p);
+// Published by QM2027/program-data at the host root, next to this site.
+const PROGRAM = "/program-data/program.json";
 
 self.addEventListener("install", (event) => {
   // Pre-cache every page so the guide works offline after the first visit.
   event.waitUntil(
-    caches.open(PAGES).then((c) => Promise.allSettled(SHELL.map((url) => c.add(url)))).then(() => self.skipWaiting()),
+    caches.open(PAGES).then((c) => Promise.allSettled([...SHELL, PROGRAM].map((url) => c.add(url)))).then(() => self.skipWaiting()),
   );
 });
 
@@ -77,7 +78,7 @@ self.addEventListener("fetch", (event) => {
     event.respondWith(networkFirst(request, DATA));
   } else if (url.origin === self.location.origin) {
     if (request.mode === "navigate" || url.pathname.endsWith(".txt") || url.pathname.endsWith(".json")) {
-      // Pages, RSC payloads and the synced program: fresh when online, cached when not.
+      // Pages, RSC payloads and the program: fresh when online, cached when not.
       event.respondWith(networkFirst(request, PAGES));
     } else if (url.pathname.startsWith(`${BASE}_next/static/`) || url.pathname.startsWith(`${BASE}icons/`)) {
       event.respondWith(cacheFirst(request, ASSETS));
