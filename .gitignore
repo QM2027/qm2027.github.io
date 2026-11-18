@@ -44,5 +44,6 @@ next-env.d.ts
 # ICC floor-plan source images: local reference only, never commit
 /docs/floorplans/
 /docs/*_gpx/
+/docs/*.png
 /public/dev-weather/
 

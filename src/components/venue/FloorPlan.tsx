@@ -152,7 +152,7 @@ function RoomShape({ room: r, ...extra }: { room: Room } & Record<string, unknow
   return r.d ? (
     <path d={r.d} fillRule={r.evenodd ? "evenodd" : undefined} {...extra} />
   ) : (
-    <rect x={r.x} y={r.y} width={r.w} height={r.h} rx="3" {...extra} />
+    <rect x={r.x} y={r.y} width={r.w} height={r.h} {...extra} />
   );
 }
 
