@@ -22,9 +22,9 @@ export type TourPhoto = {
 };
 
 export const photoUrl = (path: string) => `${TOUR_DATA_BASE}/${path}`;
-/** KOGL Type 1 asks for the source next to the work. */
+/** KOGL Type 1 asks for the source next to the work: the gallery (PhotoKorea) and the photographer. */
 export const photoCredit = (p: TourPhoto) =>
-  `Photo: ${p.photographer ? `${p.photographer}, ` : ""}Korea Tourism Organization (KOGL Type 1)`;
+  `Photo: Korea Tourism Organization, PhotoKorea${p.photographer ? ` (${p.photographer})` : ""} · KOGL Type 1`;
 
 /** Photos keyed by place id; empty while loading or when unavailable. */
 export function useTourPhotos(): Record<string, TourPhoto[]> {
