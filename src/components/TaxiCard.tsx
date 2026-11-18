@@ -47,7 +47,7 @@ export function TaxiCard() {
       />
       <button
         onClick={() => setOpen(true)}
-        className="mt-3 min-h-12 w-full rounded-md bg-tangerine font-semibold text-white sm:w-auto sm:px-8"
+        className="mt-3 min-h-12 w-full rounded-md bg-tangerine font-semibold text-background sm:w-auto sm:px-8"
       >
         Show
       </button>

@@ -14,7 +14,14 @@ export default function VenuePage() {
       <p className="font-mono text-xs tracking-widest text-muted uppercase">{SITE.venue}</p>
       <h1 className="mt-1 text-3xl font-semibold tracking-tight sm:text-4xl">Venue floor plan</h1>
       <div className="mt-6">
-        <Suspense fallback={<div className="aspect-[3/2] animate-pulse rounded-md bg-border/40" />}>
+        {/* At least a screen tall, so the footer stays out of view until the plan replaces this. */}
+        <Suspense
+          fallback={
+            <div className="min-h-svh">
+              <div className="aspect-[3/2] animate-pulse rounded-md bg-border/40" />
+            </div>
+          }
+        >
           <VenueApp />
         </Suspense>
       </div>

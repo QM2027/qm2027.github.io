@@ -17,6 +17,7 @@ export function FoodGuide() {
   return (
     <div className="grid gap-8 lg:grid-cols-[1fr_360px]">
       <section>
+        <h2 className="sr-only">Dishes</h2>
         <div className="flex flex-wrap items-center gap-2">
           {DIET_KEYS.map((d) => (
             <button

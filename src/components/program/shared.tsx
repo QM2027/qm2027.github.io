@@ -160,7 +160,7 @@ export function ContributionRow({ c, session, starred, onStar, onOpen, lead = "t
           {live && !compact && <b className="ml-2 align-middle text-xs text-tangerine">NOW</b>}
         </span>
         {meta && <span className={`block text-muted ${compact ? "line-clamp-2 text-xs" : "truncate text-sm"}`}>{meta}</span>}
-        {warn && <span className="mt-1 inline-block rounded bg-tangerine/15 px-1.5 text-xs text-tangerine">{warn}</span>}
+        {warn && <span className="mt-1 inline-block rounded bg-tangerine/10 px-1.5 text-xs text-tangerine">{warn}</span>}
       </button>
       <StarButton on={starred} title={c.title} onClick={onStar} small={compact} />
     </li>

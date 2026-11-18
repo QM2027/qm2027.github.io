@@ -222,7 +222,7 @@ function SessionRow({ session, talks, onStar, onOpen, warn }: { session: Session
         <span className="block truncate text-sm text-muted">
           {[`until ${clock(session.end)}`, session.room, talks ? `${talks} talks` : undefined].filter(Boolean).join(" · ")}
         </span>
-        {warn && <span className="mt-1 inline-block rounded bg-tangerine/15 px-1.5 text-xs text-tangerine">{warn}</span>}
+        {warn && <span className="mt-1 inline-block rounded bg-tangerine/10 px-1.5 text-xs text-tangerine">{warn}</span>}
       </button>
       <StarButton on title={session.title} onClick={onStar} />
     </li>

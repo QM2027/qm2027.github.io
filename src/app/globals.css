@@ -12,8 +12,9 @@
   --border: #e2e2e2;
   --sea: #111111;
   --sea-strong: #000000;
-  --canola: #d9480f;
-  --tangerine: #d9480f;
+  /* Dark enough for AA as small text on white, --surface and a 10% tint of itself. */
+  --canola: #bd400c;
+  --tangerine: #bd400c;
   --on-sea: #ffffff;
   /* Darker than --tangerine so white text on it passes AA, in both themes. */
   --alert: #c2410c;

@@ -152,7 +152,7 @@ function SessionHeader({ session, live, compact }: { session: Session; live: boo
       <span className="flex flex-wrap items-center gap-x-2 gap-y-1 text-sm tabular-nums text-muted">
         {clock(session.start)}–{clock(session.end)}
         {session.room && <span className="rounded bg-border/60 px-1.5 text-xs text-foreground">{session.room}</span>}
-        {live && <span className="rounded bg-tangerine px-1.5 text-xs font-semibold text-white">NOW</span>}
+        {live && <span className="rounded bg-tangerine px-1.5 text-xs font-semibold text-background">NOW</span>}
       </span>
       <span className={`mt-1 block font-semibold ${compact ? "text-sm leading-snug" : ""}`}>
         <TeX text={session.title} />

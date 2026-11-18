@@ -98,9 +98,9 @@ export function HallasanGuide() {
             <div className="rounded-md bg-background p-2"><dt className="text-xs text-muted">Up</dt><dd className="font-semibold">≈ {trail.hoursUp} h</dd></div>
           </dl>
           <p className="mt-3 flex flex-wrap gap-2 text-xs">
-            <span className={`rounded-md px-2 py-0.5 ${trail.difficulty === "Hard" ? "bg-tangerine/15 text-tangerine" : "bg-sea/10 text-sea"}`}>{trail.difficulty}</span>
+            <span className={`rounded-md px-2 py-0.5 ${trail.difficulty === "Hard" ? "bg-tangerine/10 text-tangerine" : "bg-sea/10 text-sea"}`}>{trail.difficulty}</span>
             {trail.reservation ? (
-              <span className="rounded-md bg-tangerine/15 px-2 py-0.5 text-tangerine">Reservation required</span>
+              <span className="rounded-md bg-tangerine/10 px-2 py-0.5 text-tangerine">Reservation required</span>
             ) : (
               <span className="rounded-md bg-border/60 px-2 py-0.5">No reservation</span>
             )}
