@@ -137,6 +137,10 @@ body {
   button {
     touch-action: manipulation;
   }
+  /* Keeps bottom chrome on the screen's bottom edge when iOS offsets the viewport (pwa/viewport.ts). */
+  .pin-bottom {
+    translate: 0 var(--viewport-shift, 0px);
+  }
 }
 
 @media (display-mode: standalone) and (width < 64rem) {
@@ -151,9 +155,5 @@ body {
 @media (display-mode: standalone) and (width >= 64rem) {
   body {
     padding-left: var(--rail);
-  }
-  /* Keeps bottom chrome on the screen's bottom edge when iOS offsets the viewport (pwa/viewport.ts). */
-  .pin-bottom {
-    translate: 0 var(--viewport-shift, 0px);
   }
 }
