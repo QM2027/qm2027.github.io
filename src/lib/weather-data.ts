@@ -1,13 +1,14 @@
 "use client";
 
 import { useFetchJson } from "./use-fetch-json";
+import { LIVE_ORIGIN } from "./paths";
 import type { Forecast } from "./weather";
 
 // Published hourly by QM2027/weather-data from data.go.kr (KMA warnings and forecasts, AirKorea).
-// Same origin in production; in development the live files are used (GitHub Pages sends CORS headers).
+// Same origin in production; in development the live files are used (the live domain sends CORS headers).
 export const WEATHER_DATA_URL =
   (process.env.NEXT_PUBLIC_WEATHER_DATA_BASE ??
-    (process.env.NODE_ENV === "development" ? "https://qm2027.github.io/weather-data" : "/weather-data")) + "/weather.json";
+    (process.env.NODE_ENV === "development" ? `${LIVE_ORIGIN}/weather-data` : "/weather-data")) + "/weather.json";
 
 export type WarningKind = "wind" | "rain" | "snow" | "seas" | "storm-surge" | "typhoon" | "dry" | "cold" | "heat" | "dust" | "fog" | "other";
 

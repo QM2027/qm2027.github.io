@@ -1,12 +1,13 @@
 "use client";
 
 import { useFetchJson } from "./use-fetch-json";
+import { LIVE_ORIGIN } from "./paths";
 
 // Published weekly by QM2027/tour-data from data.go.kr (Korea Tourism Organization). Photos are
 // copied to its Pages site, so visitors' browsers never call a third party for them.
 export const TOUR_DATA_BASE =
   process.env.NEXT_PUBLIC_TOUR_DATA_BASE ??
-  (process.env.NODE_ENV === "development" ? "https://qm2027.github.io/tour-data" : "/tour-data");
+  (process.env.NODE_ENV === "development" ? `${LIVE_ORIGIN}/tour-data` : "/tour-data");
 
 export type TourPhoto = {
   /** Relative to TOUR_DATA_BASE. */

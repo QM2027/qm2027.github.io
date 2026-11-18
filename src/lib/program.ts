@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useSyncExternalStore } from "react";
+import { LIVE_ORIGIN } from "./paths";
 
 // Data published by QM2027/program-data (schema 2, see its README). Times are ISO strings in
 // the event's time zone, so slicing gives event-local wall-clock values.
@@ -100,10 +101,10 @@ type Index = {
 
 // Published as its own Pages site, on the same origin as this one in production. Set
 // NEXT_PUBLIC_PROGRAM_BASE to test with other files. In development the live files are used
-// (GitHub Pages sends CORS headers).
+// (the live domain sends CORS headers).
 export const PROGRAM_BASE =
   process.env.NEXT_PUBLIC_PROGRAM_BASE ??
-  (process.env.NODE_ENV === "development" ? "https://qm2027.github.io/program-data" : "/program-data");
+  (process.env.NODE_ENV === "development" ? `${LIVE_ORIGIN}/program-data` : "/program-data");
 
 /** program-data may publish a past conference for testing; the UI labels that as a preview. */
 export const QM2027_EVENT_ID = "1622375";
