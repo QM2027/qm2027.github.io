@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { clock, dayOf, isRunning, type Contribution, type Program, type Session } from "@/lib/program";
-import { ContributionRow, type ListProps } from "./shared";
+import { ContributionRow, MarksLegend, StarButton, type ListProps } from "./shared";
 import { TeX } from "./TeX";
 
 // Literal class names so Tailwind generates them: on wide screens a time slot puts all its
@@ -52,6 +52,7 @@ export function DaySchedule({ program, day, isToday, now, onPosters, ...p }: Pro
 
   return (
     <div className="space-y-4">
+      <MarksLegend />
       {isToday && now !== undefined && <NowStrip program={program} now={now} {...p} />}
       {rows.map((row) => {
         if (row.kind === "break") {
@@ -82,7 +83,7 @@ export function DaySchedule({ program, day, isToday, now, onPosters, ...p }: Pro
             <div className={`grid gap-3 ${colsFor(row.list.length)}`}>
               {row.list.map((s) =>
                 s.poster ? (
-                  <PosterSessionCard key={s.id} session={s} count={bySession.get(s.id)?.length ?? 0} now={now} onBrowse={() => onPosters(s.id)} />
+                  <PosterSessionCard key={s.id} session={s} count={bySession.get(s.id)?.length ?? 0} now={now} onBrowse={() => onPosters(s.id)} {...p} />
                 ) : (
                   <SessionCard
                     key={s.id}
@@ -140,10 +141,13 @@ function SessionCard({
   const live = now !== undefined && isRunning(session, now);
   return (
     <section className={`min-w-0 rounded-md border bg-surface ${compact ? "p-3" : "p-4"} ${live ? "border-tangerine ring-2 ring-tangerine/20" : "border-border"}`}>
-      <button onClick={onToggle} aria-expanded={expanded} className="w-full text-left">
-        <SessionHeader session={session} live={live} compact={compact} />
-        {talks.length > 0 && !expanded && <span className="mt-1 block text-sm text-sea">{talks.length} talks ▾</span>}
-      </button>
+      <div className="flex items-start gap-1">
+        <button onClick={onToggle} aria-expanded={expanded} className="min-w-0 flex-1 text-left">
+          <SessionHeader session={session} live={live} compact={compact} />
+          {talks.length > 0 && !expanded && <span className="mt-1 block text-sm text-sea">{talks.length} talks ▾</span>}
+        </button>
+        <StarButton on={p.starred.has(session.id)} title={session.title} onClick={() => p.onStar(session.id)} small={compact} />
+      </div>
       {expanded && talks.length > 0 && (
         <ul className="mt-2 divide-y divide-border">
           {talks.map((c) => (
@@ -165,11 +169,22 @@ function SessionCard({
 }
 
 /** Hundreds of posters: never listed inline, the card links to the Posters view. */
-function PosterSessionCard({ session, count, now, onBrowse }: { session: Session; count: number; now?: number; onBrowse: () => void }) {
+function PosterSessionCard({
+  session,
+  count,
+  now,
+  onBrowse,
+  ...p
+}: ListProps & { session: Session; count: number; now?: number; onBrowse: () => void }) {
   const live = now !== undefined && isRunning(session, now);
   return (
     <section className={`min-w-0 rounded-md border bg-surface p-4 ${live ? "border-tangerine ring-2 ring-tangerine/20" : "border-border"}`}>
-      <SessionHeader session={session} live={live} />
+      <div className="flex items-start gap-1">
+        <div className="min-w-0 flex-1">
+          <SessionHeader session={session} live={live} />
+        </div>
+        <StarButton on={p.starred.has(session.id)} title={session.title} onClick={() => p.onStar(session.id)} />
+      </div>
       <button onClick={onBrowse} className="mt-2 inline-flex min-h-10 items-center rounded-md border border-border px-4 text-sm hover:border-foreground">
         Browse {count} posters
       </button>

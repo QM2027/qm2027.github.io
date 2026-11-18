@@ -16,7 +16,9 @@ function where(x: { start?: string; room?: string; board?: string }) {
   return [x.start && `${dayLabel(dayOf(x.start))} ${clock(x.start)}`, x.room, x.board && `board ${x.board}`].filter(Boolean).join(" ");
 }
 
-export const touches = (c: Change, ids: ReadonlySet<string>) => (c.ids ?? [c.id]).some((id) => ids.has(id));
+/** Whether a change concerns a saved item: a saved contribution, or anything in a saved session. */
+export const touches = (c: Change, ids: ReadonlySet<string>) =>
+  (c.ids ?? [c.id]).some((id) => ids.has(id)) || Boolean(c.sessionId && ids.has(c.sessionId));
 
 type Props = {
   program: Program;

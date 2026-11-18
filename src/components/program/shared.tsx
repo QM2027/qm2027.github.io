@@ -1,5 +1,7 @@
 "use client";
 
+import { createContext, useContext } from "react";
+import { Icon } from "@/components/Icon";
 import { FLOORS } from "@/data/venue";
 import type { IcsEvent } from "@/lib/ics";
 import { clock, dayLabel, dayOf, type Contribution, type Session } from "@/lib/program";
@@ -13,6 +15,46 @@ export type ListProps = {
 };
 
 const ROOMS = FLOORS.flatMap((f) => f.rooms);
+
+/** Which contributions have an abstract or files, for the marks next to titles. */
+export const MarksContext = createContext<{ abstract: (id: string) => boolean; files: (id: string) => boolean } | null>(null);
+
+export function Marks({ id }: { id: string }) {
+  const marks = useContext(MarksContext);
+  const abstract = marks?.abstract(id);
+  const files = marks?.files(id);
+  if (!abstract && !files) return null;
+  return (
+    <span className="ml-1.5 inline-flex gap-1 align-[-2px] text-muted">
+      {abstract && (
+        <span title="Abstract">
+          <Icon name="doc" className="size-3.5" />
+          <span className="sr-only">Abstract</span>
+        </span>
+      )}
+      {files && (
+        <span title="Files">
+          <Icon name="clip" className="size-3.5" />
+          <span className="sr-only">Files</span>
+        </span>
+      )}
+    </span>
+  );
+}
+
+/** The legend for the marks, shown once above a list. */
+export function MarksLegend() {
+  return (
+    <p className="flex gap-4 text-xs text-muted">
+      <span className="inline-flex items-center gap-1">
+        <Icon name="doc" className="size-3.5" /> Abstract
+      </span>
+      <span className="inline-flex items-center gap-1">
+        <Icon name="clip" className="size-3.5" /> Slides or poster file
+      </span>
+    </p>
+  );
+}
 
 /** The floor-plan room for an Indico room name; posters fall back to the poster area. */
 export function venueRoomId(room: string | undefined, poster?: boolean): string | undefined {
@@ -34,10 +76,22 @@ export const talkIcs = (c: Contribution, session?: Session): IcsEvent => ({
   alarmMinutes: 10,
 });
 
+/** A saved session, with a reminder ten minutes before. */
+export const sessionIcs = (s: Session): IcsEvent => ({
+  uid: `qm-session-${s.id}`,
+  title: s.title,
+  start: s.start,
+  end: s.end,
+  location: s.room,
+  description: s.conveners.length ? `Chair: ${s.conveners.join(", ")}` : undefined,
+  url: s.url,
+  alarmMinutes: 10,
+});
+
 /** One calendar entry per poster session, listing the saved posters by board. */
 export const posterSessionIcs = (session: Session, posters: Contribution[]): IcsEvent => ({
   uid: `qm-posters-${session.id}`,
-  title: `${session.title} (${posters.length} saved poster${posters.length === 1 ? "" : "s"})`,
+  title: posters.length ? `${session.title} (${posters.length} saved poster${posters.length === 1 ? "" : "s"})` : session.title,
   start: session.start,
   end: session.end,
   location: session.room,
@@ -97,6 +151,7 @@ export function ContributionRow({ c, session, starred, onStar, onOpen, lead = "t
         )}
         <span className={`block font-medium leading-snug hover:text-sea ${compact ? "text-sm" : ""}`}>
           <TeX text={c.title} />
+          <Marks id={c.id} />
           {live && !compact && <b className="ml-2 align-middle text-xs text-tangerine">NOW</b>}
         </span>
         {meta && <span className={`block text-muted ${compact ? "line-clamp-2 text-xs" : "truncate text-sm"}`}>{meta}</span>}

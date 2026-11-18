@@ -10,6 +10,8 @@ const PATHS = {
   external: "M14 4h6v6m0-6L10 14M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5",
   list: "M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01",
   chevron: "M9 6l6 6-6 6",
+  doc: "M7 3h7l5 5v13H7zM14 3v5h5M10 13h6M10 17h4",
+  clip: "M20 11.5 12.4 19a5 5 0 0 1-7.1-7.1l7.9-7.8a3.3 3.3 0 0 1 4.7 4.7l-7.8 7.8a1.7 1.7 0 0 1-2.4-2.4l7.1-7",
 } as const;
 
 export type IconName = keyof typeof PATHS;

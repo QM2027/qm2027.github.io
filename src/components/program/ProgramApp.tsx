@@ -21,9 +21,10 @@ import { useLocalSet, useLocalString } from "@/lib/use-local-set";
 import { pinnedNow, useNow } from "@/lib/use-now";
 import { ContributionDetail, MissingDetail } from "./ContributionDetail";
 import { DaySchedule } from "./DaySchedule";
+import { FloorPlanModal } from "./FloorPlanModal";
 import { MySchedule } from "./MySchedule";
 import { PosterBrowser } from "./PosterBrowser";
-import { ContributionList, type ListProps } from "./shared";
+import { ContributionList, MarksContext, type ListProps } from "./shared";
 import { touches, Updates } from "./Updates";
 
 // URL state, so every view can be linked and the back button works:
@@ -33,6 +34,7 @@ import { touches, Updates } from "./Updates";
 //   ?view=updates[&mine=1]          changes, optionally only my items
 //   ?q=…&type=talk|poster           search
 //   ?talk=<id>                      details of a talk or poster, on top of any view
+//   ?map=<room id>                  floor plan over the details, on that room's floor (`-` for none)
 //   ?now=<ISO time>                 pin the clock, for testing "now" with a past program
 
 type View = "day" | "posters" | "mine" | "updates";
@@ -131,23 +133,29 @@ function ProgramBrowser({
   const searching = deferredQuery.trim().length >= 2;
   const results = useMemo(() => (searching ? searchProgram(index, deferredQuery, type) : []), [index, deferredQuery, type, searching]);
 
-  // ---- details open with push, so the phone's back button closes them
-  const openedHere = useRef(false);
+  // ---- details and the floor plan open with push, so the phone's back button closes them in
+  // turn. `pushed` counts the entries this page added; a deep link starts at 0 and closes by replace.
+  const mapRoom = params.get("map");
+  const pushed = useRef(0);
   useEffect(() => {
-    if (!talkId) openedHere.current = false;
-  }, [talkId]);
-  const openTalk = (id: string) => {
-    openedHere.current = true;
-    go({ talk: id }, "push");
+    pushed.current = Math.min(pushed.current, (talkId ? 1 : 0) + (mapRoom ? 1 : 0));
+  }, [talkId, mapRoom]);
+  const openOver = (patch: Record<string, string>) => {
+    pushed.current++;
+    go(patch, "push");
   };
-  const closeTalk = () => {
-    if (openedHere.current) router.back();
-    else go({ talk: undefined });
+  const closeOver = (keys: string[]) => {
+    if (pushed.current > 0) {
+      pushed.current--;
+      router.back();
+    } else go(Object.fromEntries(keys.map((k) => [k, undefined])));
   };
+  const openTalk = (id: string) => openOver({ talk: id });
+  const closeTalk = () => closeOver(["talk", "map"]);
 
   // ---- my schedule: shared-link import and changes since last seen
   const importIds = view === "mine" ? (params.get("ids") ?? "").split(",").filter((id) => id && !starred.has(id)) : [];
-  const mineCount = program.contributions.filter((c) => starred.has(c.id)).length;
+  const mineCount = [...program.contributions, ...program.sessions].filter((x) => starred.has(x.id)).length;
   const newestChange = program.changes[0]?.detectedAt;
   const myNewChanges = seenChanges === undefined ? [] : program.changes.filter((c) => touches(c, starred) && c.detectedAt > (seenChanges ?? ""));
   useEffect(() => {
@@ -156,6 +164,10 @@ function ProgramBrowser({
 
   const stale = now !== undefined && now - Date.parse(checkedAt) > STALE_MS;
   const listProps = { sessionsById, starred, onStar: toggleStar, onOpen: openTalk };
+  const marks = useMemo(
+    () => ({ abstract: (id: string) => Boolean(abstracts?.[id]?.abstract), files: (id: string) => Boolean(materials?.[id]?.length) }),
+    [abstracts, materials],
+  );
 
   const tabs: [View, string][] = [
     ["day", "Schedule"],
@@ -165,6 +177,7 @@ function ProgramBrowser({
   ];
 
   return (
+    <MarksContext.Provider value={marks}>
     <div>
       {program.eventId !== QM2027_EVENT_ID && (
         <p className="mb-3 rounded-md border border-border bg-surface p-3 text-sm">
@@ -271,7 +284,12 @@ function ProgramBrowser({
                 </span>
               </div>
             )}
-            <MySchedule program={program} changedIds={changedIds} {...listProps} />
+            <MySchedule
+              program={program}
+              changedIds={changedIds}
+              onSession={(s) => (s.poster ? go({ view: "posters", ps: s.id, track: undefined }) : go({ view: undefined, day: dayOf(s.start) }))}
+              {...listProps}
+            />
           </>
         ) : view === "updates" ? (
           <Updates
@@ -307,10 +325,12 @@ function ProgramBrowser({
             changed={changedIds.has(talk.id)}
             onStar={() => toggleStar(talk.id)}
             onClose={closeTalk}
+            onShowMap={(room) => openOver({ map: room ?? "-" })}
           />
         ) : (
           <MissingDetail onClose={closeTalk} />
         ))}
+      {mapRoom && <FloorPlanModal roomId={mapRoom === "-" ? undefined : mapRoom} onClose={() => closeOver(["map"])} />}
 
       <p className="mt-8 text-xs text-muted">
         {stale && <b className="text-foreground">Couldn&apos;t check Indico for a while. </b>}
@@ -319,6 +339,7 @@ function ProgramBrowser({
         {program.eventId === QM2027_EVENT_ID ? " (KST)" : ""}. If anything here differs, Indico is authoritative.
       </p>
     </div>
+    </MarksContext.Provider>
   );
 }
 

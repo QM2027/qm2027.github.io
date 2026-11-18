@@ -1,6 +1,5 @@
 "use client";
 
-import Link from "next/link";
 import { useEffect, useState } from "react";
 import { Icon } from "@/components/Icon";
 import { INDICO_TIMETABLE } from "@/data/indico-links";
@@ -51,9 +50,11 @@ type Props = {
   changed: boolean;
   onStar: () => void;
   onClose: () => void;
+  /** Opens the floor plan over the panel, on this room (the venue room id) if it is known. */
+  onShowMap: (room?: string) => void;
 };
 
-export function ContributionDetail({ talk, session, details, abstractsLoaded, files, starred, changed, onStar, onClose }: Props) {
+export function ContributionDetail({ talk, session, details, abstractsLoaded, files, starred, changed, onStar, onClose, onShowMap }: Props) {
   const [allAuthors, setAllAuthors] = useState(false);
   // Speakers replace files all week; a deleted and re-added file gets a new link. Re-check now.
   useEffect(() => {
@@ -123,9 +124,9 @@ export function ContributionDetail({ talk, session, details, abstractsLoaded, fi
             Add to calendar
           </button>
         )}
-        <Link href={venueId ? `/venue/?room=${venueId}` : "/venue/"} className={btn}>
+        <button onClick={() => onShowMap(venueId)} className={btn}>
           {venueId ? "Show on floor plan" : "Floor plan"}
-        </Link>
+        </button>
         {talk.url && (
           <a href={talk.url} target="_blank" rel="noreferrer" className={btn}>
             Indico <Icon name="external" className="size-4" />

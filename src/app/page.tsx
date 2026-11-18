@@ -10,7 +10,7 @@ const CONTENTS = [
   { href: "/getting-there/", title: "Airport to venue", text: "Bus, taxi or car, and a card in Korean for the driver" },
   { href: "/venue/", title: "Venue plan", text: "Rooms, registration, coffee and facilities at ICC Jeju" },
   { href: "/travel/", title: "Travel toolkit", text: "Weather, money, phone, emergency numbers" },
-  { href: "/program/", title: "Program", text: "Offline copy of the Indico timetable, with your own schedule" },
+  { href: "/program/", title: "Program Book", text: "Talks and posters from Indico, offline, with your own schedule" },
   ...GUIDES.map((g) => ({ href: g.href, title: g.title, text: g.text })),
 ];
 
