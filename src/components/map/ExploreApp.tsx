@@ -104,158 +104,162 @@ export function ExploreApp() {
   }, [selectedId]);
 
   return (
-    <div data-fill-viewport className="flex min-h-0 flex-1 flex-col md:grid md:grid-cols-[minmax(320px,380px)_1fr] lg:grid-cols-[420px_1fr] max-md:landscape:flex-row">
-      {/* Map: top on phones (portrait), right on tablet/desktop and phone landscape */}
-      <div className="relative h-[42%] shrink-0 md:order-2 md:h-auto max-md:landscape:order-2 max-md:landscape:h-auto max-md:landscape:flex-1">
-        <MapView
-          places={places.map((x) => x.place)}
-          selectedId={selectedId}
-          onSelect={(id) => update({ place: id })}
-          route={route}
-          me={me}
-        />
-        <button
-          type="button"
-          onClick={locate}
-          className="absolute right-3 bottom-3 z-[500] flex size-11 items-center justify-center rounded-full bg-surface text-foreground shadow-md"
-          aria-label="Show my location"
-        >
-          <Icon name="locate" />
-        </button>
+    <div data-fill-viewport className="flex min-h-0 flex-1 flex-col">
+      <div className="shrink-0 px-4">
+        <GuideNav />
       </div>
-
-      {/* Panel */}
-      <aside className="flex min-h-0 flex-1 flex-col border-border md:order-1 md:border-r max-md:landscape:w-[45%] max-md:landscape:flex-none max-md:landscape:border-r">
-        {selected ? (
-          <PlaceDetail place={selected} origin={origin} fromMe={!!me} onClose={() => update({ place: undefined })} />
-        ) : (
-          <>
-            <div className="border-b border-border px-4">
-              <GuideNav />
-              <div role="tablist" className="mt-2 flex gap-6 border-b border-border text-sm">
-                {(["places", "courses"] as const).map((t) => (
-                  <button
-                    key={t}
-                    role="tab"
-                    aria-selected={tab === t}
-                    onClick={() => update({ tab: t === "courses" ? "courses" : undefined, course: undefined })}
-                    className="-mb-px min-h-10 border-b-2 border-transparent text-muted aria-selected:border-foreground aria-selected:text-foreground"
-                  >
-                    {t === "places" ? "Places" : "Suggested courses"}
-                  </button>
-                ))}
-              </div>
-
-              {tab === "places" && (
-                <div className="-mx-4 mt-3 flex gap-2 overflow-x-auto px-4 pb-3 [scrollbar-width:none] lg:flex-wrap">
-                  {ALL_CATEGORIES.map((c) => {
-                    const on = cats.includes(c);
-                    return (
-                      <button
-                        key={c}
-                        onClick={() => toggleCategory(c)}
-                        aria-pressed={on}
-                        className="flex min-h-9 shrink-0 items-center gap-2 rounded-md border border-border px-3 text-sm aria-pressed:border-transparent aria-pressed:bg-foreground aria-pressed:text-background"
-                      >
-                        <span className="size-2.5 rounded-full" style={{ background: CATEGORIES[c].color }} />
-                        {CATEGORIES[c].label}
-                      </button>
-                    );
-                  })}
-                  <button
-                    onClick={() => update({ indoor: indoorOnly ? undefined : "1", place: undefined })}
-                    aria-pressed={indoorOnly}
-                    className="min-h-9 shrink-0 rounded-md border border-dashed border-border px-3 text-sm aria-pressed:border-solid aria-pressed:border-sea aria-pressed:text-sea"
-                  >
-                    Indoor only
-                  </button>
-                  <button
-                    onClick={() => update({ photo: photoOnly ? undefined : "1", place: undefined })}
-                    aria-pressed={photoOnly}
-                    className="min-h-9 shrink-0 rounded-md border border-dashed border-border px-3 text-sm aria-pressed:border-solid aria-pressed:border-sea aria-pressed:text-sea"
-                  >
-                    Photo spots
-                  </button>
-                </div>
-              )}
-              {tab === "courses" && course && (
-                <div className="flex items-center justify-between gap-2 py-3">
-                  <div>
-                    <p className="font-semibold">{course.title}</p>
-                    <p className="text-sm text-muted">{course.length}</p>
-                  </div>
-                  <button onClick={() => update({ course: undefined })} className="min-h-9 rounded-md border border-border px-3 text-sm">
-                    All courses
-                  </button>
-                </div>
-              )}
-              {tab === "courses" && !course && <div className="h-3" />}
-            </div>
-
-            {locError && <p className="bg-surface px-4 py-2 text-sm">{locError}</p>}
-            <p className="px-4 pt-3 text-xs text-muted">
-              {course ? "Stops in order" : `${places.length} places · distance from ${me ? "you" : "ICC Jeju"}`}
-            </p>
-
-            <div
-              ref={listRef}
-              onScroll={(e) => (listScroll.current = e.currentTarget.scrollTop)}
-              className="min-h-0 flex-1 overflow-y-auto overscroll-contain"
-            >
-              {tab === "courses" && !course ? (
-                <ul className="grid gap-3 p-4 sm:grid-cols-2 md:grid-cols-1">
-                  {COURSES.map((c) => (
-                    <li key={c.id}>
-                      <button
-                        onClick={() => update({ course: c.id, tab: undefined })}
-                        className="w-full rounded-md border border-border bg-surface p-4 text-left transition hover:border-sea"
-                      >
-                        <p className="font-semibold">{c.title}</p>
-                        <p className="text-xs font-medium text-tangerine">{c.length}</p>
-                        <p className="mt-1 text-sm text-muted">{c.blurb}</p>
-                        <p className="mt-2 text-xs text-muted">
-                          {c.stops.map((s) => placeById(s)?.name).join(" → ")}
-                        </p>
-                      </button>
-                    </li>
+      <div className="flex min-h-0 flex-1 flex-col md:grid md:grid-cols-[minmax(320px,380px)_1fr] lg:grid-cols-[420px_1fr] max-md:landscape:flex-row">
+        {/* Map: top on phones (portrait), right on tablet/desktop and phone landscape */}
+        <div className="relative h-[42%] shrink-0 md:order-2 md:h-auto max-md:landscape:order-2 max-md:landscape:h-auto max-md:landscape:flex-1">
+          <MapView
+            places={places.map((x) => x.place)}
+            selectedId={selectedId}
+            onSelect={(id) => update({ place: id })}
+            route={route}
+            me={me}
+          />
+          <button
+            type="button"
+            onClick={locate}
+            className="absolute right-3 bottom-3 z-[500] flex size-11 items-center justify-center rounded-full bg-surface text-foreground shadow-md"
+            aria-label="Show my location"
+          >
+            <Icon name="locate" />
+          </button>
+        </div>
+  
+        {/* Panel */}
+        <aside className="flex min-h-0 flex-1 flex-col border-border md:order-1 md:border-r max-md:landscape:w-[45%] max-md:landscape:flex-none max-md:landscape:border-r">
+          {selected ? (
+            <PlaceDetail place={selected} origin={origin} fromMe={!!me} onClose={() => update({ place: undefined })} />
+          ) : (
+            <>
+              <div className="border-b border-border px-4 pt-1">
+                <div role="tablist" className="flex gap-6 border-b border-border text-sm">
+                  {(["places", "courses"] as const).map((t) => (
+                    <button
+                      key={t}
+                      role="tab"
+                      aria-selected={tab === t}
+                      onClick={() => update({ tab: t === "courses" ? "courses" : undefined, course: undefined })}
+                      className="-mb-px min-h-10 border-b-2 border-transparent text-muted aria-selected:border-foreground aria-selected:text-foreground"
+                    >
+                      {t === "places" ? "Places" : "Suggested courses"}
+                    </button>
                   ))}
-                </ul>
-              ) : (
-                <ol className="divide-y divide-border">
-                  {places.map(({ place, km }, i) => (
-                    <li key={place.id}>
-                      <button
-                        data-place={place.id}
-                        onClick={() => update({ place: place.id })}
-                        className="flex w-full items-start gap-3 px-4 py-3 text-left hover:bg-surface"
-                      >
-                        <span
-                          className="mt-1 flex size-6 shrink-0 items-center justify-center rounded-full text-[11px] font-semibold text-white"
-                          style={{ background: CATEGORIES[place.category].color }}
+                </div>
+  
+                {tab === "places" && (
+                  <div className="-mx-4 mt-3 flex gap-2 overflow-x-auto px-4 pb-3 [scrollbar-width:none] lg:flex-wrap">
+                    {ALL_CATEGORIES.map((c) => {
+                      const on = cats.includes(c);
+                      return (
+                        <button
+                          key={c}
+                          onClick={() => toggleCategory(c)}
+                          aria-pressed={on}
+                          className="flex min-h-9 shrink-0 items-center gap-2 rounded-md border border-border px-3 text-sm aria-pressed:border-transparent aria-pressed:bg-foreground aria-pressed:text-background"
                         >
-                          {course ? i + 1 : ""}
-                        </span>
-                        <span className="min-w-0 flex-1">
-                          <span className="block font-medium">{place.name}</span>
-                          <span className="block truncate text-sm text-muted">{place.summary}</span>
-                          {place.march && (
-                            <span className="mt-1 inline-block rounded border border-border px-1.5 text-xs">In season in March</span>
-                          )}
-                        </span>
-                        <span className="shrink-0 text-right text-xs text-muted">
-                          {formatDistance(km)}
-                          <br />
-                          {km < 2 ? `${formatMinutes(travelMinutes(km, "walk"))} walk` : `${formatMinutes(travelMinutes(km, "car"))} drive`}
-                        </span>
-                      </button>
-                    </li>
-                  ))}
-                </ol>
-              )}
-            </div>
-          </>
-        )}
-      </aside>
+                          <span className="size-2.5 rounded-full" style={{ background: CATEGORIES[c].color }} />
+                          {CATEGORIES[c].label}
+                        </button>
+                      );
+                    })}
+                    <button
+                      onClick={() => update({ indoor: indoorOnly ? undefined : "1", place: undefined })}
+                      aria-pressed={indoorOnly}
+                      className="min-h-9 shrink-0 rounded-md border border-dashed border-border px-3 text-sm aria-pressed:border-solid aria-pressed:border-sea aria-pressed:text-sea"
+                    >
+                      Indoor only
+                    </button>
+                    <button
+                      onClick={() => update({ photo: photoOnly ? undefined : "1", place: undefined })}
+                      aria-pressed={photoOnly}
+                      className="min-h-9 shrink-0 rounded-md border border-dashed border-border px-3 text-sm aria-pressed:border-solid aria-pressed:border-sea aria-pressed:text-sea"
+                    >
+                      Photo spots
+                    </button>
+                  </div>
+                )}
+                {tab === "courses" && course && (
+                  <div className="flex items-center justify-between gap-2 py-3">
+                    <div>
+                      <p className="font-semibold">{course.title}</p>
+                      <p className="text-sm text-muted">{course.length}</p>
+                    </div>
+                    <button onClick={() => update({ course: undefined })} className="min-h-9 rounded-md border border-border px-3 text-sm">
+                      All courses
+                    </button>
+                  </div>
+                )}
+                {tab === "courses" && !course && <div className="h-3" />}
+              </div>
+  
+              {locError && <p className="bg-surface px-4 py-2 text-sm">{locError}</p>}
+              <p className="px-4 pt-3 text-xs text-muted">
+                {course ? "Stops in order" : `${places.length} places · distance from ${me ? "you" : "ICC Jeju"}`}
+              </p>
+  
+              <div
+                ref={listRef}
+                onScroll={(e) => (listScroll.current = e.currentTarget.scrollTop)}
+                className="min-h-0 flex-1 overflow-y-auto overscroll-contain"
+              >
+                {tab === "courses" && !course ? (
+                  <ul className="grid gap-3 p-4 sm:grid-cols-2 md:grid-cols-1">
+                    {COURSES.map((c) => (
+                      <li key={c.id}>
+                        <button
+                          onClick={() => update({ course: c.id, tab: undefined })}
+                          className="w-full rounded-md border border-border bg-surface p-4 text-left transition hover:border-sea"
+                        >
+                          <p className="font-semibold">{c.title}</p>
+                          <p className="text-xs font-medium text-tangerine">{c.length}</p>
+                          <p className="mt-1 text-sm text-muted">{c.blurb}</p>
+                          <p className="mt-2 text-xs text-muted">
+                            {c.stops.map((s) => placeById(s)?.name).join(" → ")}
+                          </p>
+                        </button>
+                      </li>
+                    ))}
+                  </ul>
+                ) : (
+                  <ol className="divide-y divide-border">
+                    {places.map(({ place, km }, i) => (
+                      <li key={place.id}>
+                        <button
+                          data-place={place.id}
+                          onClick={() => update({ place: place.id })}
+                          className="flex w-full items-start gap-3 px-4 py-3 text-left hover:bg-surface"
+                        >
+                          <span
+                            className="mt-1 flex size-6 shrink-0 items-center justify-center rounded-full text-[11px] font-semibold text-white"
+                            style={{ background: CATEGORIES[place.category].color }}
+                          >
+                            {course ? i + 1 : ""}
+                          </span>
+                          <span className="min-w-0 flex-1">
+                            <span className="block font-medium">{place.name}</span>
+                            <span className="block truncate text-sm text-muted">{place.summary}</span>
+                            {place.march && (
+                              <span className="mt-1 inline-block rounded border border-border px-1.5 text-xs">In season in March</span>
+                            )}
+                          </span>
+                          <span className="shrink-0 text-right text-xs text-muted">
+                            {formatDistance(km)}
+                            <br />
+                            {km < 2 ? `${formatMinutes(travelMinutes(km, "walk"))} walk` : `${formatMinutes(travelMinutes(km, "car"))} drive`}
+                          </span>
+                        </button>
+                      </li>
+                    ))}
+                  </ol>
+                )}
+              </div>
+            </>
+          )}
+        </aside>
+      </div>
     </div>
   );
 }
