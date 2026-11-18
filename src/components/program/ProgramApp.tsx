@@ -2,7 +2,7 @@
 
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useDeferredValue, useEffect, useMemo, useRef, useState } from "react";
-import { Icon } from "@/components/Icon";
+import { Icon, type IconName } from "@/components/Icon";
 import { INDICO_GROUPS, INDICO_TIMETABLE } from "@/data/indico-links";
 import {
   changedContributionIds,
@@ -187,18 +187,60 @@ function ProgramBrowser({
     [abstracts, materials],
   );
 
-  const tabs: [View, string][] = [
-    ["day", "Schedule"],
-    ...(posterCount ? ([["posters", `Posters (${posterCount})`]] as [View, string][]) : []),
-    ...(program.tracks.length ? ([["topics", "Topics"]] as [View, string][]) : []),
-    ["speakers", "Speakers"],
-    ["mine", `Mine (${mineCount})`],
-    ["updates", `Updates${program.changes.length ? ` (${program.changes.length})` : ""}`],
+  type Tab = { view: View; label: string; icon: IconName; count?: number; alert?: boolean };
+  const tabs: Tab[] = [
+    { view: "day", label: "Schedule", icon: "calendar" },
+    ...(posterCount ? [{ view: "posters" as const, label: "Posters", icon: "grid" as const, count: posterCount }] : []),
+    ...(program.tracks.length ? [{ view: "topics" as const, label: "Topics", icon: "layers" as const, count: program.tracks.length }] : []),
+    { view: "speakers", label: "Speakers", icon: "users" },
+    { view: "mine", label: "Mine", icon: "star", count: mineCount, alert: filesChanged.size > 0 },
+    { view: "updates", label: "Updates", icon: "bell", count: program.changes.length, alert: myNewChanges.length > 0 },
   ];
+  const showDays = !searching && view === "day";
+  const selectView = (v: View) => {
+    setQuery("");
+    go({ view: v === "day" ? undefined : v, q: undefined, type: undefined, ids: undefined, mine: undefined, topic: undefined });
+    window.scrollTo({ top: 0 });
+  };
+  const dayButtons = (className: string) =>
+    days.map((d) => (
+      <button key={d} onClick={() => go({ day: d })} aria-pressed={d === day} className={className}>
+        {dayLabel(d)}
+        {d === todayKey && " · today"}
+      </button>
+    ));
 
   return (
     <MarksContext.Provider value={marks}>
-    <div>
+    {/* Wide screens: views (and days) in a pane on the left. Phones: both in a bar at the bottom. */}
+    <div className="pb-4 lg:grid lg:grid-cols-[12rem_minmax(0,1fr)] lg:gap-8 lg:pb-0">
+      <nav aria-label="Program views" className="hidden lg:block">
+        <div className="sticky top-20 space-y-1">
+          {tabs.map((t) => (
+            <div key={t.view}>
+              <button
+                onClick={() => selectView(t.view)}
+                aria-pressed={!searching && view === t.view}
+                className="flex min-h-11 w-full items-center gap-3 rounded-md px-3 text-left text-sm hover:bg-surface aria-pressed:bg-foreground aria-pressed:text-background"
+              >
+                <Icon name={t.icon} className="size-4.5 shrink-0" />
+                <span className="flex-1">{t.label}</span>
+                {t.alert && <span className="size-2 rounded-full bg-tangerine" aria-label="New" />}
+                {t.count ? <span className="text-xs tabular-nums opacity-70">{t.count}</span> : null}
+              </button>
+              {t.view === "day" && showDays && (
+                <div className="my-1 ml-7 flex flex-col gap-0.5" role="group" aria-label="Day">
+                  {dayButtons(
+                    "min-h-9 rounded-md px-3 text-left text-sm text-muted hover:text-foreground aria-pressed:bg-surface aria-pressed:font-semibold aria-pressed:text-foreground",
+                  )}
+                </div>
+              )}
+            </div>
+          ))}
+        </div>
+      </nav>
+
+    <div className="min-w-0">
       {program.eventId !== QM2027_EVENT_ID && (
         <p className="mb-3 rounded-md border border-border bg-surface p-3 text-sm">
           <b>Preview.</b> The QM2027 timetable isn&apos;t on Indico yet, so this shows the program of a past conference (Indico
@@ -232,7 +274,7 @@ function ProgramBrowser({
         </button>
       )}
 
-      <div className="sticky top-14 z-20 -mx-4 space-y-2 bg-background/95 px-4 py-3 backdrop-blur lg:-mx-8 lg:px-8">
+      <div className="sticky top-14 z-20 -mx-4 space-y-2 bg-background/95 px-4 py-3 backdrop-blur lg:mx-0 lg:px-0">
         <input
           type="search"
           value={query}
@@ -258,30 +300,7 @@ function ProgramBrowser({
               Clear
             </button>
           </div>
-        ) : (
-          <div className="-mx-4 flex gap-2 overflow-x-auto px-4 [scrollbar-width:none]" role="group" aria-label="View">
-            {tabs.map(([v, label]) => (
-              <Tab key={v} on={view === v} onClick={() => go({ view: v === "day" ? undefined : v, ids: undefined, mine: undefined })}>
-                {label}
-              </Tab>
-            ))}
-          </div>
-        )}
-        {!searching && view === "day" && (
-          <div className="-mx-4 flex gap-2 overflow-x-auto px-4 [scrollbar-width:none]" role="group" aria-label="Day">
-            {days.map((d) => (
-              <button
-                key={d}
-                onClick={() => go({ day: d })}
-                aria-pressed={d === day}
-                className="min-h-10 shrink-0 rounded-md border border-border bg-surface px-3 text-sm aria-pressed:border-sea aria-pressed:bg-sea aria-pressed:text-on-sea"
-              >
-                {dayLabel(d)}
-                {d === todayKey && " · today"}
-              </button>
-            ))}
-          </div>
-        )}
+        ) : null}
       </div>
 
       <div className="mt-4">
@@ -385,6 +404,40 @@ function ProgramBrowser({
         {program.eventId === QM2027_EVENT_ID ? " (KST)" : ""}. If anything here differs, Indico is authoritative.
       </p>
     </div>
+    </div>
+
+    <nav
+      aria-label="Program views"
+      data-bottom-bar={showDays ? "2" : "1"}
+      className="fixed inset-x-0 bottom-0 z-[900] border-t border-border bg-background/95 pb-[env(safe-area-inset-bottom)] backdrop-blur lg:hidden"
+    >
+      {showDays && (
+        <div className="flex gap-2 overflow-x-auto border-b border-border px-3 py-2 [scrollbar-width:none]" role="group" aria-label="Day">
+          {dayButtons(
+            "min-h-9 shrink-0 rounded-md border border-border bg-surface px-3 text-sm aria-pressed:border-sea aria-pressed:bg-sea aria-pressed:text-on-sea",
+          )}
+        </div>
+      )}
+      <div className="grid" style={{ gridTemplateColumns: `repeat(${tabs.length}, minmax(0, 1fr))` }}>
+        {tabs.map((t) => (
+          <button
+            key={t.view}
+            onClick={() => selectView(t.view)}
+            aria-pressed={!searching && view === t.view}
+            className="relative flex min-h-14 flex-col items-center justify-center gap-0.5 text-[11px] text-muted aria-pressed:font-semibold aria-pressed:text-foreground"
+          >
+            <Icon name={t.icon} className="size-5" />
+            {t.label}
+            {t.view === "mine" && t.count ? (
+              <span className="absolute top-1.5 left-1/2 ml-2 min-w-4 rounded-full bg-foreground px-1 text-[10px] leading-4 font-semibold text-background">
+                {t.count}
+              </span>
+            ) : null}
+            {t.alert && <span className="absolute top-2 left-1/2 -ml-4 size-2 rounded-full bg-tangerine" aria-label="New" />}
+          </button>
+        ))}
+      </div>
+    </nav>
     </MarksContext.Provider>
   );
 }

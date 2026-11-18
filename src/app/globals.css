@@ -87,3 +87,17 @@ body {
   }
 }
 
+
+/* Program Book on phones: views and days sit in a bar at the bottom. Its height lets the page end
+   and fixed prompts (the install hint) clear it. */
+@media (width < 64rem) {
+  :root:has([data-bottom-bar="1"]) {
+    --bottom-bar: 3.5rem;
+  }
+  :root:has([data-bottom-bar="2"]) {
+    --bottom-bar: 6.9rem;
+  }
+  body:has([data-bottom-bar]) main {
+    padding-bottom: calc(var(--bottom-bar) + 1rem);
+  }
+}
