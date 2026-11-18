@@ -38,7 +38,11 @@ export function WeatherCard() {
         <b>Late March, typically:</b> {MARCH_CLIMATE.high}° / {MARCH_CLIMATE.low}°C, about {MARCH_CLIMATE.rainyDays} rainy
         days in the month. {MARCH_CLIMATE.text}
       </p>
-      <p className="mt-2 text-xs text-muted">Forecast by Open-Meteo.</p>
+      <p className="mt-2 text-xs text-muted">
+        <a href="https://open-meteo.com/" target="_blank" rel="noreferrer" className="underline underline-offset-2">
+          Weather data by Open-Meteo.com
+        </a>
+      </p>
     </section>
   );
 }

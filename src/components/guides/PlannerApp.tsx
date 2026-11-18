@@ -110,6 +110,14 @@ export function PlannerApp() {
               : forecast.status === "loading"
                 ? "Checking the forecast…"
                 : "Forecast unavailable. Choose dry or rain above."}
+            {forecast.status === "ok" && (
+              <>
+                {" "}
+                <a href="https://open-meteo.com/" target="_blank" rel="noreferrer" className="text-xs text-muted underline underline-offset-2">
+                  Weather data by Open-Meteo.com
+                </a>
+              </>
+            )}
           </p>
         )}
         <label className="flex items-center justify-between gap-3 text-sm font-medium">
