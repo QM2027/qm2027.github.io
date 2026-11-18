@@ -65,12 +65,12 @@ export default function CompanionsPage() {
         ))}
       </ul>
 
-      <div className="mt-8 grid gap-6 md:grid-cols-2 lg:grid-cols-[1fr_1fr_400px]">
-        <section className="rounded-md border border-border bg-surface p-4">
+      <div className="mt-8 grid gap-6 md:grid-cols-2 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_400px]">
+        <section className="min-w-0 rounded-md border border-border bg-surface p-4">
           <h2 className="font-semibold">Good with kids</h2>
           <ul className="mt-2 divide-y divide-border">{KIDS.map((p) => <PlaceRow key={p.id} p={p} />)}</ul>
         </section>
-        <section className="rounded-md border border-border bg-surface p-4">
+        <section className="min-w-0 rounded-md border border-border bg-surface p-4">
           <h2 className="font-semibold">Step-free main route</h2>
           <ul className="mt-2 divide-y divide-border">{STEP_FREE.map((p) => <PlaceRow key={p.id} p={p} />)}</ul>
           <p className="mt-2 text-xs text-muted">Step-free means the main visitor route, as far as we know. Call ahead if it matters.</p>
