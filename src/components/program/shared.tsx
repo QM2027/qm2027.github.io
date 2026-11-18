@@ -2,6 +2,7 @@
 
 import { createContext, useContext } from "react";
 import { Icon } from "@/components/Icon";
+import { INDICO_ROOM_MAP } from "@/data/indico-rooms";
 import { FLOORS } from "@/data/venue";
 import type { IcsEvent } from "@/lib/ics";
 import { clock, dayLabel, dayOf, type Contribution, type Session } from "@/lib/program";
@@ -58,9 +59,13 @@ export function MarksLegend() {
 
 /** The floor-plan room for an Indico room name; posters fall back to the poster area. */
 export function venueRoomId(room: string | undefined, poster?: boolean): string | undefined {
-  const hit = room ? ROOMS.find((r) => r.indicoRooms?.includes(room)) : undefined;
-  return hit?.id ?? (poster ? ROOMS.find((r) => r.kind === "poster")?.id : undefined);
+  const mapped = room ? INDICO_ROOM_MAP[room] : undefined;
+  const hit = mapped ?? (room ? ROOMS.find((r) => r.indicoRooms?.includes(room))?.id : undefined);
+  return hit ?? (poster ? ROOMS.find((r) => r.kind === "poster")?.id : undefined);
 }
+
+/** The floor-plan name of a room id, for labels. */
+export const venueRoomName = (id: string | undefined) => (id ? ROOMS.find((r) => r.id === id)?.name : undefined);
 
 export const roomOf = (c: Contribution, session?: Session) => c.room ?? session?.room;
 

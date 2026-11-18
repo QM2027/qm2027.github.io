@@ -7,6 +7,7 @@ import { DEFAULT_FLOOR, FLOORS, ROOM_KINDS, ROUTES, type Room, type RoomKind, ty
 import { FloorPlan, Legend } from "./FloorPlan";
 import { clock, dayLabel, dayOf, isRunning, useProgram } from "@/lib/program";
 import { pinnedNow, useNow } from "@/lib/use-now";
+import { INDICO_ROOM_MAP, MAPPED_ROOM_IDS } from "@/data/indico-rooms";
 
 const FIND_KINDS = (Object.keys(ROOM_KINDS) as RoomKind[]).filter((k) => !ROOM_KINDS[k].hidden);
 
@@ -219,7 +220,7 @@ function RoomCard({ room, floorLabel, onClose }: { room: Room; floorLabel: strin
       {room.estimated && (
         <p className="mt-3 text-xs text-muted">This use is the committee’s current plan and may change.</p>
       )}
-      {(room.kind === "plenary" || room.kind === "parallel") && <RoomSessions room={room} />}
+      {(room.kind === "plenary" || room.kind === "parallel" || MAPPED_ROOM_IDS.has(room.id)) && <RoomSessions room={room} />}
       {room.kind === "poster" && <PosterSessions />}
     </div>
   );
@@ -230,14 +231,15 @@ function RoomSessions({ room }: { room: Room }) {
   const program = useProgram();
   const now = pinnedNow(useSearchParams().get("now"), useNow());
 
-  if (program.status !== "ok" || !room.indicoRooms?.length || now === undefined) {
+  if (program.status !== "ok" || !(room.indicoRooms?.length || MAPPED_ROOM_IDS.has(room.id)) || now === undefined) {
     return (
       <p className="mt-4 rounded-md bg-sea/10 p-3 text-sm text-sea">
         Sessions in this room will appear here once the program is published and rooms are confirmed.
       </p>
     );
   }
-  const inRoom = (name?: string) => Boolean(name && room.indicoRooms!.includes(name));
+  // Indico names listed on the room, or mapped to it in src/data/indico-rooms.ts.
+  const inRoom = (name?: string) => Boolean(name && (room.indicoRooms?.includes(name) || INDICO_ROOM_MAP[name] === room.id));
   const { sessions, contributions } = program.data;
   const sessionsById = new Map(sessions.map((s) => [s.id, s]));
   // A talk's own room wins over its session's.

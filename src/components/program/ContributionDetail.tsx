@@ -6,7 +6,7 @@ import { INDICO_TIMETABLE } from "@/data/indico-links";
 import { fileFlag } from "@/lib/files-seen";
 import { downloadIcs } from "@/lib/ics";
 import { clock, dayLabel, dayOf, refreshProgram, type Abstracts, type Contribution, type Material, type Session } from "@/lib/program";
-import { roomOf, shareLink, talkIcs, venueRoomId } from "./shared";
+import { roomOf, shareLink, talkIcs, venueRoomId, venueRoomName } from "./shared";
 import { TeX } from "./TeX";
 
 const AUTHORS_SHOWN = 6;
@@ -150,7 +150,7 @@ export function ContributionDetail({
           </button>
         )}
         <button onClick={() => onShowMap(venueId)} className={btn}>
-          {venueId ? "Show on floor plan" : "Floor plan"}
+          {venueId ? `${venueRoomName(venueId)} on floor plan` : "Floor plan"}
         </button>
         {talk.url && (
           <a href={talk.url} target="_blank" rel="noreferrer" className={btn}>
