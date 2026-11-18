@@ -11,6 +11,7 @@ import {
   dayLabel,
   dayOf,
   QM2027_EVENT_ID,
+  refreshProgram,
   STALE_MS,
   useProgram,
   type Abstracts,
@@ -68,7 +69,9 @@ function NotPublished({ checkedAt }: { checkedAt?: string }) {
         The detailed timetable hasn&apos;t been published on Indico yet. Once it is, it will appear here automatically,
         with search, a personal schedule and offline access.
       </p>
-      {checkedAt && <p className="mt-2 text-xs text-muted">Last checked {new Date(checkedAt).toLocaleString("en-GB")}.</p>}
+      <div className="mt-3">
+        <SyncStatus checkedAt={checkedAt} />
+      </div>
       <a href={INDICO_TIMETABLE} target="_blank" rel="noreferrer" className="mt-6 inline-flex min-h-12 items-center gap-2 rounded-md bg-sea px-6 font-semibold text-on-sea">
         Open timetable on Indico <Icon name="external" className="size-4" />
       </a>
@@ -81,6 +84,42 @@ function NotPublished({ checkedAt }: { checkedAt?: string }) {
           </li>
         ))}
       </ul>
+    </div>
+  );
+}
+
+const shortTime = (iso: string) =>
+  new Date(iso).toLocaleString("en-GB", { weekday: "short", day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" });
+
+/** When the program was last checked against Indico, and a button to fetch the latest now. */
+function SyncStatus({ checkedAt, stale }: { checkedAt?: string; stale?: boolean }) {
+  const [result, setResult] = useState<"busy" | "ok" | "failed">();
+  useEffect(() => {
+    if (result !== "ok") return;
+    const t = setTimeout(() => setResult(undefined), 4000);
+    return () => clearTimeout(t);
+  }, [result]);
+  const refresh = async () => {
+    setResult("busy");
+    setResult((await refreshProgram(true)) ? "ok" : "failed");
+  };
+  return (
+    <div className="flex items-center justify-between gap-3 text-xs text-muted">
+      <p aria-live="polite">
+        {stale && <b className="text-foreground">Not updated for a while. </b>}
+        {checkedAt ? `Checked against Indico ${shortTime(checkedAt)}` : "Not checked yet"}
+        {result === "ok" && <span className="text-foreground"> · Up to date</span>}
+        {result === "failed" && <b className="text-foreground"> · No connection, showing the saved copy</b>}
+      </p>
+      <button
+        type="button"
+        onClick={refresh}
+        disabled={result === "busy"}
+        className="flex min-h-9 shrink-0 items-center gap-1.5 rounded-md border border-border px-3 text-sm text-foreground hover:bg-surface disabled:opacity-60"
+      >
+        <Icon name="refresh" className={`size-4 ${result === "busy" ? "animate-spin" : ""}`} />
+        Refresh
+      </button>
     </div>
   );
 }
@@ -255,6 +294,9 @@ function ProgramBrowser({
       </nav>
 
     <div className="min-w-0">
+      <div className="mb-3">
+        <SyncStatus checkedAt={checkedAt} stale={stale} />
+      </div>
       {program.eventId !== QM2027_EVENT_ID && (
         <p className="mb-3 rounded-md border border-border bg-surface p-3 text-sm">
           <b>Preview.</b> The QM2027 timetable isn&apos;t on Indico yet, so this shows the program of a past conference (Indico

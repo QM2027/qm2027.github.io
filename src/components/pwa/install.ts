@@ -46,9 +46,22 @@ if (typeof window !== "undefined" && !isStandalone()) {
     set({ mode: "prompt" });
   });
   window.addEventListener("appinstalled", () => {
+    persistStorage();
     deferred = undefined;
     set({ mode: null, helpOpen: false });
   });
+}
+
+/**
+ * Asks the browser not to clear the saved program and schedule when space runs low or the site
+ * goes unused. Chromium and Safari decide silently (installed apps qualify); Firefox would show a
+ * permission prompt, so there it is only asked from the installed app.
+ */
+export function persistStorage() {
+  try {
+    if (/Firefox\//.test(navigator.userAgent) && !isStandalone()) return;
+    navigator.storage?.persist?.().catch(() => {});
+  } catch {}
 }
 
 function subscribe(listener: () => void) {

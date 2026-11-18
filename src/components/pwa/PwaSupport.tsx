@@ -3,9 +3,21 @@
 import { useEffect, useState } from "react";
 import { Icon } from "@/components/Icon";
 import { withBase } from "@/lib/paths";
-import { closeInstallHelp, install, useInstall } from "./install";
+import { closeInstallHelp, install, persistStorage, useInstall } from "./install";
 
 const DISMISS_KEY = "qm2027:install-dismissed";
+
+type PeriodicSync = { register: (tag: string, options: { minInterval: number }) => Promise<void> };
+
+/** Where the browser allows it (an installed Chromium app), fetch the program hourly even while closed. */
+async function registerProgramSync() {
+  try {
+    const registration = (await navigator.serviceWorker.ready) as ServiceWorkerRegistration & { periodicSync?: PeriodicSync };
+    if (!registration.periodicSync) return;
+    const status = await navigator.permissions.query({ name: "periodic-background-sync" as PermissionName });
+    if (status.state === "granted") await registration.periodicSync.register("program", { minInterval: 60 * 60_000 });
+  } catch {}
+}
 
 /**
  * Registers the service worker and offers "add to home screen" once per device.
@@ -18,7 +30,9 @@ export function PwaSupport() {
   useEffect(() => {
     if (process.env.NODE_ENV === "production" && "serviceWorker" in navigator) {
       navigator.serviceWorker.register(withBase("/sw.js"), { scope: withBase("/") }).catch(() => {});
+      registerProgramSync();
     }
+    persistStorage();
   }, []);
 
   useEffect(() => {

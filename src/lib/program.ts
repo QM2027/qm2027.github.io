@@ -124,7 +124,7 @@ export type ProgramState =
 let state: ProgramState = { status: "loading" };
 const listeners = new Set<() => void>();
 let current: { program?: string; abstracts?: string; materials?: string } = {};
-let inflight: Promise<void> | undefined;
+let inflight: Promise<boolean> | undefined;
 let users = 0;
 let timer: ReturnType<typeof setInterval> | undefined;
 
@@ -144,8 +144,9 @@ async function getJson<T>(name: string, init?: RequestInit): Promise<T> {
 
 const idle = () => new Promise((r) => (typeof requestIdleCallback === "function" ? requestIdleCallback(r, { timeout: 2000 }) : setTimeout(r, 300)));
 
-async function refreshOnce(): Promise<void> {
-  const index = await getJson<Index>("index.json", { cache: "no-cache" });
+async function refreshOnce(manual: boolean): Promise<void> {
+  // "reload" tells the service worker to wait for the network instead of answering from its cache.
+  const index = await getJson<Index>("index.json", { cache: manual ? "reload" : "no-cache" });
   if (index.schema !== 2) throw new Error(`unknown schema ${index.schema}`);
 
   if (index.program !== current.program || state.status !== "ok") {
@@ -172,26 +173,37 @@ async function refreshOnce(): Promise<void> {
   }
 }
 
-async function refresh(): Promise<void> {
+/** Resolves false when the latest program couldn't be fetched. */
+async function refresh(manual: boolean): Promise<boolean> {
   try {
-    await refreshOnce();
+    await refreshOnce(manual);
+    return true;
   } catch (e) {
     try {
       // A 404 on a hashed file means a deploy replaced it since index.json was read: read it again.
-      if (e instanceof Gone) return await refreshOnce();
+      if (e instanceof Gone) {
+        await refreshOnce(manual);
+        return true;
+      }
     } catch {}
     // Keep what is shown; only a first load that fails is an error.
     if (state.status === "loading") set({ status: "error" });
+    return false;
   }
 }
 
-function load() {
-  inflight ??= refresh().finally(() => (inflight = undefined));
+function load(manual = false): Promise<boolean> {
+  // A manual refresh must reach the network, so it doesn't settle for a background check in flight.
+  if (manual && inflight) return inflight.then(() => load(true));
+  inflight ??= refresh(manual).finally(() => (inflight = undefined));
   return inflight;
 }
 
-/** Check index.json now, e.g. when a contribution is opened, so its file links are current. */
-export const refreshProgram = () => load();
+/**
+ * Check index.json now, e.g. when a contribution is opened, so its file links are current.
+ * `manual` (the Refresh button) waits for the network; it resolves false when that failed.
+ */
+export const refreshProgram = (manual = false) => load(manual);
 
 const onVisible = () => {
   if (document.visibilityState === "visible") load();
