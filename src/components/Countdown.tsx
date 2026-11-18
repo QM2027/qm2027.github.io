@@ -1,6 +1,6 @@
 "use client";
 
-import { useSyncExternalStore } from "react";
+import { useState, useSyncExternalStore } from "react";
 import { SITE } from "@/lib/site";
 
 const subscribe = (cb: () => void) => {
@@ -8,7 +8,7 @@ const subscribe = (cb: () => void) => {
   return () => clearInterval(id);
 };
 // Second resolution keeps the snapshot stable between ticks.
-const now = () => Math.floor(Date.now() / 1_000);
+const nowAt = (offset: number) => () => Math.floor((Date.now() + offset) / 1_000);
 
 const DAY = 86_400_000;
 const START = Date.parse(SITE.start);
@@ -31,8 +31,10 @@ function Units({ values }: { values: [string, string, string, string] }) {
   );
 }
 
-export function Countdown() {
-  const second = useSyncExternalStore(subscribe, now, () => null);
+/** `from`: a pinned clock (the preview's `?now=`), from which the countdown then runs on. */
+export function Countdown({ from }: { from?: number } = {}) {
+  const [offset] = useState(() => (from === undefined ? 0 : from - Date.now()));
+  const second = useSyncExternalStore(subscribe, nowAt(offset), () => null);
 
   // Same footprint before hydration, so the hero does not shift.
   if (second === null) {

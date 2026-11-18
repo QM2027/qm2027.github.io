@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import type { ReactNode } from "react";
+import { Countdown } from "@/components/Countdown";
 import { HappeningNow } from "@/components/HappeningNow";
 import { Icon, type IconName } from "@/components/Icon";
 import { JejuOutline } from "@/components/JejuOutline";
@@ -47,13 +48,13 @@ export function AppHome() {
   const phase = forced && PHASES.includes(forced) ? (forced as Phase) : phaseAt(now);
   if (phase === "week") return <Week now={now} />;
   if (phase === "after") return <After />;
-  return <Before now={now} phase={phase} />;
+  const pinned = params.get("now") ? now : undefined;
+  return <Before now={now} phase={phase} pinned={pinned} />;
 }
 
 /* ---------- Before the conference ---------- */
 
-function Before({ now, phase }: { now: number; phase: "prep" | "departure" }) {
-  const days = Math.max(0, Math.ceil((START - now) / DAY));
+function Before({ now, phase, pinned }: { now: number; phase: "prep" | "departure"; pinned?: number }) {
   const blocks =
     phase === "prep"
       ? [<NextDates key="dates" now={now} />, <ProgramBlock key="program" />, <Trip key="trip" />, <Install key="install" />]
@@ -69,9 +70,9 @@ function Before({ now, phase }: { now: number; phase: "prep" | "departure" }) {
             <p className="mt-3 text-lg text-muted">
               {SITE.dates} · ICC Jeju, Korea
             </p>
-            <p className="mt-5 font-mono text-sm tabular-nums">
-              {days === 1 ? "Opens tomorrow" : `${days} days to go`}
-            </p>
+            <div className="mt-6">
+              <Countdown from={pinned} />
+            </div>
           </div>
           <JejuOutline className="hidden h-auto w-full text-foreground lg:block" />
         </div>
