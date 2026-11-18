@@ -54,8 +54,9 @@ export function useLocalSet(key: string) {
   );
 
   const addAll = useCallback((ids: Iterable<string>) => write(key, JSON.stringify([...new Set([...read(key), ...ids])])), [key]);
+  const replaceAll = useCallback((ids: Iterable<string>) => write(key, JSON.stringify([...new Set(ids)])), [key]);
 
-  return [value, toggle, addAll] as const;
+  return [value, toggle, addAll, replaceAll] as const;
 }
 
 function readString(key: string): string | null {

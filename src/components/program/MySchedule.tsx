@@ -4,10 +4,18 @@ import { useState } from "react";
 import { downloadIcs } from "@/lib/ics";
 import { byBoard } from "@/lib/program-search";
 import { clashes, clock, dayLabel, dayOf, type Contribution, type Program, type Session, type Slot } from "@/lib/program";
-import { ContributionRow, posterSessionIcs, sessionIcs, shareLink, StarButton, talkIcs, type ListProps } from "./shared";
+import { ContributionRow, posterSessionIcs, sessionIcs, StarButton, talkIcs, type ListProps } from "./shared";
 import { TeX } from "./TeX";
+import { ScanDialog, SendDialog } from "./TransferSchedule";
 
-type Props = ListProps & { program: Program; changedIds: Set<string>; filesChanged: Set<string>; onSession: (s: Session) => void };
+type Props = ListProps & {
+  program: Program;
+  changedIds: Set<string>;
+  filesChanged: Set<string>;
+  onSession: (s: Session) => void;
+  /** A schedule read from another device's QR code. */
+  onReceive: (ids: string[]) => void;
+};
 
 type Entry = { kind: "talk"; c: Contribution; start: string; end: string } | { kind: "session"; s: Session; start: string; end: string };
 
@@ -16,8 +24,8 @@ type Entry = { kind: "talk"; c: Contribution; start: string; end: string } | { k
  * inside a saved session doesn't clash with it). Saved posters are grouped per poster session:
  * posters are up all week, so they never clash with anything.
  */
-export function MySchedule({ program, changedIds, filesChanged, onSession, ...p }: Props) {
-  const [shared, setShared] = useState<string>();
+export function MySchedule({ program, changedIds, filesChanged, onSession, onReceive, ...p }: Props) {
+  const [transfer, setTransfer] = useState<"send" | "scan">();
   /** Talks (with sessions) and posters are shown apart; until chosen, talks unless there are none. */
   const [part, setPart] = useState<"talks" | "posters">();
   const items = program.contributions.filter((c) => p.starred.has(c.id));
@@ -26,12 +34,31 @@ export function MySchedule({ program, changedIds, filesChanged, onSession, ...p 
   const sessions = program.sessions.filter((s) => p.starred.has(s.id));
   const known = new Set([...program.contributions, ...program.unscheduled, ...program.sessions].map((c) => c.id));
   const gone = [...p.starred].filter((id) => !known.has(id)).length;
+  const savedIds = [...p.starred].filter((id) => known.has(id));
+
+  const scanDialog = transfer === "scan" && (
+    <ScanDialog
+      onScan={(ids) => {
+        setTransfer(undefined);
+        onReceive(ids);
+      }}
+      onClose={() => setTransfer(undefined)}
+    />
+  );
 
   if (!items.length && !sessions.length) {
     return (
       <div className="space-y-2 text-muted">
         <p>Tap ☆ next to a session, talk or poster to add it here. Your schedule is saved on this device.</p>
         {gone > 0 && <p className="text-sm">{gone} saved item(s) are no longer in the program.</p>}
+        <p className="pt-2 text-sm">
+          Saved a schedule on another device? On that one, open Mine and tap Send to phone, then{" "}
+          <button onClick={() => setTransfer("scan")} className="min-h-10 font-semibold text-sea underline">
+            scan its code here
+          </button>
+          .
+        </p>
+        {scanDialog}
       </div>
     );
   }
@@ -69,13 +96,6 @@ export function MySchedule({ program, changedIds, filesChanged, onSession, ...p 
     downloadIcs("qm2027-my-schedule.ics", events);
   }
 
-  async function shareSchedule() {
-    // The link is the only backup: Safari clears site storage after a week unused unless the guide is installed.
-    const url = `${location.origin}${location.pathname}?view=mine&ids=${[...p.starred].filter((id) => known.has(id)).join(",")}`;
-    const result = await shareLink("My QM2027 schedule", url);
-    setShared(result === "copied" ? "Link copied" : result === "shared" ? "Shared" : "Couldn't share");
-  }
-
   const plural = (n: number, word: string) => `${n} ${word}${n === 1 ? "" : "s"}`;
 
   return (
@@ -84,15 +104,27 @@ export function MySchedule({ program, changedIds, filesChanged, onSession, ...p 
         <button onClick={exportIcs} className="min-h-11 rounded-md bg-sea px-5 font-semibold text-on-sea">
           Add to my calendar (.ics)
         </button>
-        <button onClick={shareSchedule} className="min-h-11 rounded-md border border-border px-4 text-sm">
-          {shared ?? "Copy schedule link"}
+        <button onClick={() => setTransfer("send")} className="min-h-11 rounded-md border border-border px-4 text-sm">
+          Send to phone
+        </button>
+        <button onClick={() => setTransfer("scan")} className="min-h-11 rounded-md border border-border px-4 text-sm">
+          Scan a code
         </button>
       </div>
       <p className="text-sm text-muted">
         {plural(sessions.length, "session")}, {plural(talks.length, "talk")}, {plural(posters.length, "poster")}. Saved on this device
-        only. The link opens your schedule on another phone or after clearing the browser.
+        only. Send to phone shows a QR code and a link that open it on another device or after clearing the browser.
         {gone > 0 && ` ${gone} saved item(s) are no longer in the program.`}
       </p>
+      {transfer === "send" && (
+        // The link is also the only backup: Safari clears site storage after a week unused unless the guide is installed.
+        <SendDialog
+          url={`${location.origin}${location.pathname}?view=mine&ids=${savedIds.join(",")}`}
+          count={savedIds.length}
+          onClose={() => setTransfer(undefined)}
+        />
+      )}
+      {scanDialog}
 
       <div className="flex gap-2" role="group" aria-label="Show">
         {(

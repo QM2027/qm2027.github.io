@@ -50,6 +50,7 @@ import { touches, Updates } from "./Updates";
 type View = "day" | "posters" | "topics" | "speakers" | "mine" | "updates";
 const VIEWS: View[] = ["day", "posters", "topics", "speakers", "mine", "updates"];
 const SEARCH_PAGE = 50;
+const plural = (n: number, word: string) => `${n} ${word}${n === 1 ? "" : "s"}`;
 
 export function ProgramApp() {
   const program = useProgram();
@@ -139,7 +140,7 @@ function ProgramBrowser({
   const router = useRouter();
   const pathname = usePathname();
   const now = pinnedNow(params.get("now"), useNow());
-  const [starred, toggleStar, addStars] = useLocalSet("qm2027:my-schedule");
+  const [starred, toggleStar, addStars, replaceStars] = useLocalSet("qm2027:my-schedule");
   const [seenChanges, setSeenChanges] = useLocalString("qm2027:changes-seen");
 
   function go(patch: Record<string, string | undefined>, mode: "replace" | "push" = "replace") {
@@ -205,7 +206,12 @@ function ProgramBrowser({
   const closeTalk = () => closeOver(["talk", "map"]);
 
   // ---- my schedule: shared-link import and changes since last seen
-  const importIds = view === "mine" ? (params.get("ids") ?? "").split(",").filter((id) => id && !starred.has(id)) : [];
+  // A link (or a scanned code) holds a whole schedule: it can be added to this one, or replace it so
+  // that removals on the other device carry over too. Only items still in the program count.
+  const linkIds = view === "mine" && params.has("ids") ? (params.get("ids") ?? "").split(",").filter(Boolean) : undefined;
+  const programIds = useMemo(() => new Set([...program.contributions, ...program.unscheduled, ...program.sessions].map((x) => x.id)), [program]);
+  const importIds = linkIds?.filter((id) => programIds.has(id) && !starred.has(id)) ?? [];
+  const dropIds = linkIds ? [...starred].filter((id) => programIds.has(id) && !linkIds.includes(id)) : [];
   const mineCount = [...program.contributions, ...program.sessions].filter((x) => starred.has(x.id)).length;
   const newestChange = program.changes[0]?.detectedAt;
   const myNewChanges = seenChanges === undefined ? [] : program.changes.filter((c) => touches(c, starred) && c.detectedAt > (seenChanges ?? ""));
@@ -381,21 +387,40 @@ function ProgramBrowser({
           <SpeakerList program={program} onSession={showSession} {...listProps} />
         ) : view === "mine" ? (
           <>
-            {importIds.length > 0 && (
+            {linkIds && (
               <div className="mb-4 flex flex-wrap items-center justify-between gap-3 rounded-md border border-border bg-surface p-3 text-sm">
-                <span>This link has {importIds.length} item(s) that aren&apos;t in your schedule yet.</span>
-                <span className="flex gap-2">
-                  <button
-                    onClick={() => {
-                      addStars(importIds);
-                      go({ ids: undefined });
-                    }}
-                    className="min-h-10 rounded-md bg-sea px-4 font-semibold text-on-sea"
-                  >
-                    Add them
-                  </button>
+                <span>
+                  {!importIds.length && !dropIds.length
+                    ? "Your schedule here already matches this one."
+                    : !dropIds.length
+                      ? `This schedule has ${plural(importIds.length, "item")} that ${importIds.length === 1 ? "isn't" : "aren't"} in yours yet.`
+                      : `This schedule has ${importIds.length ? `${importIds.length} new, and ` : ""}${plural(dropIds.length, "item")} of yours ${dropIds.length === 1 ? "isn't" : "aren't"} in it.`}
+                </span>
+                <span className="flex flex-wrap gap-2">
+                  {importIds.length > 0 && (
+                    <button
+                      onClick={() => {
+                        addStars(importIds);
+                        go({ ids: undefined });
+                      }}
+                      className="min-h-10 rounded-md bg-sea px-4 font-semibold text-on-sea"
+                    >
+                      Add {importIds.length} new
+                    </button>
+                  )}
+                  {dropIds.length > 0 && (
+                    <button
+                      onClick={() => {
+                        replaceStars(linkIds);
+                        go({ ids: undefined });
+                      }}
+                      className="min-h-10 rounded-md border border-border px-4"
+                    >
+                      Replace mine with it
+                    </button>
+                  )}
                   <button onClick={() => go({ ids: undefined })} className="min-h-10 rounded-md border border-border px-4">
-                    Dismiss
+                    {importIds.length || dropIds.length ? "Dismiss" : "OK"}
                   </button>
                 </span>
               </div>
@@ -405,6 +430,7 @@ function ProgramBrowser({
               changedIds={changedIds}
               filesChanged={filesChanged}
               onSession={showSession}
+              onReceive={(ids) => go({ view: "mine", ids: ids.join(",") || undefined })}
               {...listProps}
             />
           </>
