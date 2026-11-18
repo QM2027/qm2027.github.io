@@ -23,10 +23,10 @@
 
 ## 🚨 배포 전 필수
 
-- [ ] 장소 좌표 검증 (Kakao/Naver Map 대조) — [src/data/places.ts](../src/data/places.ts). 2026-11-18 TourAPI·OSM과 대조: 4·3평화공원(4.8 km)·여미지(470 m) 수정. 남은 확인: 사려니숲길(어느 입구), 외돌개·색달해변(주차장/해변, 색달·올레8은 지도에서 바다 위), 대조 불가 10곳(olle8, leejungseop, astro-seogwipo, bonte, seongpanak, jeonnongro, cju, seongsan-port, 병원 2)
+- [ ] 장소 좌표 검증 (Kakao/Naver Map 대조) — [src/data/places.ts](../src/data/places.ts). 2026-11-18 TourAPI·OSM과 대조: 4·3평화공원(4.8 km)·여미지(470 m) 수정. 남은 확인: 사려니숲길(어느 입구), 외돌개·색달해변(주차장/해변, 색달은 지도에서 바다 위; 올레8은 2026-11-18 올레 GPX 위 ICC 최근접점으로 이동), 대조 불가 9곳(leejungseop, astro-seogwipo, bonte, seongpanak, jeonnongro, cju, seongsan-port, 병원 2)
 - [ ] ICC Jeju 좌표 검증 — [src/lib/geo.ts](../src/lib/geo.ts) `ICC`. OSM 건물 위치(33.2435, 126.4249)와 약 250 m 차이: 정문 기준으로 확정 필요 (거리 계산·러닝 출발점)
 - [ ] 공항버스 600 요금·소요시간·승차 위치, 택시·렌터카 요금 확인 — [src/app/getting-there/page.tsx](../src/app/getting-there/page.tsx)
-- [ ] 러닝 코스 경로를 실제 GPX로 다시 그리기 — [src/data/runs.ts](../src/data/runs.ts)
+- [ ] 러닝 코스 경로를 실제 GPX로 다시 그리기 — [src/data/runs.ts](../src/data/runs.ts). 2026-11-18 올레8(ICC→대포포구 왕복)은 블로그 올레 GPX(docs/olle_gpx/, gitignore)에서 [scripts/olle-slice.mjs](../scripts/olle-slice.mjs)로 추출. 남은 것: resort-loop·falls-beach (올레 구간 아님, 손으로 그린 상태)
 - [ ] 시즌 날짜(개화 예상, 들불축제·걷기대회 2027 일정) 확인 — [src/data/season.ts](../src/data/season.ts)
 - [ ] 스탬프 투어 체크인 반경 현장 테스트 — [src/data/passport.ts](../src/data/passport.ts)
 - [ ] 국내선 소요시간·환승 안내 확인 — [src/data/korea.ts](../src/data/korea.ts)
@@ -51,7 +51,7 @@
 - [x] **A. March in Jeju 시즌** `/explore/season` — 유채꽃, 왕벚꽃, 들불축제(2027 개최 여부 확인), 한라봉·천혜향 제철; 학회 날짜(3/21~27)와 겹치는지 타임라인 표시
 - [x] **D. 먹거리 가이드** `/explore/food` — 제주 음식 Must-try 체크리스트(localStorage), 식이 필터(vegetarian/vegan/halal/gluten-free/해산물 알레르기), 한국어 주문 문구
 - [x] **C. 아침 산책·러닝 코스** `/explore/run` — 3개 코스, GPX 다운로드, 학회 기간 일출·일몰
-- [ ] (C 후속) 고도 프로파일 — 실제 GPX/DEM 데이터 확보 후
+- [x] (C 후속) 고도 프로파일 — 올레8 코스만 (GPX `<ele>`). 원본 GPX에서 `<ele>-1</ele>` = 경로 자동인식 실패로 손으로 그린 점 → 고도 없음(점선), 위치 정확도도 낮음. 나머지 두 코스는 고도 데이터 없음 (DEM 필요)
 - [x] **E. Physicist's Science Trail** `/explore/science` — UNESCO 지질 명소 해설, 천문대, 학회 기간 월령·별보기 조건
 
 ### 5. 관광 확장 2차 + 도구 ✅

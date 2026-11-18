@@ -3,8 +3,9 @@
 import { useMemo, useState } from "react";
 import { LazyMap } from "@/components/map/LazyMap";
 import { RUNS, toLatLng, type Run } from "@/data/runs";
-import { ICC, distanceKm } from "@/lib/geo";
+import { ICC, distanceKm, type LatLng } from "@/lib/geo";
 import { CONFERENCE_DAYS, formatClock, sunTimes } from "@/lib/sky";
+import { ElevationProfile } from "@/components/guides/ElevationProfile";
 import { WeatherAlerts } from "@/components/travel/WeatherAlerts";
 import { useWeatherData } from "@/lib/weather-data";
 
@@ -14,7 +15,12 @@ function pathKm(run: Run) {
 }
 
 function downloadGpx(run: Run) {
-  const pts = run.path.map(([lat, lng]) => `<trkpt lat="${lat}" lon="${lng}"/>`).join("");
+  const pts = run.path
+    .map(([lat, lng], i) => {
+      const ele = run.ele?.[i];
+      return ele == null ? `<trkpt lat="${lat}" lon="${lng}"/>` : `<trkpt lat="${lat}" lon="${lng}"><ele>${ele}</ele></trkpt>`;
+    })
+    .join("");
   const gpx = `<?xml version="1.0" encoding="UTF-8"?><gpx version="1.1" creator="QM2027" xmlns="http://www.topografix.com/GPX/1/1"><trk><name>QM2027 – ${run.title}</name><trkseg>${pts}</trkseg></trk></gpx>`;
   const url = URL.createObjectURL(new Blob([gpx], { type: "application/gpx+xml" }));
   const a = Object.assign(document.createElement("a"), { href: url, download: `qm2027-${run.id}.gpx` });
@@ -60,10 +66,17 @@ export function RunGuide() {
         <div className="h-80 overflow-hidden rounded-md border border-border sm:h-[28rem]">
           <LazyMap places={[]} onSelect={() => {}} route={route} />
         </div>
+        {run.ele && <RunProfile run={run} route={route} ele={run.ele} />}
         <SunriseTable />
       </div>
     </div>
   );
+}
+
+function RunProfile({ run, route, ele }: { run: Run; route: LatLng[]; ele: (number | null)[] }) {
+  // An out-and-back profile is its own mirror image; show the outbound half.
+  const half = run.outAndBack ? Math.ceil(route.length / 2) : route.length;
+  return <ElevationProfile key={run.id} route={route.slice(0, half)} ele={ele.slice(0, half)} oneWay={run.outAndBack} />;
 }
 
 function SunriseTable() {

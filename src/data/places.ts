@@ -37,7 +37,7 @@ export const PLACES: Place[] = [
   { id: "cheonjeyeon", name: "Cheonjeyeon Falls", nameKo: "천제연폭포", category: "nature", lat: 33.2523, lng: 126.4183, durationMin: 60, summary: "Three-tier waterfall in a subtropical gorge, crossed by the arched Seonimgyo Bridge.", tags: ["walkable", "photo"] },
   { id: "yeomiji", name: "Yeomiji Botanical Garden", nameKo: "여미지식물원", category: "nature", lat: 33.2526, lng: 126.4143, durationMin: 75, indoor: true, summary: "Large glasshouse garden next to the venue. Works on a rainy day.", tags: ["walkable", "family", "accessible"] },
   { id: "teddy", name: "Teddy Bear Museum", nameKo: "테디베어뮤지엄", category: "culture", lat: 33.2502, lng: 126.4122, durationMin: 60, indoor: true, summary: "Light-hearted museum in the Jungmun complex; easy with children.", tags: ["walkable", "family", "accessible"] },
-  { id: "olle8", name: "Olle Trail Route 8", nameKo: "올레 8코스", category: "nature", lat: 33.2398, lng: 126.4176, durationMin: 120, summary: "The coastal Olle trail passes ICC Jeju. Good for an early walk or run.", tags: ["walkable", "running"] },
+  { id: "olle8", name: "Olle Trail Route 8", nameKo: "올레 8코스", category: "nature", lat: 33.2397, lng: 126.4233, durationMin: 120, summary: "The coastal Olle trail passes ICC Jeju. Good for an early walk or run.", tags: ["walkable", "running"] },
 
   // Seogwipo city
   { id: "cheonjiyeon", name: "Cheonjiyeon Falls", nameKo: "천지연폭포", category: "nature", lat: 33.2469, lng: 126.5543, durationMin: 45, summary: "22 m waterfall at the end of a lit path. Open in the evening.", tags: ["evening", "family", "accessible"] },
