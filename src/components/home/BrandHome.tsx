@@ -65,11 +65,11 @@ export function BrandHome() {
   return (
     <>
       <section aria-labelledby="brand-title">
-        {/* The opening sits on a field of the logo's blue. Re-pointing the text tokens here lets the
-            countdown and links inside take white and pale blue without classes of their own. The
-            field runs on below the text so the photographs can overlap its lower edge. */}
+        {/* The opening, photographs included, sits on a field of the logo's blue. Re-pointing the
+            text tokens here lets the countdown, links and caption inside take white and pale blue
+            without classes of their own. */}
         <div className={ON_FIELD}>
-          <div className="mx-auto grid max-w-7xl gap-x-12 gap-y-6 px-4 pt-12 pb-40 sm:pt-16 sm:pb-48 lg:grid-cols-12 lg:items-end lg:px-8 lg:pt-24 lg:pb-56">
+          <div className="mx-auto grid max-w-7xl gap-x-12 gap-y-6 px-4 pt-12 pb-10 sm:pt-16 sm:pb-12 lg:grid-cols-12 lg:items-end lg:px-8 lg:pt-24 lg:pb-16">
             <div className="lg:col-span-8">
               <h1 id="brand-title" className="text-5xl leading-[1.02] sm:text-7xl lg:text-[4.5rem] xl:text-[5rem]">
                 Jeju,
@@ -99,50 +99,50 @@ export function BrandHome() {
               </div>
             </div>
           </div>
-        </div>
 
-        {/* Hidden (display: none) outside the brand look, where lazy images are never fetched.
-            The whole island, then its summit; on phones only the island. */}
-        <figure className="mx-auto -mt-32 max-w-7xl px-4 sm:-mt-40 lg:-mt-48 lg:px-8">
-          <div className="grid gap-2 lg:grid-cols-12">
-            {/* eslint-disable-next-line @next/next/no-img-element -- a static export with two widths; next/image would serve one */}
-            <img
-              src={islandLarge.src}
-              srcSet={`${islandSmall.src} ${islandSmall.width}w, ${islandLarge.src} ${islandLarge.width}w`}
-              sizes="(min-width: 80rem) 740px, (min-width: 64rem) 58vw, 100vw"
-              width={islandLarge.width}
-              height={islandLarge.height}
-              loading="lazy"
-              alt="Satellite view of Jeju Island: an oval of green and brown fields around the dark slopes of Hallasan, in a deep blue sea"
-              className="h-[clamp(16rem,36vw,32rem)] w-full bg-surface object-cover object-center lg:col-span-7"
-            />
-            {/* eslint-disable-next-line @next/next/no-img-element -- as above */}
-            <img
-              src={baengnokdamLarge.src}
-              srcSet={`${baengnokdamSmall.src} ${baengnokdamSmall.width}w, ${baengnokdamLarge.src} ${baengnokdamLarge.width}w`}
-              sizes="(min-width: 80rem) 520px, 42vw"
-              width={baengnokdamLarge.width}
-              height={baengnokdamLarge.height}
-              loading="lazy"
-              alt="The snow-covered crater of Baengnokdam on the summit of Hallasan under a clear blue sky"
-              className="h-[clamp(16rem,36vw,32rem)] w-full bg-surface object-cover object-[50%_60%] max-lg:hidden lg:col-span-5"
-            />
-          </div>
-          <figcaption className="pt-2 text-xs text-muted">
-            Jeju from space, a{" "}
-            <a href="https://commons.wikimedia.org/wiki/File:Jeju_Island.jpg" target="_blank" rel="noreferrer" className="underline underline-offset-2">
-              Landsat image
-            </a>{" "}
-            by Robert Simmon, NASA Earth Observatory, public domain
-            <span className="max-lg:hidden">
-              . Baengnokdam, the summit crater of Hallasan, photo{" "}
-              <a href="https://commons.wikimedia.org/wiki/File:Baengnokdam_(2025-01)_3.jpg" target="_blank" rel="noreferrer" className="underline underline-offset-2">
-                Sadopaul
-              </a>
-              , CC BY 4.0
-            </span>
-          </figcaption>
-        </figure>
+          {/* Hidden (display: none) outside the brand look, where lazy images are never fetched.
+              The whole island, then its summit; on phones only the island. */}
+          <figure className="mx-auto max-w-7xl px-4 pb-12 lg:px-8 lg:pb-16">
+            <div className="grid gap-2 lg:grid-cols-12">
+              {/* eslint-disable-next-line @next/next/no-img-element -- a static export with two widths; next/image would serve one */}
+              <img
+                src={islandLarge.src}
+                srcSet={`${islandSmall.src} ${islandSmall.width}w, ${islandLarge.src} ${islandLarge.width}w`}
+                sizes="(min-width: 80rem) 740px, (min-width: 64rem) 58vw, 100vw"
+                width={islandLarge.width}
+                height={islandLarge.height}
+                loading="lazy"
+                alt="Satellite view of Jeju Island: an oval of green and brown fields around the dark slopes of Hallasan, in a deep blue sea"
+                className="h-[clamp(16rem,36vw,32rem)] w-full bg-surface object-cover object-center lg:col-span-7"
+              />
+              {/* eslint-disable-next-line @next/next/no-img-element -- as above */}
+              <img
+                src={baengnokdamLarge.src}
+                srcSet={`${baengnokdamSmall.src} ${baengnokdamSmall.width}w, ${baengnokdamLarge.src} ${baengnokdamLarge.width}w`}
+                sizes="(min-width: 80rem) 520px, 42vw"
+                width={baengnokdamLarge.width}
+                height={baengnokdamLarge.height}
+                loading="lazy"
+                alt="The snow-covered crater of Baengnokdam on the summit of Hallasan under a clear blue sky"
+                className="h-[clamp(16rem,36vw,32rem)] w-full bg-surface object-cover object-[50%_60%] max-lg:hidden lg:col-span-5"
+              />
+            </div>
+            <figcaption className="pt-2 text-xs text-muted">
+              Jeju from space, a{" "}
+              <a href="https://commons.wikimedia.org/wiki/File:Jeju_Island.jpg" target="_blank" rel="noreferrer" className="underline underline-offset-2">
+                Landsat image
+              </a>{" "}
+              by Robert Simmon, NASA Earth Observatory, public domain
+              <span className="max-lg:hidden">
+                . Baengnokdam, the summit crater of Hallasan, photo{" "}
+                <a href="https://commons.wikimedia.org/wiki/File:Baengnokdam_(2025-01)_3.jpg" target="_blank" rel="noreferrer" className="underline underline-offset-2">
+                  Sadopaul
+                </a>
+                , CC BY 4.0
+              </span>
+            </figcaption>
+          </figure>
+        </div>
       </section>
 
       <div className="mx-auto max-w-7xl px-4 lg:px-8">
