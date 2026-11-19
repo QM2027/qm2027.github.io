@@ -11,12 +11,12 @@ html[data-notice="off"] .dev-notice {
 }
 
 /* Design variants under discussion (?look=, src/lib/edition-script.ts).
-   plain: the tells of generated design taken out. Markup states its own differences with plain:
-   utilities (plain:hidden, hidden plain:inline for changed words); the rules below cover the one
-   tell that repeats on every page.
-   brand: everything in plain, plus the colour and type of the QM2027 logo (tokens further down). */
+   plain: the tells of generated design taken out, and the colour and type of the QM2027 logo
+   (tokens further down). Markup states its own differences with plain: utilities (plain:hidden,
+   hidden plain:inline for changed words); the rules below cover the tell that repeats on every page.
+   brand: everything in plain, plus pages redesigned from their content (brand:, e.g. BrandHome). */
 @custom-variant plain (&:where([data-look="plain"], [data-look="plain"] *, [data-look="brand"], [data-look="brand"] *));
-/* The brand look alone: the primary action takes the brand colour (brand:bg-tangerine). */
+/* The brand look alone: where a page has a redesigned version (hidden brand:block, brand:hidden). */
 @custom-variant brand (&:where([data-look="brand"], [data-look="brand"] *));
 
 /* Labels: sentence case in the body face, untracked, a step up from the 12px mono caps. Steps back
@@ -74,25 +74,38 @@ html:is([data-look="plain"], [data-look="brand"]) .font-mono.uppercase:not([clas
   }
 }
 
-/* Brand look: the accent is the logo's blue, where the current one is a burnt orange that no part of
+/* Plain and brand looks: the accent is the logo's blue, where the current one is a burnt orange that no part of
    the logo carries, and headings are set in Plex Sans like the rest of the page. A serif display
    over a warm accent is the look generated pages fall into most. Every serif on the page (the
    h1/h2 rule, font-serif) reads --font-source-serif, so pointing it at Plex swaps them all.
    The blue is the logo's #0070b0 taken a step darker, for AA as small text on white, --surface and
    a 10% tint of itself, like --canola above. --alert stays: it means a warning, not the brand. */
-html[data-look="brand"] {
+html:is([data-look="plain"], [data-look="brand"]) {
   --canola: #00649e;
   --tangerine: #00649e;
   --font-source-serif: var(--font-plex);
 }
 @media (prefers-color-scheme: dark) {
-  html[data-look="brand"] {
+  html:is([data-look="plain"], [data-look="brand"]) {
     --canola: #5aaee6;
     --tangerine: #5aaee6;
   }
 }
-html[data-look="brand"] :is(h1, h2) {
+html:is([data-look="plain"], [data-look="brand"]) :is(h1, h2) {
   letter-spacing: -0.02em;
+}
+
+/* Brand look only: a field of the logo's blue under page openings (bg-brand-field), with white
+   ink and a pale blue for secondary text. White on the field is about 8:1, the pale blue 5.5:1. */
+html[data-look="brand"] {
+  --brand-field: #00598c;
+  --on-brand-field: #ffffff;
+  --brand-field-muted: #cfe3f1;
+}
+@media (prefers-color-scheme: dark) {
+  html[data-look="brand"] {
+    --brand-field: #0c4468;
+  }
 }
 
 @theme inline {
@@ -107,6 +120,9 @@ html[data-look="brand"] :is(h1, h2) {
   --color-tangerine: var(--tangerine);
   --color-on-sea: var(--on-sea);
   --color-alert: var(--alert);
+  --color-brand-field: var(--brand-field);
+  --color-on-brand-field: var(--on-brand-field);
+  --color-brand-field-muted: var(--brand-field-muted);
   --font-sans: var(--font-plex), var(--font-plex-kr), system-ui, sans-serif;
   --font-serif: var(--font-source-serif), var(--font-plex-kr), Georgia, serif;
   --font-mono: var(--font-plex-mono), ui-monospace, monospace;

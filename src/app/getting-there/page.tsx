@@ -1,7 +1,9 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { PageTitle } from "@/components/PageTitle";
+import { BrandArrival, BrandMore } from "@/components/BrandGettingThere";
 import { TaxiCard } from "@/components/TaxiCard";
+import { AIRPORT_KM, AIRPORT_OPTIONS as OPTIONS } from "@/data/airport";
 import { INDICO_ACCOMMODATION, INDICO_VENUE } from "@/data/indico-links";
 
 export const metadata: Metadata = {
@@ -9,39 +11,17 @@ export const metadata: Metadata = {
   description: "From Jeju International Airport (CJU) to ICC Jeju: bus and taxi compared.",
 };
 
-// Fares and times follow the Indico venue page (INDICO_VENUE), which takes precedence. No rental
-// car option: renting is hard for many foreign visitors (permit rules), so the guide doesn't suggest it.
-const OPTIONS = [
-  {
-    title: "Airport Limousine Bus 600",
-    time: "≈ 60 min",
-    cost: "≈ ₩4,500",
-    best: "Best value",
-    steps: [
-      "Exit arrivals (1F) and find the Limousine 600 stop; buses run 06:00–21:25, every 16–40 min",
-      "Pay by T-money card or credit card on boarding",
-      "Get off at “ICC Jeju” (or the stop for your Jungmun hotel)",
-    ],
-  },
-  {
-    title: "Taxi",
-    time: "≈ 50 min",
-    cost: "≈ ₩35,000–50,000",
-    best: "Door to door",
-    steps: [
-      "Use the taxi rank outside arrivals, or book with the Kakao T app",
-      "Show the driver the Korean card below",
-      "Most taxis accept foreign credit cards",
-    ],
-  },
-];
-
 export default function GettingTherePage() {
   return (
-    <main className="mx-auto w-full max-w-5xl px-4 py-6 sm:py-10 lg:px-8">
-      <PageTitle kicker="CJU → ICC Jeju" plainKicker="From Jeju International Airport (CJU)" title="Getting to the venue" />
-      <p className="mt-3 max-w-2xl text-muted">
-        ICC Jeju is in the Jungmun resort area on the south coast, about 45 km from Jeju International Airport.
+    // The brand look (?look=brand) has its own versions of the parts around the driver card
+    // (BrandArrival, BrandMore); the current ones carry brand:hidden.
+    <main className="mx-auto w-full max-w-5xl px-4 py-6 sm:py-10 lg:px-8 brand:max-w-none brand:px-0 brand:pt-0 brand:pb-16 sm:brand:pt-0 lg:brand:px-0 lg:brand:pb-24">
+      <div className="hidden brand:block">
+        <BrandArrival />
+      </div>
+      <PageTitle kicker="CJU → ICC Jeju" plainKicker="From Jeju International Airport (CJU)" title="Getting to the venue" className="brand:hidden" />
+      <p className="mt-3 max-w-2xl text-muted brand:hidden">
+        ICC Jeju is in the Jungmun resort area on the south coast, about {AIRPORT_KM} km from Jeju International Airport.
         Hotels are listed on the{" "}
         <a href={INDICO_ACCOMMODATION} target="_blank" rel="noreferrer" className="text-sea underline">
           Indico accommodation page
@@ -49,7 +29,7 @@ export default function GettingTherePage() {
         .
       </p>
 
-      <ol className="mt-8 grid gap-4 sm:grid-cols-2">
+      <ol className="mt-8 grid gap-4 sm:grid-cols-2 brand:hidden">
         {OPTIONS.map((o) => (
           <li key={o.title} className="flex flex-col rounded-md border border-border bg-surface p-5">
             <div className="flex items-center justify-between">
@@ -66,7 +46,7 @@ export default function GettingTherePage() {
           </li>
         ))}
       </ol>
-      <p className="mt-3 text-xs text-muted">
+      <p className="mt-3 text-xs text-muted brand:hidden">
         Fares and times from the{" "}
         <a href={INDICO_VENUE} target="_blank" rel="noreferrer" className="underline">
           Indico venue page
@@ -74,11 +54,11 @@ export default function GettingTherePage() {
         , which has the latest details and takes precedence.
       </p>
 
-      <div className="mt-8">
+      <div className="mt-8 brand:mx-auto brand:mt-20 brand:max-w-7xl brand:px-4 lg:brand:mt-28 lg:brand:px-8">
         <TaxiCard />
       </div>
 
-      <section className="mt-8 grid gap-4 sm:grid-cols-2">
+      <section className="mt-8 grid gap-4 sm:grid-cols-2 brand:hidden">
         <div className="rounded-md border border-border bg-surface p-5">
           <h2 className="font-semibold">Apps worth installing</h2>
           <ul className="mt-2 space-y-1 text-sm text-muted">
@@ -95,6 +75,9 @@ export default function GettingTherePage() {
           </p>
         </div>
       </section>
+      <div className="hidden brand:block">
+        <BrandMore />
+      </div>
     </main>
   );
 }

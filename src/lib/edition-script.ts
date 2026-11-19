@@ -13,9 +13,10 @@ const KEY = "qm2027:prefs";
 
 /**
  * Design variants besides the current one ("default", which sets no attribute).
- * plain: the tells of generated design taken out (tracked-caps labels, eyebrows above headings,
- * template punctuation, a ticking countdown, cards nested in cards).
- * brand: plain, plus the logo's blue as the accent and Plex Sans headings in place of the serif.
+ * plain: the current layout with the tells of generated design taken out (tracked-caps labels,
+ * eyebrows above headings, template punctuation, a ticking countdown, cards nested in cards), the
+ * logo's blue as the accent and Plex Sans headings in place of the serif.
+ * brand: plain, plus pages redesigned from their content (the home first).
  * Whichever look wins, the others' classes and rules get deleted.
  */
 export const LOOKS = ["plain", "brand"] as const;
