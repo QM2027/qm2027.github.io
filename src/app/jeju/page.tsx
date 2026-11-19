@@ -29,8 +29,8 @@ export default function JejuPage() {
       <ol className="mt-8 grid border-t border-border md:grid-cols-2 md:gap-x-12">
         {CONTENTS.map((c, i) => (
           <li key={c.href} className="border-b border-border">
-            <Link href={c.href} className="group grid grid-cols-[2.5rem_1fr] gap-x-3 py-4">
-              <span className="font-mono text-sm text-muted tabular-nums">{String(i + 1).padStart(2, "0")}</span>
+            <Link href={c.href} className="group grid grid-cols-[2.5rem_1fr] gap-x-3 py-4 plain:grid-cols-1">
+              <span className="font-mono text-sm text-muted tabular-nums plain:hidden">{String(i + 1).padStart(2, "0")}</span>
               <span>
                 <span className="font-medium group-hover:underline group-hover:underline-offset-4">{c.title}</span>
                 <span className="mt-0.5 block text-sm text-muted">{c.text}</span>

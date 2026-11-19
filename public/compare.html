@@ -4,12 +4,13 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex">
-<title>Edition comparison</title>
+<title>Preview comparison</title>
 <!--
-  The visitor guide and the conference-app edition side by side, for discussion.
-  Each frame is named "qm2027:edition=…&notice=…"; the site's inline script reads that name (see
-  src/lib/edition-script.ts), so the frames keep their edition while you click around in them
-  and never touch this browser's own setting.
+  Two versions of the site side by side, for discussion: the visitor guide and the conference-app
+  edition, or the current design and the plain look (?look=plain) of either edition.
+  Each frame is named "qm2027:edition=…&notice=…&look=…"; the site's inline script reads that name
+  (see src/lib/edition-script.ts), so the frames keep their settings while you click around in
+  them and never touch this browser's own setting.
 -->
 <style>
   :root {
@@ -45,7 +46,8 @@
 </head>
 <body>
 <header>
-  <h1>QM2027 · Visitor guide vs conference app</h1>
+  <h1>QM2027 previews</h1>
+  <div class="group" id="sets"><span>Compare</span></div>
   <div class="group" id="phases"><span>When</span></div>
   <div class="group" id="sizes"><span>Size</span></div>
   <label><input type="checkbox" id="notice"> Hide “Not fully developed” bar</label>
@@ -67,12 +69,22 @@
     { id: "phone", label: "Phone", w: 390, h: 844 },
     { id: "desktop", label: "Desktop", w: 1280, h: 800 },
   ];
-  const EDITIONS = [
-    { id: "guide", label: "Visitor guide (live)" },
-    { id: "app", label: "Conference app (preview)" },
+  const SETS = [
+    { id: "editions", label: "Guide vs app", frames: [
+      { label: "Visitor guide (live)", edition: "guide" },
+      { label: "Conference app (preview)", edition: "app" },
+    ] },
+    { id: "looks-guide", label: "Guide: current vs plain", frames: [
+      { label: "Visitor guide, current design", edition: "guide" },
+      { label: "Visitor guide, plain look", edition: "guide", look: "plain" },
+    ] },
+    { id: "looks-app", label: "App: current vs plain", frames: [
+      { label: "Conference app, current design", edition: "app" },
+      { label: "Conference app, plain look", edition: "app", look: "plain" },
+    ] },
   ];
 
-  const state = { phase: "week", size: "phone", notice: true };
+  const state = { set: "editions", phase: "week", size: "phone", notice: true };
   try { Object.assign(state, JSON.parse(sessionStorage.getItem("compare") || "{}")); } catch (_) {}
 
   const $ = (id) => document.getElementById(id);
@@ -86,6 +98,7 @@
       container.append(b);
     }
   }
+  buttons($("sets"), SETS, "set");
   buttons($("phases"), PHASES, "phase");
   buttons($("sizes"), SIZES, "size");
   $("notice").onchange = (e) => { state.notice = !e.target.checked; render(); };
@@ -102,23 +115,26 @@
 
   function render() {
     try { sessionStorage.setItem("compare", JSON.stringify(state)); } catch (_) {}
+    for (const b of document.querySelectorAll("#sets button")) b.setAttribute("aria-pressed", String(b.dataset.id === state.set));
     for (const b of document.querySelectorAll("#phases button")) b.setAttribute("aria-pressed", String(b.dataset.id === state.phase));
     for (const b of document.querySelectorAll("#sizes button")) b.setAttribute("aria-pressed", String(b.dataset.id === state.size));
     $("notice").checked = !state.notice;
     const phase = PHASES.find((p) => p.id === state.phase) || PHASES[0];
     const size = SIZES.find((s) => s.id === state.size);
-    $("hint").textContent = phase.hint + " Links inside each frame keep its edition.";
+    const set = SETS.find((s) => s.id === state.set) || SETS[0];
+    $("hint").textContent = phase.hint + " Links inside each frame keep its edition and look.";
 
     const frames = $("frames");
     frames.className = state.size;
     frames.replaceChildren();
-    for (const ed of EDITIONS) {
+    for (const ed of set.frames) {
       const prefs = new URLSearchParams();
-      if (ed.id === "app") prefs.set("edition", "app");
+      if (ed.edition === "app") prefs.set("edition", "app");
       if (!state.notice) prefs.set("notice", "off");
+      if (ed.look) prefs.set("look", ed.look);
       const src = "./" + (phase.q ? "?" + phase.q : "");
-      // The same view in a tab of its own (this sets that tab's remembered edition).
-      const own = "./?" + [phase.q, "edition=" + ed.id, state.notice ? "notice=on" : "notice=off"].filter(Boolean).join("&");
+      // The same view in a tab of its own (this sets that tab's remembered edition and look).
+      const own = "./?" + [phase.q, "edition=" + ed.edition, state.notice ? "notice=on" : "notice=off", "look=" + (ed.look || "default")].filter(Boolean).join("&");
 
       const fig = document.createElement("figure");
       fig.innerHTML = `<figcaption><span>${ed.label}</span><a href="${own}" target="_blank" rel="noopener">Open in a tab ↗</a></figcaption><div class="viewport"><iframe title="${ed.label}"></iframe></div>`;

@@ -31,6 +31,28 @@ function Units({ values }: { values: [string, string, string, string] }) {
   );
 }
 
+/**
+ * Current look: days, hours, minutes and seconds ticking in four cells. Plain look: the days in
+ * type, with what they count down to; a clock running in seconds says nothing a visitor plans by.
+ */
+function Until({ values }: { values: [string, string, string, string] }) {
+  const days = Number(values[0]);
+  return (
+    <>
+      <div className="plain:hidden">
+        <Units values={values} />
+        <p className="mt-3 font-mono text-xs text-muted">Until the opening, 21 March 08:30 Korea time (KST)</p>
+      </div>
+      <p className="hidden plain:block" aria-hidden="true">
+        <span className="block font-serif text-4xl font-semibold tabular-nums">
+          {days >= 1 ? `${days} ${days === 1 ? "day" : "days"}` : "Today"}
+        </span>
+        <span className="mt-1 block text-muted">until the opening on 21 March at 08:30 Korea time (KST)</span>
+      </p>
+    </>
+  );
+}
+
 /** `from`: a pinned clock (the preview's `?now=`), from which the countdown then runs on. */
 export function Countdown({ from }: { from?: number } = {}) {
   const [offset] = useState(() => (from === undefined ? 0 : from - Date.now()));
@@ -40,21 +62,22 @@ export function Countdown({ from }: { from?: number } = {}) {
   if (second === null) {
     return (
       <div className="invisible">
-        <Units values={["000", "00", "00", "00"]} />
-        <p className="mt-3 font-mono text-xs">—</p>
+        <Until values={["000", "00", "00", "00"]} />
       </div>
     );
   }
 
   const t = second * 1_000;
 
-  if (t >= END) return <p className="font-mono text-sm text-muted">The conference has ended.</p>;
+  if (t >= END) return <p className="font-mono text-sm text-muted plain:font-sans plain:text-base">The conference has ended.</p>;
 
   if (t >= START) {
     const day = Math.min(TOTAL_DAYS, Math.floor((t - START) / DAY) + 1);
     return (
-      <p className="font-mono text-sm text-muted">
-        <span className="text-foreground">The conference is on now</span> · day {day} of {TOTAL_DAYS}
+      <p className="font-mono text-sm text-muted plain:font-sans plain:text-base">
+        <span className="text-foreground">The conference is on now</span>
+        <span className="plain:hidden"> · day</span>
+        <span className="hidden plain:inline">, day</span> {day} of {TOTAL_DAYS}
       </p>
     );
   }
@@ -67,8 +90,7 @@ export function Countdown({ from }: { from?: number } = {}) {
 
   return (
     <div role="timer" aria-label={`${d} ${d === 1 ? "day" : "days"} until the conference opens`}>
-      <Units values={[String(d), pad(h), pad(m), pad(s)]} />
-      <p className="mt-3 font-mono text-xs text-muted">Until the opening, 21 March 08:30 Korea time (KST)</p>
+      <Until values={[String(d), pad(h), pad(m), pad(s)]} />
     </div>
   );
 }

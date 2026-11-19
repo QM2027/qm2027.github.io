@@ -10,6 +10,24 @@ html[data-notice="off"] .dev-notice {
   display: none !important;
 }
 
+/* Design variant under discussion, ?look=plain. Markup states its own differences with plain:
+   utilities (plain:hidden, hidden plain:inline for changed words); the rule below covers the one
+   tell that repeats on every page. */
+@custom-variant plain (&:where([data-look="plain"], [data-look="plain"] *));
+
+/* Labels: sentence case in the body face, untracked, a step up from the 12px mono caps. Steps back
+   where the element says how it looks in plain, and inside SVG, where caps are map lettering. */
+html[data-look="plain"] .uppercase:not(svg *):not([class*="plain:"]) {
+  text-transform: none;
+  letter-spacing: normal;
+}
+html[data-look="plain"] .font-mono.uppercase:not([class*="plain:"]) {
+  font-family: var(--font-plex), var(--font-plex-kr), system-ui, sans-serif;
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  font-weight: 500;
+}
+
 /* Neutral palette: white, greys, near-black ink, one warm accent. */
 :root {
   --background: #ffffff;

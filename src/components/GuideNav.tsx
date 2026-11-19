@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { GUIDES } from "@/data/guides";
+import { PageTitle } from "./PageTitle";
 
 export function GuideNav({ className = "" }: { className?: string }) {
   const pathname = usePathname();
@@ -29,8 +30,7 @@ export function GuideHeader({ kicker, title, children }: { kicker: string; title
     <header>
       {/* Cancel the page's top padding so the tabs sit right under the site bar, as on the map. */}
       <GuideNav className="-mt-6 sm:-mt-10" />
-      <p className="mt-8 font-mono text-xs tracking-widest text-muted uppercase">{kicker}</p>
-      <h1 className="mt-1 text-3xl font-semibold tracking-tight sm:text-4xl">{title}</h1>
+      <PageTitle kicker={kicker} title={title} className="mt-8" />
       {children && <div className="mt-3 max-w-3xl text-muted">{children}</div>}
     </header>
   );

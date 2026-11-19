@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { PLAIN_OPEN_PANEL, PLAIN_TILE } from "@/lib/look";
 import { useFetchJson } from "@/lib/use-fetch-json";
 
 const CURRENCIES = ["USD", "EUR", "JPY", "CNY", "GBP", "CHF", "INR", "AUD", "CAD"] as const;
@@ -24,8 +25,8 @@ export function CurrencyConverter() {
   const fmt = (n: number) => n.toLocaleString("en", { maximumFractionDigits: cur === "JPY" ? 0 : 2 });
 
   return (
-    <section className="rounded-md border border-border bg-surface p-5">
-      <h2 className="font-semibold">Currency</h2>
+    <section className={`rounded-md border border-border bg-surface p-5 ${PLAIN_OPEN_PANEL}`}>
+      <h2 className="font-semibold plain:text-xl">Currency</h2>
       <div className="mt-3 flex flex-wrap items-center gap-2">
         <label className="flex min-h-11 flex-1 items-center gap-2 rounded-md border border-border bg-background px-3">
           <span className="text-muted">₩</span>
@@ -48,7 +49,7 @@ export function CurrencyConverter() {
       {rate && (
         <ul className="mt-3 grid grid-cols-2 gap-2 text-sm">
           {PRICES.map((p) => (
-            <li key={p.label} className="rounded-md bg-background p-2">
+            <li key={p.label} className={`rounded-md bg-background p-2 ${PLAIN_TILE}`}>
               <span className="block text-xs text-muted">{p.label}</span>
               ₩{p.krw.toLocaleString("en")} ≈ {fmt(p.krw * rate)} {cur}
             </li>

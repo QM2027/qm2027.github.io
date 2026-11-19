@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { PageTitle } from "@/components/PageTitle";
 import { TaxiCard } from "@/components/TaxiCard";
 import { INDICO_ACCOMMODATION, INDICO_VENUE } from "@/data/indico-links";
 
@@ -38,8 +39,7 @@ const OPTIONS = [
 export default function GettingTherePage() {
   return (
     <main className="mx-auto w-full max-w-5xl px-4 py-6 sm:py-10 lg:px-8">
-      <p className="font-mono text-xs tracking-widest text-muted uppercase">CJU → ICC Jeju</p>
-      <h1 className="mt-1 text-3xl font-semibold tracking-tight sm:text-4xl">Getting to the venue</h1>
+      <PageTitle kicker="CJU → ICC Jeju" plainKicker="From Jeju International Airport (CJU)" title="Getting to the venue" />
       <p className="mt-3 max-w-2xl text-muted">
         ICC Jeju is in the Jungmun resort area on the south coast, about 45 km from Jeju International Airport.
         Hotels are listed on the{" "}

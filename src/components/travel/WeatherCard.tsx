@@ -3,6 +3,7 @@
 import { useFetchJson } from "@/lib/use-fetch-json";
 import { FORECAST_URL, MARCH_CLIMATE, describeWeather, type Forecast } from "@/lib/weather";
 import { useWeatherData } from "@/lib/weather-data";
+import { PLAIN_OPEN_PANEL, PLAIN_TILE } from "@/lib/look";
 import { WeatherAlerts } from "./WeatherAlerts";
 
 export function WeatherCard() {
@@ -10,8 +11,8 @@ export function WeatherCard() {
   const kma = useWeatherData();
 
   return (
-    <section className="rounded-md border border-border bg-surface p-5">
-      <h2 className="font-semibold">Weather at the venue</h2>
+    <section className={`rounded-md border border-border bg-surface p-5 ${PLAIN_OPEN_PANEL}`}>
+      <h2 className="font-semibold plain:text-xl">Weather at the venue</h2>
       <div className="mt-3 empty:hidden">
         <WeatherAlerts data={kma} />
       </div>
@@ -21,14 +22,19 @@ export function WeatherCard() {
             <div>
               <p className="font-mono text-4xl tabular-nums">{Math.round(f.data.current.temperature_2m)}°C</p>
               <p className="text-sm text-muted">
-                {describeWeather(f.data.current.weather_code)} · feels {Math.round(f.data.current.apparent_temperature)}° ·
+                {describeWeather(f.data.current.weather_code)}
+                <span className="plain:hidden"> · </span>
+                <span className="hidden plain:inline">, </span>
+                feels {Math.round(f.data.current.apparent_temperature)}°
+                <span className="plain:hidden"> · </span>
+                <span className="hidden plain:inline">, </span>
                 wind {Math.round(f.data.current.wind_speed_10m)} m/s
               </p>
             </div>
           </div>
           <ul className="mt-4 grid grid-cols-5 gap-1 text-center text-xs">
             {f.data.daily.time.map((day, i) => (
-              <li key={day} className="rounded-md bg-background p-2">
+              <li key={day} className={`rounded-md bg-background p-2 ${PLAIN_TILE}`}>
                 <p className="text-muted">{new Date(`${day}T00:00:00+09:00`).toLocaleDateString("en-GB", { weekday: "short", timeZone: "Asia/Seoul" })}</p>
                 <p className="truncate">{describeWeather(f.data.daily.weather_code[i])}</p>
                 <p className="tabular-nums">{Math.round(f.data.daily.temperature_2m_max[i])}° / {Math.round(f.data.daily.temperature_2m_min[i])}°</p>

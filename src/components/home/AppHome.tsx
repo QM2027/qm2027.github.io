@@ -65,10 +65,13 @@ function Before({ now, phase, pinned }: { now: number; phase: "prep" | "departur
       <section className="border-b border-border">
         <div className="mx-auto grid max-w-7xl items-center gap-8 px-4 py-8 sm:py-12 lg:grid-cols-[1fr_1fr] lg:px-8">
           <div>
-            <p className="font-mono text-xs tracking-widest text-muted uppercase">{SITE.shortName} · Conference app</p>
-            <h1 className="mt-3 text-4xl leading-tight sm:text-5xl">{SITE.name}</h1>
+            <p className="font-mono text-xs tracking-widest text-muted uppercase plain:hidden">{SITE.shortName} · Conference app</p>
+            <h1 className="mt-3 text-4xl leading-tight sm:text-5xl plain:mt-0">{SITE.name}</h1>
             <p className="mt-3 text-lg text-muted">
-              {SITE.dates} · ICC Jeju, Korea
+              {SITE.dates}
+              <span className="plain:hidden"> · </span>
+              <span className="hidden plain:inline">, </span>
+              ICC Jeju, Korea
             </p>
             <div className="mt-6">
               <Countdown from={pinned} />
@@ -85,12 +88,22 @@ function Before({ now, phase, pinned }: { now: number; phase: "prep" | "departur
   );
 }
 
-function Block({ title, children, id }: { title: string; children: ReactNode; id?: string }) {
+function Block({ title, plainTitle, children, id }: { title: string; plainTitle?: string; children: ReactNode; id?: string }) {
   return (
     <section aria-labelledby={id} className="mt-10 border-t border-foreground pt-3">
-      {/* The span carries the mono face: the global h2 rule (serif) outranks utility classes. */}
+      {/* The span carries the mono face: the global h2 rule (serif) outranks utility classes.
+          Plain look: a heading at heading size, not a small grey label. */}
       <h2 id={id}>
-        <span className="font-mono text-xs font-normal tracking-wider text-muted uppercase">{title}</span>
+        <span className="font-mono text-xs font-normal tracking-wider text-muted uppercase plain:font-serif plain:text-xl plain:font-semibold plain:tracking-normal plain:text-foreground plain:normal-case">
+          {plainTitle ? (
+            <>
+              <span className="plain:hidden">{title}</span>
+              <span className="hidden plain:inline">{plainTitle}</span>
+            </>
+          ) : (
+            title
+          )}
+        </span>
       </h2>
       {children}
     </section>
@@ -144,7 +157,7 @@ function NextDates({ now }: { now: number }) {
           </a>
         )}
         <a href={KEY_DATES_SOURCE} target="_blank" rel="noreferrer" className={textLink}>
-          All dates on Indico ↗
+          All dates on Indico<span className="plain:hidden"> ↗</span>
         </a>
       </div>
     </Block>
@@ -179,7 +192,7 @@ function ProgramBlock() {
             offline use.
           </p>
           <a href={INDICO_GLANCE} target="_blank" rel="noreferrer" className={`mt-4 inline-block ${textLink}`}>
-            Program at a glance on Indico ↗
+            Program at a glance on Indico<span className="plain:hidden"> ↗</span>
           </a>
         </>
       )}
@@ -264,7 +277,7 @@ function JejuGuides() {
     <Block title="Jeju in March" id="jeju-guides">
       <LinkList rows={rows} />
       <Link href="/jeju/" className={`mt-4 inline-block ${textLink}`}>
-        Everything for Jeju →
+        Everything for Jeju<span className="plain:hidden"> →</span>
       </Link>
     </Block>
   );
@@ -285,8 +298,8 @@ function Week({ now }: { now: number }) {
     <>
       <section className={arriving ? "border-b border-border" : ""}>
         <div className="mx-auto max-w-7xl px-4 pt-8 lg:px-8">
-          <p className="font-mono text-xs tracking-widest text-muted uppercase">{SITE.name}</p>
-          <h1 className="mt-2 text-3xl sm:text-4xl">
+          <p className="font-mono text-xs tracking-widest text-muted uppercase plain:hidden">{SITE.name}</p>
+          <h1 className="mt-2 text-3xl sm:text-4xl plain:mt-0">
             {arriving ? "Welcome to Jeju" : dayIndex >= 0 ? `Day ${dayIndex + 1} of ${days.length}` : SITE.name}
           </h1>
           {arriving && Number.isFinite(firstStart) && data && (
@@ -372,7 +385,7 @@ function Today({ program, today, now }: { program: Program; today: string; now: 
   const rows = todayRows(program, today);
   if (!rows.length) return null;
   return (
-    <Block title={`Today · ${dayLabel(today)}`} id="today">
+    <Block title={`Today · ${dayLabel(today)}`} plainTitle={`Today, ${dayLabel(today)}`} id="today">
       <ol className="mt-2">
         {rows.map((r) => {
           const running = isRunning(r, now);
@@ -444,8 +457,8 @@ function Conditions() {
 function After() {
   return (
     <section className="mx-auto w-full max-w-7xl px-4 py-10 pb-14 lg:px-8">
-      <p className="font-mono text-xs tracking-widest text-muted uppercase">{SITE.shortName}</p>
-      <h1 className="mt-3 text-4xl">{SITE.name}</h1>
+      <p className="font-mono text-xs tracking-widest text-muted uppercase plain:hidden">{SITE.shortName}</p>
+      <h1 className="mt-3 text-4xl plain:mt-0">{SITE.name}</h1>
       <p className="mt-3 text-lg text-muted">Held in Jeju, {SITE.dates}. Thank you for coming.</p>
       <div className="max-w-2xl">
         <LinkList

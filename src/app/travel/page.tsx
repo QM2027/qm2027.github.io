@@ -1,17 +1,19 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { PageTitle } from "@/components/PageTitle";
 import { CurrencyConverter } from "@/components/travel/CurrencyConverter";
 import { PhraseBook } from "@/components/travel/PhraseBook";
 import { WeatherCard } from "@/components/travel/WeatherCard";
 import { EMERGENCY } from "@/data/emergency";
+import { PLAIN_OPEN_PANEL } from "@/lib/look";
 
 export const metadata: Metadata = {
   title: "Travel toolkit",
   description: "Live Jeju weather, currency converter, emergency numbers, Korean phrase cards and practical tips.",
 };
 
-const LINKS = [
-  { href: "/getting-there/", title: "Airport → venue", text: "Bus, taxi and car compared, plus a taxi card." },
+const LINKS: { href: string; title: string; plainTitle?: string; text: string }[] = [
+  { href: "/getting-there/", title: "Airport → venue", plainTitle: "Airport to venue", text: "Bus, taxi and car compared, plus a taxi card." },
   { href: "/explore/plan/", title: "Free-time planner", text: "A loop from the venue that fits your time." },
   { href: "/explore/hallasan/", title: "Hallasan trails", text: "Profiles, reservations and March conditions." },
   { href: "/explore/companions/", title: "Companions & families", text: "Kid-friendly and step-free ideas." },
@@ -73,8 +75,7 @@ const PRACTICAL: { title: string; items: string[] }[] = [
 export default function TravelPage() {
   return (
     <main className="mx-auto w-full max-w-7xl px-4 py-6 sm:py-10 lg:px-8">
-      <p className="font-mono text-xs tracking-widest text-muted uppercase">Practical Jeju</p>
-      <h1 className="mt-1 text-3xl font-semibold tracking-tight sm:text-4xl">Travel toolkit</h1>
+      <PageTitle kicker="Practical Jeju" plainKicker="Weather, money, phrases and the numbers to call" title="Travel toolkit" />
 
       <section aria-label="Emergency numbers" className="mt-6 grid grid-cols-2 gap-2 sm:grid-cols-4">
         {EMERGENCY.map((e) => (
@@ -88,9 +89,22 @@ export default function TravelPage() {
       <ul className="mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
         {LINKS.map((l) => (
           <li key={l.href}>
-            <Link href={l.href} className="flex h-full items-start gap-3 rounded-md bg-surface p-4 hover:bg-border/60">
+            {/* Plain look: four equal filled tiles read as a template; they become rows under a rule. */}
+            <Link
+              href={l.href}
+              className="group flex h-full items-start gap-3 rounded-md bg-surface p-4 hover:bg-border/60 plain:rounded-none plain:border-t plain:border-foreground plain:bg-transparent plain:px-0 plain:pt-3 plain:pb-0 plain:hover:bg-transparent"
+            >
               <span>
-                <span className="block font-semibold">{l.title}</span>
+                <span className="block font-semibold plain:group-hover:underline plain:group-hover:underline-offset-4">
+                  {l.plainTitle ? (
+                    <>
+                      <span className="plain:hidden">{l.title}</span>
+                      <span className="hidden plain:inline">{l.plainTitle}</span>
+                    </>
+                  ) : (
+                    l.title
+                  )}
+                </span>
                 <span className="block text-sm text-muted">{l.text}</span>
               </span>
             </Link>
@@ -98,20 +112,20 @@ export default function TravelPage() {
         ))}
       </ul>
 
-      <div className="mt-6 grid gap-4 lg:grid-cols-2">
+      <div className="mt-6 grid gap-4 lg:grid-cols-2 plain:mt-12 plain:gap-x-12 plain:gap-y-12">
         <WeatherCard />
         <CurrencyConverter />
       </div>
 
-      <div className="mt-4">
+      <div className="mt-4 plain:mt-12">
         <PhraseBook />
       </div>
 
-      <section className="mt-8">
-        <h2 className="text-xl font-semibold">Good to know</h2>
-        <div className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+      <section className="mt-8 plain:mt-16">
+        <h2 className="text-xl font-semibold plain:text-2xl">Good to know</h2>
+        <div className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-3 plain:mt-6 plain:gap-x-12 plain:gap-y-10">
           {PRACTICAL.map((g) => (
-            <div key={g.title} className="rounded-md border border-border bg-surface p-5">
+            <div key={g.title} className={`rounded-md border border-border bg-surface p-5 ${PLAIN_OPEN_PANEL}`}>
               <h3 className="font-semibold">{g.title}</h3>
               <ul className="mt-2 list-disc space-y-1.5 pl-5 text-sm text-muted">
                 {g.items.map((i) => <li key={i}>{i}</li>)}

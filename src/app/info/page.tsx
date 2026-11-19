@@ -14,6 +14,10 @@ export const metadata: Metadata = {
   robots: { index: false },
 };
 
+/** Current look: a small mono caps label. Plain look: a heading at heading size. */
+const sectionHead =
+  "font-mono text-xs font-normal tracking-wider text-muted uppercase plain:font-serif plain:text-xl plain:font-semibold plain:tracking-normal plain:text-foreground plain:normal-case";
+
 /** Filled in once the organizing committee confirms the details. */
 const ON_SITE = ["Wi-Fi", "Cloakroom and luggage", "Lost and found", "First aid", "Prayer and quiet room", "Badge"];
 
@@ -25,7 +29,7 @@ export default function InfoPage() {
       <div className="mt-8 grid gap-x-12 lg:grid-cols-2">
         <section id="help" aria-labelledby="help-h" className="scroll-mt-24 border-t border-foreground pt-3">
           <h2 id="help-h">
-            <span className="font-mono text-xs font-normal tracking-wider text-muted uppercase">Help</span>
+            <span className={sectionHead}>Help</span>
           </h2>
           <ul className="mt-2">
             {EMERGENCY.map((e) => (
@@ -48,7 +52,7 @@ export default function InfoPage() {
 
         <section id="conduct" aria-labelledby="conduct-h" className="mt-10 scroll-mt-24 border-t border-foreground pt-3 lg:mt-0">
           <h2 id="conduct-h">
-            <span className="font-mono text-xs font-normal tracking-wider text-muted uppercase">Code of Conduct</span>
+            <span className={sectionHead}>Code of Conduct</span>
           </h2>
           <p className="mt-3 max-w-prose">
             {SITE.shortName} is committed to a welcoming conference for everyone. If you experience or witness
@@ -61,13 +65,13 @@ export default function InfoPage() {
             rel="noreferrer"
             className="mt-4 inline-block text-sm underline decoration-border underline-offset-4 hover:decoration-foreground"
           >
-            Read the Code of Conduct on Indico ↗
+            Read the Code of Conduct on Indico<span className="plain:hidden"> ↗</span>
           </a>
         </section>
 
         <section aria-labelledby="onsite-h" className="mt-10 border-t border-foreground pt-3">
           <h2 id="onsite-h">
-            <span className="font-mono text-xs font-normal tracking-wider text-muted uppercase">At the venue</span>
+            <span className={sectionHead}>At the venue</span>
           </h2>
           <ul className="mt-2">
             <li className="border-b border-border py-3">
@@ -87,7 +91,7 @@ export default function InfoPage() {
 
         <section aria-labelledby="contact-h" className="mt-10 border-t border-foreground pt-3">
           <h2 id="contact-h">
-            <span className="font-mono text-xs font-normal tracking-wider text-muted uppercase">Contact</span>
+            <span className={sectionHead}>Contact</span>
           </h2>
           <p className="mt-3">
             Secretariat:{" "}

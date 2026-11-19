@@ -40,14 +40,16 @@ export default function Home() {
         <section className="border-b border-border">
           <div className="mx-auto grid max-w-7xl items-center gap-8 px-4 py-10 sm:py-14 lg:grid-cols-[1fr_1.1fr] lg:px-8 lg:py-20">
             <div>
-              <p className="font-mono text-xs tracking-widest text-muted uppercase">{SITE.name} · Visitor guide</p>
-              <h1 className="mt-4 text-5xl leading-[1.05] sm:text-6xl">
+              {/* Plain look: no label above the title; the conference name moves into the lede. */}
+              <p className="font-mono text-xs tracking-widest text-muted uppercase plain:hidden">{SITE.name} · Visitor guide</p>
+              <h1 className="mt-4 text-5xl leading-[1.05] sm:text-6xl plain:mt-0">
                 Jeju,
                 <br />
                 21–27 March 2027
               </h1>
               <p className="mt-5 max-w-xl text-lg leading-relaxed text-muted">
-                Practical notes for conference participants: getting to {SITE.venue}, finding your way inside it, and
+                Practical notes for <span className="plain:hidden">conference</span>
+                <span className="hidden plain:inline">{SITE.name}</span> participants: getting to {SITE.venue}, finding your way inside it, and
                 what to do on the island before, between and after the sessions.
               </p>
               <div className="mt-8 flex flex-wrap items-center gap-x-6 gap-y-3">
@@ -55,7 +57,7 @@ export default function Home() {
                   Open the map
                 </Link>
                 <a href={SITE.indico} target="_blank" rel="noreferrer" className="text-sm underline decoration-border underline-offset-4 hover:decoration-foreground">
-                  Official conference site on Indico ↗
+                  Official conference site on Indico<span className="plain:hidden"> ↗</span>
                 </a>
               </div>
               <div className="mt-10">
@@ -71,8 +73,8 @@ export default function Home() {
           <ol className="mt-6 grid border-t border-border md:grid-cols-2 md:gap-x-12">
             {CONTENTS.map((c, i) => (
               <li key={c.href} className="border-b border-border">
-                <Link href={c.href} className="group grid grid-cols-[2.5rem_1fr] gap-x-3 py-4">
-                  <span className="font-mono text-sm text-muted tabular-nums">{String(i + 1).padStart(2, "0")}</span>
+                <Link href={c.href} className="group grid grid-cols-[2.5rem_1fr] gap-x-3 py-4 plain:grid-cols-1">
+                  <span className="font-mono text-sm text-muted tabular-nums plain:hidden">{String(i + 1).padStart(2, "0")}</span>
                   <span>
                     <span className="font-medium group-hover:underline group-hover:underline-offset-4">{c.title}</span>
                     <span className="mt-0.5 block text-sm text-muted">{c.text}</span>

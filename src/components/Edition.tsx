@@ -1,8 +1,9 @@
 "use client";
 
 import { useLayoutEffect, useSyncExternalStore, type ReactNode } from "react";
+import { LOOKS } from "@/lib/edition-script";
 
-// The edition and notice switches are applied by PREFS_SCRIPT (src/lib/edition-script.ts) before
+// The edition, notice and look switches are applied by PREFS_SCRIPT (src/lib/edition-script.ts) before
 // the first paint. Most of the difference is CSS (.guide-only / .app-only); these helpers are for
 // the parts that must not run at all in the other edition, such as the app home's data loading.
 
@@ -27,6 +28,8 @@ export function PrefsSync() {
     const html = document.documentElement;
     if (prefs.get("edition") === "app") html.setAttribute("data-edition", "app");
     if (prefs.get("notice") === "off") html.setAttribute("data-notice", "off");
+    const look = LOOKS.find((l) => l === prefs.get("look"));
+    if (look) html.setAttribute("data-look", look);
   }, []);
   return null;
 }

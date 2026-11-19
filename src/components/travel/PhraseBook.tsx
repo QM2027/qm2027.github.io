@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useState } from "react";
 import { ShowCard } from "@/components/ShowCard";
+import { PLAIN_OPEN_PANEL } from "@/lib/look";
 
 const GROUPS = [
   {
@@ -37,8 +38,8 @@ export function PhraseBook() {
   const [shown, setShown] = useState<{ en: string; ko: string }>();
 
   return (
-    <section className="rounded-md border border-border bg-surface p-5">
-      <h2 className="font-semibold">Show-in-Korean cards</h2>
+    <section className={`rounded-md border border-border bg-surface p-5 ${PLAIN_OPEN_PANEL}`}>
+      <h2 className="font-semibold plain:text-xl">Show-in-Korean cards</h2>
       <p className="mt-1 text-sm text-muted">
         Tap to show full screen. Food and allergy phrases are in the <Link href="/explore/food/" className="text-sea underline">food guide</Link>.
       </p>
