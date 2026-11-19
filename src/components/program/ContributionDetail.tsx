@@ -33,6 +33,11 @@ function Panel({ label, onClose, children }: { label: string; onClose: () => voi
 }
 
 const btn = "flex min-h-11 items-center gap-1 rounded-md border border-border px-4 text-sm";
+/** Brand look: the panel opens on the logo blue, holding what the item is and when; the wrapper is
+ *  display: contents in the other looks. Tokens are re-pointed so muted text and borders read on it. */
+const FIELD =
+  "brand:-mx-5 brand:-mt-[max(1.25rem,env(safe-area-inset-top))] brand:bg-brand-field brand:px-5 brand:pt-[max(1.25rem,env(safe-area-inset-top))] brand:pb-5 brand:text-on-brand-field brand:[--foreground:var(--on-brand-field)] brand:[--muted:var(--brand-field-muted)] brand:[--border:var(--brand-field-muted)]";
+const onField = "brand:focus-visible:outline-2 brand:focus-visible:outline-offset-2 brand:focus-visible:outline-on-brand-field";
 
 const KIND: Record<Material["kind"], string> = { pdf: "PDF", slides: "Slides", video: "Video", image: "Image", link: "Link", file: "File" };
 
@@ -97,23 +102,25 @@ export function ContributionDetail({
 
   return (
     <Panel label={talk.title} onClose={onClose}>
-      <div className="flex items-start justify-between gap-3">
-        <p className="text-sm tabular-nums text-muted">
-          {talk.poster ? `Poster${talk.board ? ` ${talk.board}` : ""}` : "Talk"} · {dayLabel(dayOf(talk.start))} · {clock(talk.start)}–
-          {clock(talk.end)}
-          {room && ` · ${room}`}
+      <div className={`contents brand:block ${FIELD}`}>
+        <div className="flex items-start justify-between gap-3">
+          <p className="text-sm tabular-nums text-muted">
+            {talk.poster ? `Poster${talk.board ? ` ${talk.board}` : ""}` : "Talk"} · {dayLabel(dayOf(talk.start))} · {clock(talk.start)}–
+            {clock(talk.end)}
+            {room && ` · ${room}`}
+          </p>
+          <button onClick={onClose} aria-label="Close" className={`flex size-11 shrink-0 items-center justify-center rounded-full border border-border ${onField}`}>
+            <Icon name="close" />
+          </button>
+        </div>
+        <h2 className="mt-2 text-xl font-semibold leading-snug">
+          <TeX text={talk.title} />
+        </h2>
+        <p className="mt-1 text-sm text-muted">
+          {[session?.title, talk.track, talk.friendlyId && `#${talk.friendlyId}`].filter(Boolean).join(" · ")}
         </p>
-        <button onClick={onClose} aria-label="Close" className="flex size-11 shrink-0 items-center justify-center rounded-full border border-border">
-          <Icon name="close" />
-        </button>
+        {talk.poster && <p className="mt-1 text-sm text-muted">Up all week; the presenter is at the board during the session.</p>}
       </div>
-      <h2 className="mt-2 text-xl font-semibold leading-snug">
-        <TeX text={talk.title} />
-      </h2>
-      <p className="mt-1 text-sm text-muted">
-        {[session?.title, talk.track, talk.friendlyId && `#${talk.friendlyId}`].filter(Boolean).join(" · ")}
-      </p>
-      {talk.poster && <p className="mt-1 text-sm text-muted">Up all week; the presenter is at the board during the session.</p>}
       {changed && <p className="mt-3 rounded-md bg-tangerine/10 p-3 text-sm text-tangerine">This item&apos;s time, room or speaker changed recently.</p>}
 
       {talk.speakers.length > 0 && (
@@ -165,10 +172,10 @@ export function ContributionDetail({
       {files && files.length > 0 && (
         <section className="mt-5">
           <h3 className="text-sm font-semibold">Files</h3>
-          <ul className="mt-2 space-y-2">
+          <ul className="mt-2 space-y-2 brand:space-y-0 brand:border-t brand:border-border">
             {files.map((f) => (
               <li key={f.url}>
-                <a href={f.url} target="_blank" rel="noreferrer" className="flex min-h-11 items-center justify-between gap-3 rounded-md border border-border px-4 text-sm hover:border-foreground">
+                <a href={f.url} target="_blank" rel="noreferrer" className="flex min-h-11 items-center justify-between gap-3 rounded-md border border-border px-4 text-sm hover:border-foreground brand:rounded-none brand:border-x-0 brand:border-t-0 brand:px-0 brand:hover:border-border brand:hover:underline">
                   <span className="min-w-0">
                     <span className="block truncate">{f.title}</span>
                     {fileFlag(baseline, f) && (
@@ -205,9 +212,9 @@ export function ContributionDetail({
 export function MissingDetail({ onClose }: { onClose: () => void }) {
   return (
     <Panel label="Not in the program" onClose={onClose}>
-      <div className="flex items-start justify-between gap-3">
+      <div className={`flex items-start justify-between gap-3 ${FIELD}`}>
         <h2 className="text-xl font-semibold">Not in the current program</h2>
-        <button onClick={onClose} aria-label="Close" className="flex size-11 shrink-0 items-center justify-center rounded-full border border-border">
+        <button onClick={onClose} aria-label="Close" className={`flex size-11 shrink-0 items-center justify-center rounded-full border border-border ${onField}`}>
           <Icon name="close" />
         </button>
       </div>

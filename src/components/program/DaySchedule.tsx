@@ -15,6 +15,10 @@ const COLS: Record<number, string> = {
   6: "md:grid-cols-3 lg:grid-cols-6",
 };
 const colsFor = (n: number) => COLS[Math.min(n, 6)] ?? "";
+/** Brand look: sessions lose their boxes and sit as columns of a printed timetable, with a
+ *  hairline between neighbours (stacked on phones, side by side from md). */
+const BRAND_COLUMN =
+  "brand:rounded-none brand:border-0 brand:bg-transparent brand:p-0 brand:ring-0 brand:[&:not(:first-child)]:border-t brand:[&:not(:first-child)]:border-border brand:[&:not(:first-child)]:pt-3 md:brand:[&:not(:first-child)]:border-t-0 md:brand:[&:not(:first-child)]:border-l md:brand:[&:not(:first-child)]:pt-0 md:brand:[&:not(:first-child)]:pl-4";
 
 /** md and up: parallel sessions sit side by side, so they open and close as one row. */
 function useWide() {
@@ -72,7 +76,7 @@ export function DaySchedule({ program, day, isToday, now, onPosters, ...p }: Pro
         if (row.kind === "break") {
           return (
             <p key={`b${row.start}${row.b.title}`} className="flex items-center gap-3 text-sm text-muted">
-              <span className="w-12 tabular-nums">{clock(row.b.start)}</span>
+              <span className="w-12 tabular-nums brand:font-mono">{clock(row.b.start)}</span>
               <span className="h-px flex-1 bg-border" />
               {row.b.title}
               <span className="h-px flex-1 bg-border" />
@@ -87,18 +91,18 @@ export function DaySchedule({ program, day, isToday, now, onPosters, ...p }: Pro
         // close it, so a tap opens or closes every session in the row together.
         const rowWide = wide && talkSessions.length > 1;
         return (
-          <div key={row.start} data-slot className="scroll-mt-24">
+          <div key={row.start} data-slot className="scroll-mt-24 brand:border-t brand:border-foreground brand:pt-3">
             {talkSessions.length > 1 && (
               <div className="mb-2 flex items-center gap-3 text-sm">
-                <span className="tabular-nums text-muted">
-                  {clock(row.start)} · {row.list.length} parallel
+                <span className="tabular-nums text-muted brand:[&>span]:font-mono brand:[&>span]:font-semibold brand:[&>span]:text-foreground">
+                  <span>{clock(row.start)}</span> · {row.list.length} parallel
                 </span>
                 <button onClick={() => toggle(talkSessions.map((s) => s.id), !allOpen)} className="text-sea underline-offset-2 hover:underline">
                   {allOpen ? "Collapse all" : "Show all talks"}
                 </button>
               </div>
             )}
-            <div className={`grid gap-3 ${colsFor(row.list.length)}`}>
+            <div className={`grid gap-3 brand:gap-x-4 ${colsFor(row.list.length)}`}>
               {row.list.map((s) =>
                 s.poster ? (
                   <PosterSessionCard key={s.id} session={s} count={bySession.get(s.id)?.length ?? 0} now={now} onBrowse={() => onPosters(s.id)} {...p} />
@@ -125,7 +129,7 @@ export function DaySchedule({ program, day, isToday, now, onPosters, ...p }: Pro
         );
       })}
       {loose.length > 0 && (
-        <ul className="divide-y divide-border rounded-md border border-border bg-surface px-3">
+        <ul className="divide-y divide-border rounded-md border border-border bg-surface px-3 brand:rounded-none brand:border-x-0 brand:border-t-foreground brand:bg-transparent brand:px-0">
           {loose.map((c) => (
             <ContributionRow key={c.id} c={c} starred={p.starred.has(c.id)} onStar={() => p.onStar(c.id)} onOpen={() => p.onOpen(c.id)} live={now !== undefined && isRunning(c, now)} />
           ))}
@@ -149,10 +153,10 @@ function keepInView(el: HTMLElement, row: boolean) {
 function SessionHeader({ session, live, compact }: { session: Session; live: boolean; compact?: boolean }) {
   return (
     <>
-      <span className="flex flex-wrap items-center gap-x-2 gap-y-1 text-sm tabular-nums text-muted">
+      <span className="flex flex-wrap items-center gap-x-2 gap-y-1 text-sm tabular-nums text-muted brand:font-mono">
         {clock(session.start)}–{clock(session.end)}
-        {session.room && <span className="rounded bg-border/60 px-1.5 text-xs text-foreground">{session.room}</span>}
-        {live && <span className="rounded bg-tangerine px-1.5 text-xs font-semibold text-background">NOW</span>}
+        {session.room && <span className="rounded bg-border/60 px-1.5 text-xs text-foreground brand:rounded-none brand:bg-transparent brand:px-0 brand:font-sans brand:text-sm brand:font-semibold">{session.room}</span>}
+        {live && <span className="rounded bg-tangerine px-1.5 text-xs font-semibold text-background brand:font-sans">NOW</span>}
       </span>
       <span className={`mt-1 block font-semibold ${compact ? "text-sm leading-snug" : ""}`}>
         <TeX text={session.title} />
@@ -183,7 +187,7 @@ function SessionCard({
   const live = now !== undefined && isRunning(session, now);
   const toggles = canToggle && talks.length > 0;
   return (
-    <section className={`scroll-mt-24 min-w-0 rounded-md border bg-surface ${compact ? "p-3" : "p-4"} ${live ? "border-tangerine ring-2 ring-tangerine/20" : "border-border"}`}>
+    <section className={`scroll-mt-24 min-w-0 rounded-md border bg-surface ${compact ? "p-3" : "p-4"} ${live ? "border-tangerine ring-2 ring-tangerine/20" : "border-border"} ${BRAND_COLUMN}`}>
       <div className="flex items-start gap-1">
         <button onClick={toggles ? onToggle : undefined} aria-expanded={toggles ? expanded : undefined} className="min-w-0 flex-1 text-left">
           <SessionHeader session={session} live={live} compact={compact} />
@@ -226,7 +230,7 @@ function PosterSessionCard({
 }: ListProps & { session: Session; count: number; now?: number; onBrowse: () => void }) {
   const live = now !== undefined && isRunning(session, now);
   return (
-    <section className={`min-w-0 rounded-md border bg-surface p-4 ${live ? "border-tangerine ring-2 ring-tangerine/20" : "border-border"}`}>
+    <section className={`min-w-0 rounded-md border bg-surface p-4 ${live ? "border-tangerine ring-2 ring-tangerine/20" : "border-border"} ${BRAND_COLUMN}`}>
       <div className="flex items-start gap-1">
         <div className="min-w-0 flex-1">
           <SessionHeader session={session} live={live} />
@@ -248,7 +252,7 @@ function NowStrip({ program, now, ...p }: ListProps & { program: Program; now: n
   const items = (running.length ? running : soon).slice(0, 8);
   if (!items.length) return null;
   return (
-    <section className="rounded-md border border-tangerine/40 p-3">
+    <section className="rounded-md border border-tangerine/40 p-3 brand:rounded-none brand:border-0 brand:border-t-2 brand:border-tangerine brand:p-0 brand:pt-3">
       <h2 className="text-sm font-semibold">{running.length ? "Happening now" : "Starting within the hour"}</h2>
       <ul className="mt-1 divide-y divide-border">
         {items.map((c) => (

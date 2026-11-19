@@ -44,7 +44,7 @@ export function Updates({ program, sessionsById, starred, mineOnly, onMineOnly, 
       {!changes.length ? (
         <p className="text-muted">None of the items in your schedule changed.</p>
       ) : (
-        <ul className="divide-y divide-border rounded-md border border-border bg-surface px-4">
+        <ul className="divide-y divide-border rounded-md border border-border bg-surface px-4 brand:rounded-none brand:border-x-0 brand:border-t-foreground brand:bg-transparent brand:px-0">
           {changes.map((c) => {
             const session = c.count ? sessionsById.get(c.id) : undefined;
             const label = c.count ? `${c.count} ${session?.poster ? "posters" : "contributions"} ${LABEL[c.kind]}` : LABEL[c.kind];

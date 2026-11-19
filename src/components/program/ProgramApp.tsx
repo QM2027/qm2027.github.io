@@ -73,13 +73,13 @@ function NotPublished({ checkedAt }: { checkedAt?: string }) {
       <div className="mt-3">
         <SyncStatus checkedAt={checkedAt} />
       </div>
-      <a href={INDICO_TIMETABLE} target="_blank" rel="noreferrer" className="mt-6 inline-flex min-h-12 items-center gap-2 rounded-md bg-sea px-6 font-semibold text-on-sea">
+      <a href={INDICO_TIMETABLE} target="_blank" rel="noreferrer" className="mt-6 inline-flex min-h-12 items-center gap-2 rounded-md bg-sea px-6 font-semibold text-on-sea brand:bg-tangerine brand:text-background">
         Open timetable on Indico <Icon name="external" className="size-4" />
       </a>
-      <ul className="mt-8 divide-y divide-border rounded-md border border-border bg-surface">
+      <ul className="mt-8 divide-y divide-border rounded-md border border-border bg-surface brand:rounded-none brand:border-x-0 brand:border-t-foreground brand:bg-transparent">
         {links.map((l) => (
           <li key={l.href}>
-            <a href={l.href} target="_blank" rel="noreferrer" className="flex min-h-12 items-center justify-between px-4">
+            <a href={l.href} target="_blank" rel="noreferrer" className="flex min-h-12 items-center justify-between px-4 brand:px-0">
               {l.label} <Icon name="external" className="size-4 text-muted" />
             </a>
           </li>
@@ -295,13 +295,13 @@ function ProgramBrowser({
     {/* Wide screens: views (and days) in a pane on the left. Phones: both in a bar at the bottom. */}
     <div className="pb-4 lg:grid lg:grid-cols-[12rem_minmax(0,1fr)] lg:gap-8 lg:pb-0">
       <nav aria-label="Program views" className="hidden lg:block">
-        <div className="sticky top-20 space-y-1">
+        <div className="sticky top-20 space-y-1 brand:space-y-0 brand:border-t brand:border-foreground">
           {tabs.map((t) => (
-            <div key={t.view}>
+            <div key={t.view} className="brand:border-b brand:border-border">
               <button
                 onClick={() => selectView(t.view)}
                 aria-pressed={!searching && view === t.view}
-                className="flex min-h-11 w-full items-center gap-3 rounded-md px-3 text-left text-sm hover:bg-surface aria-pressed:bg-foreground aria-pressed:text-background"
+                className="flex min-h-11 w-full items-center gap-3 rounded-md px-3 text-left text-sm hover:bg-surface aria-pressed:bg-foreground aria-pressed:text-background brand:rounded-none brand:aria-pressed:bg-transparent brand:aria-pressed:font-semibold brand:aria-pressed:text-foreground brand:aria-pressed:shadow-[inset_3px_0_0_var(--foreground)]"
               >
                 <Icon name={t.icon} className="size-4.5 shrink-0" />
                 <span className="flex-1">{t.label}</span>
@@ -309,9 +309,9 @@ function ProgramBrowser({
                 {t.count ? <span className="text-xs tabular-nums opacity-70">{t.count}</span> : null}
               </button>
               {t.view === "day" && showDays && (
-                <div className="my-1 ml-7 flex flex-col gap-0.5" role="group" aria-label="Day">
+                <div className="my-1 ml-7 flex flex-col gap-0.5 brand:mt-0 brand:mb-2" role="group" aria-label="Day">
                   {dayButtons(
-                    "min-h-9 rounded-md px-3 text-left text-sm text-muted hover:text-foreground aria-pressed:bg-surface aria-pressed:font-semibold aria-pressed:text-foreground",
+                    "min-h-9 rounded-md px-3 text-left text-sm text-muted hover:text-foreground aria-pressed:bg-surface aria-pressed:font-semibold aria-pressed:text-foreground brand:rounded-none brand:aria-pressed:bg-transparent brand:aria-pressed:shadow-[inset_2px_0_0_var(--foreground)]",
                   )}
                 </div>
               )}
@@ -325,7 +325,7 @@ function ProgramBrowser({
         <SyncStatus checkedAt={checkedAt} stale={stale} />
       </div>
       {program.eventId !== QM2027_EVENT_ID && (
-        <p className="mb-3 rounded-md border border-border bg-surface p-3 text-sm">
+        <p className="mb-3 rounded-md border border-border bg-surface p-3 text-sm brand:rounded-none brand:border-0 brand:bg-transparent brand:p-0 brand:text-muted brand:[&_b]:text-foreground">
           <b>Preview.</b> The QM2027 timetable isn&apos;t on Indico yet, so this shows the program of a past conference (Indico
           event {program.eventId}) to try the features. Times are that event&apos;s local time.
         </p>
@@ -408,7 +408,7 @@ function ProgramBrowser({
         ) : view === "mine" ? (
           <>
             {linkIds && (
-              <div className="mb-4 flex flex-wrap items-center justify-between gap-3 rounded-md border border-border bg-surface p-3 text-sm">
+              <div className="mb-4 flex flex-wrap items-center justify-between gap-3 rounded-md border border-border bg-surface p-3 text-sm brand:rounded-none brand:border-x-0 brand:border-t-foreground brand:bg-transparent brand:px-0">
                 <span>
                   {!importIds.length && !dropIds.length
                     ? "Your schedule here already matches this one."
@@ -423,7 +423,7 @@ function ProgramBrowser({
                         addStars(importIds);
                         go({ ids: undefined });
                       }}
-                      className="min-h-10 rounded-md bg-sea px-4 font-semibold text-on-sea"
+                      className="min-h-10 rounded-md bg-sea px-4 font-semibold text-on-sea brand:bg-tangerine brand:text-background"
                     >
                       Add {importIds.length} new
                     </button>
@@ -521,12 +521,12 @@ function ProgramBrowser({
     <nav
       aria-label="Program views"
       data-bottom-bar={showDays ? "2" : "1"}
-      className="pin-bottom fixed inset-x-0 bottom-0 z-[900] border-t border-border bg-background/95 pb-[env(safe-area-inset-bottom)] backdrop-blur lg:hidden standalone:bottom-[calc(var(--tabbar)+env(safe-area-inset-bottom))] standalone:pb-0"
+      className="pin-bottom fixed inset-x-0 bottom-0 z-[900] border-t border-border brand:border-foreground bg-background/95 pb-[env(safe-area-inset-bottom)] backdrop-blur lg:hidden standalone:bottom-[calc(var(--tabbar)+env(safe-area-inset-bottom))] standalone:pb-0"
     >
       {showDays && (
         <div className="flex gap-2 overflow-x-auto border-b border-border px-3 py-2 [scrollbar-width:none]" role="group" aria-label="Day">
           {dayButtons(
-            "min-h-9 shrink-0 rounded-md border border-border bg-surface px-3 text-sm aria-pressed:border-sea aria-pressed:bg-sea aria-pressed:text-on-sea",
+            "min-h-9 shrink-0 rounded-md border border-border bg-surface px-3 text-sm aria-pressed:border-sea aria-pressed:bg-sea aria-pressed:text-on-sea brand:rounded-none brand:border-0 brand:bg-transparent brand:px-2 brand:text-muted brand:aria-pressed:bg-transparent brand:aria-pressed:font-semibold brand:aria-pressed:text-foreground brand:aria-pressed:shadow-[inset_0_-2px_0_var(--foreground)]",
           )}
         </div>
       )}
@@ -536,7 +536,7 @@ function ProgramBrowser({
             key={t.view}
             onClick={() => selectView(t.view)}
             aria-pressed={!searching && view === t.view}
-            className="relative flex min-h-14 flex-col items-center justify-center gap-0.5 text-[11px] text-muted aria-pressed:font-semibold aria-pressed:text-foreground"
+            className="relative flex min-h-14 flex-col items-center justify-center gap-0.5 text-[11px] text-muted aria-pressed:font-semibold aria-pressed:text-foreground brand:aria-pressed:shadow-[inset_0_2px_0_var(--foreground)]"
           >
             <Icon name={t.icon} className="size-5" />
             {t.label}

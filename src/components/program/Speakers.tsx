@@ -72,7 +72,7 @@ export function SpeakerList({ program, onSession, ...p }: ListProps & { program:
       {!q && (
         <nav aria-label="Jump to letter" className="flex flex-wrap gap-1">
           {letters.map((l) => (
-            <a key={l} href={`#speakers-${l}`} className="flex size-9 items-center justify-center rounded-md border border-border text-sm">
+            <a key={l} href={`#speakers-${l}`} className="flex size-9 items-center justify-center rounded-md border border-border text-sm brand:border-transparent brand:font-semibold brand:hover:border-foreground">
               {l}
             </a>
           ))}
@@ -80,13 +80,13 @@ export function SpeakerList({ program, onSession, ...p }: ListProps & { program:
       )}
       {!shown.length && <p className="text-muted">Nobody matches.</p>}
       {[...groups].map(([letter, list]) => (
-        <section key={letter} id={`speakers-${letter}`} className="scroll-mt-40">
-          <h2 className="text-sm font-semibold text-muted">{letter}</h2>
-          <ul className="mt-1 divide-y divide-border rounded-md border border-border bg-surface">
+        <section key={letter} id={`speakers-${letter}`} className="scroll-mt-40 brand:border-t brand:border-foreground brand:pt-2 lg:brand:grid lg:brand:grid-cols-12 lg:brand:gap-x-8">
+          <h2 className="text-sm font-semibold text-muted brand:text-2xl brand:text-foreground lg:brand:col-span-1">{letter}</h2>
+          <ul className="mt-1 divide-y divide-border rounded-md border border-border bg-surface brand:rounded-none brand:border-0 brand:bg-transparent lg:brand:col-span-11 lg:brand:mt-0">
             {list.map((x) => (
               <li key={x.key} className="[contain-intrinsic-size:auto_56px] [content-visibility:auto]">
                 <details className="group">
-                  <summary className="flex min-h-12 cursor-pointer list-none items-center justify-between gap-3 px-4 py-2">
+                  <summary className="flex min-h-12 cursor-pointer list-none items-center justify-between gap-3 px-4 py-2 brand:px-0">
                     <span className="min-w-0">
                       <b className="block">{x.name}</b>
                       {x.affiliation && <span className="block truncate text-sm text-muted">{x.affiliation}</span>}
@@ -95,9 +95,9 @@ export function SpeakerList({ program, onSession, ...p }: ListProps & { program:
                       {x.contributions.length + x.chairs.length} <span className="inline-block transition group-open:rotate-90">›</span>
                     </span>
                   </summary>
-                  <div className="space-y-2 border-t border-border p-3">
+                  <div className="space-y-2 border-t border-border p-3 brand:border-t-0 brand:px-0 brand:pt-0 brand:pb-4">
                     {x.chairs.map((s) => (
-                      <button key={s.id} onClick={() => onSession(s)} className="block w-full rounded-md border border-border px-3 py-2 text-left text-sm">
+                      <button key={s.id} onClick={() => onSession(s)} className="block w-full rounded-md border border-border px-3 py-2 text-left text-sm brand:rounded-none brand:border-x-0 brand:border-t-0 brand:px-0">
                         <span className="text-muted">
                           Chair · {dayLabel(dayOf(s.start))} {clock(s.start)}
                           {s.room && ` · ${s.room}`}

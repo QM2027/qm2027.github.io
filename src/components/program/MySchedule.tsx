@@ -101,7 +101,7 @@ export function MySchedule({ program, changedIds, filesChanged, onSession, onRec
   return (
     <div className="space-y-6">
       <div className="flex flex-wrap gap-2">
-        <button onClick={exportIcs} className="min-h-11 rounded-md bg-sea px-5 font-semibold text-on-sea">
+        <button onClick={exportIcs} className="min-h-11 rounded-md bg-sea px-5 font-semibold text-on-sea brand:bg-tangerine brand:text-background">
           Add to my calendar (.ics)
         </button>
         <button onClick={() => setTransfer("send")} className="min-h-11 rounded-md border border-border px-4 text-sm">
@@ -156,10 +156,10 @@ export function MySchedule({ program, changedIds, filesChanged, onSession, onRec
           ? [...posterGroups].filter(([id]) => groupDay(id) === d).sort(([a], [b]) => p.sessionsById.get(a)!.start.localeCompare(p.sessionsById.get(b)!.start))
           : [];
         return (
-          <section key={d}>
+          <section key={d} className="brand:border-t brand:border-foreground brand:pt-3">
             <h2 className="font-semibold">{dayLabel(d)}</h2>
             {dayEntries.length > 0 && (
-              <ul className="mt-2 divide-y divide-border rounded-md border border-border bg-surface px-3">
+              <ul className="mt-2 divide-y divide-border rounded-md border border-border bg-surface px-3 brand:mt-1 brand:rounded-none brand:border-0 brand:bg-transparent brand:px-0">
                 {dayEntries.map((e) => {
                   const clash = clashWith(e, dayEntries);
                   const clashText = clash ? `Overlaps “${clash.title}”` : undefined;
@@ -213,7 +213,7 @@ export function MySchedule({ program, changedIds, filesChanged, onSession, onRec
 function SessionRow({ session, talks, onStar, onOpen, warn }: { session: Session; talks: number; onStar: () => void; onOpen: () => void; warn?: string }) {
   return (
     <li className="flex items-start gap-2 py-2">
-      <span className="w-12 shrink-0 pt-2 text-sm tabular-nums text-muted">{clock(session.start)}</span>
+      <span className="w-12 shrink-0 pt-2 text-sm tabular-nums text-muted brand:font-mono">{clock(session.start)}</span>
       <button onClick={onOpen} className="min-w-0 flex-1 py-1.5 text-left">
         <span className="block text-xs font-semibold uppercase tracking-wide text-muted">Session</span>
         <span className="block font-semibold leading-snug hover:text-sea">
@@ -241,10 +241,10 @@ function PosterGroup({
   // Open the group when something in it changed, so the warning isn't hidden.
   const news = posters.filter((c) => changedIds.has(c.id) || filesChanged.has(c.id)).length;
   return (
-    <details open={news > 0 || undefined} className="group mt-2 rounded-md border border-border bg-surface">
-      <summary className="flex min-h-12 cursor-pointer list-none items-center justify-between gap-3 px-4">
+    <details open={news > 0 || undefined} className="group mt-2 rounded-md border border-border bg-surface brand:mt-0 brand:rounded-none brand:border-x-0 brand:border-t-0 brand:bg-transparent">
+      <summary className="flex min-h-12 cursor-pointer list-none items-center justify-between gap-3 px-4 brand:px-0">
         <span>
-          <span className="text-sm tabular-nums text-muted">
+          <span className="text-sm tabular-nums text-muted brand:font-mono">
             {clock(session.start)}–{clock(session.end)}
           </span>{" "}
           <b>{session.title}</b>
@@ -254,7 +254,7 @@ function PosterGroup({
           {posters.length ? `${posters.length} saved` : "session saved"} <span className="inline-block transition group-open:rotate-90">›</span>
         </span>
       </summary>
-      <div className="border-t border-border px-3">
+      <div className="border-t border-border px-3 brand:px-0">
         {posters.length > 0 && (
           <ul className="divide-y divide-border">
             {posters.sort(byBoard).map((c) => (

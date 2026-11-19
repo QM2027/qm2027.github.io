@@ -27,17 +27,17 @@ export function TopicList({ program, open, ...p }: Props) {
   if (!program.tracks.length) return <p className="text-muted">Indico doesn&apos;t group this program by topic.</p>;
 
   return (
-    <div className="space-y-3">
-      <p className="text-sm text-muted">Topics are the tracks on Indico. &ldquo;Other&rdquo; holds plenaries and contributions without a track.</p>
+    <div className="space-y-3 brand:space-y-0">
+      <p className="text-sm text-muted brand:pb-4">Topics are the tracks on Indico. &ldquo;Other&rdquo; holds plenaries and contributions without a track.</p>
       {topics.map((t) => (
-        <details key={t.name} open={open === t.name || undefined} className="group rounded-md border border-border bg-surface">
-          <summary className="flex min-h-12 cursor-pointer list-none items-center justify-between gap-3 px-4 py-2">
+        <details key={t.name} open={open === t.name || undefined} className="group rounded-md border border-border bg-surface brand:rounded-none brand:border-x-0 brand:border-t-0 brand:bg-transparent brand:first-of-type:border-t brand:first-of-type:border-t-foreground">
+          <summary className="flex min-h-12 cursor-pointer list-none items-center justify-between gap-3 px-4 py-2 brand:px-0">
             <b className="min-w-0">{t.name}</b>
             <span className="shrink-0 text-sm text-muted">
               {t.talks.length} talks · {t.posters.length} posters <span className="inline-block transition group-open:rotate-90">›</span>
             </span>
           </summary>
-          <div className="space-y-3 border-t border-border p-3">
+          <div className="space-y-3 border-t border-border p-3 brand:border-t-0 brand:px-0 brand:pt-0 brand:pb-6">
             {t.talks.length > 0 ? <ContributionList items={t.talks} showDay {...p} /> : <p className="text-sm text-muted">No talks in this topic.</p>}
             {t.posters.length > 0 && (
               <details className="group/posters">

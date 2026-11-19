@@ -101,16 +101,16 @@ export function PosterBrowser({ program, sessionId, track, onFilter, ...p }: Pro
       </div>
       {boardMiss && <p className="text-sm text-tangerine">No poster with board {boardMiss}.</p>}
 
-      <div className="space-y-3">
+      <div className="space-y-3 brand:space-y-0">
         {groups.map((g) => (
-          <details key={`${sessionId}-${track}-${g.name}`} open={groups.length === 1} className="group rounded-md border border-border bg-surface">
-            <summary className="flex min-h-12 cursor-pointer list-none items-center justify-between gap-3 px-4 font-semibold">
+          <details key={`${sessionId}-${track}-${g.name}`} open={groups.length === 1} className="group rounded-md border border-border bg-surface brand:rounded-none brand:border-x-0 brand:border-t-0 brand:bg-transparent brand:first-of-type:border-t brand:first-of-type:border-t-foreground">
+            <summary className="flex min-h-12 cursor-pointer list-none items-center justify-between gap-3 px-4 font-semibold brand:px-0">
               <span>{g.name}</span>
               <span className="text-sm font-normal text-muted">
                 {g.items.length} <span className="inline-block transition group-open:rotate-90">›</span>
               </span>
             </summary>
-            <ul className="divide-y divide-border border-t border-border px-3">
+            <ul className="divide-y divide-border border-t border-border px-3 brand:px-0">
               {g.items.map((c) => (
                 <ContributionRow
                   key={c.id}
@@ -135,7 +135,7 @@ function Chip({ on, onClick, children }: { on: boolean; onClick: () => void; chi
     <button
       onClick={onClick}
       aria-pressed={on}
-      className="min-h-10 rounded-md border border-border bg-surface px-3 text-sm aria-pressed:border-sea aria-pressed:bg-sea aria-pressed:text-on-sea"
+      className="min-h-10 rounded-md border border-border bg-surface px-3 text-sm aria-pressed:border-sea aria-pressed:bg-sea aria-pressed:text-on-sea brand:bg-transparent"
     >
       {children}
     </button>

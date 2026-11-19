@@ -36,8 +36,9 @@ export function FloorPlanModal({ roomId, onClose }: { roomId?: string; onClose: 
         className="max-h-[92dvh] w-full overflow-y-auto rounded-t-xl bg-background p-4 pb-[max(1rem,env(safe-area-inset-bottom))] shadow-xl sm:max-w-2xl sm:rounded-xl"
       >
         <div className="flex items-start justify-between gap-3">
-          <div>
-            <p className="text-xs font-medium uppercase tracking-wide text-muted">ICC Jeju · {floor.label}</p>
+          {/* Brand look: the room first, where it is underneath. */}
+          <div className="brand:flex brand:flex-col-reverse">
+            <p className="text-xs font-medium uppercase tracking-wide text-muted brand:text-sm">ICC Jeju · {floor.label}</p>
             <h2 className="text-lg font-semibold">{room?.name ?? "Floor plan"}</h2>
           </div>
           <button onClick={onClose} aria-label="Close floor plan" className="flex size-11 shrink-0 items-center justify-center rounded-full border border-border">

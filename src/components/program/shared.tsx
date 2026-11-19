@@ -145,11 +145,11 @@ export function ContributionRow({ c, session, starred, onStar, onOpen, lead = "t
     .join(" · ");
 
   return (
-    <li className={`flex items-start gap-2 py-2 [contain-intrinsic-size:auto_64px] [content-visibility:auto] ${live ? "-mx-2 rounded-md bg-tangerine/10 px-2" : ""}`}>
-      {!compact && lead !== "none" && <span className={`shrink-0 pt-2 text-sm tabular-nums text-muted ${lead === "board" ? "w-16 font-mono" : "w-12"}`}>{leadText}</span>}
+    <li className={`flex items-start gap-2 py-2 [contain-intrinsic-size:auto_64px] [content-visibility:auto] ${live ? "-mx-2 rounded-md bg-tangerine/10 px-2 brand:rounded-none" : ""}`}>
+      {!compact && lead !== "none" && <span className={`shrink-0 pt-2 text-sm tabular-nums text-muted brand:font-mono ${lead === "board" ? "w-16 font-mono" : "w-12"}`}>{leadText}</span>}
       <button onClick={onOpen} className="min-w-0 flex-1 py-1.5 text-left">
         {compact && leadText && (
-          <span className="block text-xs tabular-nums text-muted">
+          <span className="block text-xs tabular-nums text-muted brand:font-mono">
             {leadText}
             {live && <b className="ml-2 text-tangerine">NOW</b>}
           </span>
@@ -169,7 +169,7 @@ export function ContributionRow({ c, session, starred, onStar, onOpen, lead = "t
 
 export function ContributionList({ items, lead, showDay, ...p }: ListProps & { items: Contribution[]; lead?: RowProps["lead"]; showDay?: boolean }) {
   return (
-    <ul className="divide-y divide-border rounded-md border border-border bg-surface px-3">
+    <ul className="divide-y divide-border rounded-md border border-border bg-surface px-3 brand:rounded-none brand:border-x-0 brand:bg-transparent brand:px-0">
       {items.map((c) => (
         <ContributionRow
           key={c.id}
