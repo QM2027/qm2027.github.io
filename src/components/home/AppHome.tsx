@@ -60,28 +60,35 @@ function Before({ now, phase, pinned }: { now: number; phase: "prep" | "departur
       ? [<NextDates key="dates" now={now} />, <ProgramBlock key="program" />, <Trip key="trip" />, <Install key="install" />]
       : [<ProgramBlock key="program" />, <Trip key="trip" climate />, <Install key="install" />, <NextDates key="dates" now={now} />];
 
+  // Brand look: the name across the page, then a ruled row of the facts (when, how long, where),
+  // the map taking the "where" column; the text column dissolves (brand:contents) into that grid.
   return (
     <>
-      <section className="border-b border-border">
-        <div className="mx-auto grid max-w-7xl items-center gap-8 px-4 py-8 sm:py-12 lg:grid-cols-[1fr_1fr] lg:px-8">
-          <div>
+      <section className={`border-b border-border brand:border-b-0 ${band}`}>
+        <div className="mx-auto grid max-w-7xl items-center gap-8 px-4 py-8 sm:py-12 lg:grid-cols-[1fr_1fr] lg:px-8 brand:items-start brand:gap-x-12 brand:gap-y-0 brand:pt-10 brand:pb-12 sm:brand:pt-14 sm:brand:pb-14 lg:brand:grid-cols-12 lg:brand:pt-20 lg:brand:pb-16">
+          <div className="brand:contents">
             {/* The official name over the name everyone uses, in every look. */}
-            <p className="max-w-2xl text-sm text-balance text-muted sm:text-base">{SITE.officialName}</p>
-            <h1 className="mt-2 text-4xl leading-tight sm:text-5xl">{SITE.name}</h1>
-            <p className="mt-3 text-lg text-muted">
-              {SITE.dates}
+            <p className="max-w-2xl text-sm text-balance text-muted sm:text-base brand:text-brand-field-muted lg:brand:col-span-12">{SITE.officialName}</p>
+            <h1 className="mt-2 text-4xl leading-tight sm:text-5xl brand:mt-3 brand:text-5xl brand:leading-[1.02] sm:brand:text-7xl lg:brand:col-span-12 lg:brand:text-[4.5rem] xl:brand:text-[5rem]">
+              {SITE.name}
+            </h1>
+            <div aria-hidden="true" className="mt-8 mb-6 hidden border-t border-brand-field-muted brand:block lg:col-span-12 lg:mt-12" />
+            <p className="mt-3 text-lg text-muted brand:mt-0 brand:text-base brand:text-brand-field-muted lg:brand:col-span-4">
+              <span className="brand:block brand:text-2xl brand:font-semibold brand:text-on-brand-field brand:tabular-nums">{SITE.dates}</span>
               <span className="plain:hidden"> · </span>
-              <span className="hidden plain:inline">, </span>
-              ICC Jeju, Korea
+              <span className="hidden plain:inline brand:hidden">, </span>
+              <span className="brand:mt-1 brand:block">ICC Jeju, Korea</span>
             </p>
-            <div className="mt-6">
+            {/* Brand look: the countdown at the fact row's size, its caption in the band's pale blue. */}
+            <div className="mt-6 brand:mt-8 lg:brand:col-span-3 lg:brand:mt-0 brand:[&_.text-4xl]:text-2xl brand:[&_.text-muted]:text-brand-field-muted">
               <Countdown from={pinned} />
             </div>
           </div>
-          <JejuOutline className="hidden h-auto w-full text-foreground lg:block" />
+          {/* Brand look: the map in the band's inks; its fills read these variables. */}
+          <JejuOutline className="hidden h-auto w-full text-foreground lg:block lg:brand:col-span-5 brand:text-on-brand-field brand:[--sea:var(--brand-field-muted)] brand:[--surface:color-mix(in_srgb,var(--on-brand-field)_12%,transparent)] brand:[--tangerine:var(--on-brand-field)]" />
         </div>
       </section>
-      <div className="mx-auto grid max-w-7xl gap-x-12 px-4 pb-14 lg:grid-cols-2 lg:px-8">
+      <div className="mx-auto grid max-w-7xl gap-x-12 px-4 pb-14 lg:grid-cols-2 lg:px-8 brand:block brand:pb-24 lg:brand:pb-28">
         {blocks}
         <JejuGuides />
       </div>
@@ -91,10 +98,14 @@ function Before({ now, phase, pinned }: { now: number; phase: "prep" | "departur
 
 function Block({ title, plainTitle, children, id }: { title: string; plainTitle?: string; children: ReactNode; id?: string }) {
   return (
-    <section aria-labelledby={id} className="mt-10 border-t border-foreground pt-3">
+    <section
+      aria-labelledby={id}
+      className="mt-10 border-t border-foreground pt-3 brand:mt-16 brand:pt-6 lg:brand:mt-20 lg:brand:grid lg:brand:grid-cols-12 lg:brand:gap-x-12"
+    >
       {/* The span carries the mono face: the global h2 rule (serif) outranks utility classes.
-          Plain look: a heading at heading size, not a small grey label. */}
-      <h2 id={id}>
+          Plain look: a heading at heading size, not a small grey label.
+          Brand look: a ruled row, the heading in three columns and the content in nine. */}
+      <h2 id={id} className="lg:brand:col-span-3">
         <span className="font-mono text-xs font-normal tracking-wider text-muted uppercase plain:font-serif plain:text-xl plain:font-semibold plain:tracking-normal plain:text-foreground plain:normal-case">
           {plainTitle ? (
             <>
@@ -106,14 +117,22 @@ function Block({ title, plainTitle, children, id }: { title: string; plainTitle?
           )}
         </span>
       </h2>
-      {children}
+      {/* No box outside the brand look (display: contents), so the content sits as before. */}
+      <div className="contents brand:mt-4 brand:block lg:brand:col-span-9 lg:brand:mt-0 brand:[&>:first-child]:mt-0">{children}</div>
     </section>
   );
 }
 
 const button =
-  "inline-flex min-h-11 items-center gap-1.5 rounded-md bg-foreground px-5 font-medium text-background hover:opacity-90 brand:bg-tangerine";
+  "inline-flex min-h-11 items-center gap-1.5 rounded-md bg-foreground px-5 font-medium text-background hover:opacity-90 plain:bg-tangerine brand:min-h-12 brand:px-6";
+/** Brand look: a secondary action is outlined, so the accent stays on the one primary action. */
+const secondary = "brand:border brand:border-foreground brand:bg-transparent brand:text-foreground brand:hover:bg-surface brand:hover:opacity-100";
 const textLink = "text-sm underline decoration-border underline-offset-4 hover:decoration-foreground";
+/** Brand look: the full-bleed band of the logo's blue under a screen's opening. It points the ink
+    tokens at the band's white and pale blue, so text-muted, border-foreground and the rest follow,
+    and gives links a white focus ring (the default ring is blue and would vanish on it). One per screen. */
+const band =
+  "brand:bg-brand-field brand:text-foreground brand:[--foreground:var(--on-brand-field)] brand:[--muted:var(--brand-field-muted)] brand:[--border:var(--brand-field-muted)] brand:[&_a:focus-visible]:outline-2 brand:[&_a:focus-visible]:outline-offset-2 brand:[&_a:focus-visible]:outline-on-brand-field";
 
 const kstDay = (t: number) => new Date(t).toLocaleDateString("sv-SE", { timeZone: KST });
 
@@ -129,29 +148,39 @@ function NextDates({ now }: { now: number }) {
 
   return (
     <Block title="Next dates" id="next-dates">
-      <ul className="mt-2">
+      <ul className="mt-2 brand:grid brand:gap-x-12 brand:gap-y-10 sm:brand:grid-cols-2">
         {next.map((d) => {
           const at = Date.parse(d.at);
           const date = new Date(at).toLocaleDateString("en-GB", { day: "numeric", month: "short", timeZone: KST });
+          const time = d.timed ? `${clock(new Date(at + 9 * 3600_000).toISOString())} KST` : undefined;
+          const when = inDays(at, now);
+          const labels = d.labels.map((l) => (
+            <span key={l} className="block leading-snug">
+              {l}
+            </span>
+          ));
           return (
-            <li key={d.at} className="grid grid-cols-[1fr_auto] gap-x-4 border-b border-border py-3">
-              <span>
-                {d.labels.map((l) => (
-                  <span key={l} className="block leading-snug">
-                    {l}
-                  </span>
-                ))}
-              </span>
-              <span className="text-right font-mono text-sm tabular-nums">
+            <li key={d.at} className="grid grid-cols-[1fr_auto] gap-x-4 border-b border-border py-3 brand:block brand:border-b-0 brand:py-0">
+              <span className="brand:hidden">{labels}</span>
+              <span className="text-right font-mono text-sm tabular-nums brand:hidden">
                 {date}
-                {d.timed && `, ${clock(new Date(at + 9 * 3600_000).toISOString())} KST`}
-                <span className="block text-muted">{inDays(at, now)}</span>
+                {time && `, ${time}`}
+                <span className="block text-muted">{when}</span>
+              </span>
+              {/* Brand look: the date set large, then how soon, then what falls on it. */}
+              <span className="hidden brand:block">
+                <span className="block text-2xl font-semibold tabular-nums">{date}</span>
+                <span className="mt-1 block text-muted tabular-nums first-letter:uppercase">
+                  {time && `${time}, `}
+                  {when}
+                </span>
+                <span className="mt-4 block">{labels}</span>
               </span>
             </li>
           );
         })}
       </ul>
-      <div className="mt-4 flex flex-wrap items-center gap-x-6 gap-y-3">
+      <div className="mt-4 flex flex-wrap items-center gap-x-6 gap-y-3 brand:mt-8">
         {registrationOpen && (
           <a href={INDICO_REGISTER} target="_blank" rel="noreferrer" className={button}>
             Register on Indico <Icon name="external" className="size-4" />
@@ -203,20 +232,22 @@ function ProgramBlock() {
 
 type Row = { href: string; title: string; text?: string; external?: boolean };
 
+/** Brand look: the rows become columns of links under the section rule, without row lines or chevrons. */
 function LinkList({ rows }: { rows: Row[] }) {
   return (
-    <ul className="mt-2">
+    <ul className="mt-2 brand:grid brand:gap-x-12 brand:gap-y-6 sm:brand:grid-cols-2 lg:brand:grid-cols-3">
       {rows.map((r) => {
         const body = (
           <>
             <span>
               <span className="font-medium group-hover:underline group-hover:underline-offset-4">{r.title}</span>
+              {r.external && <Icon name="external" className="ml-1.5 hidden size-3.5 align-[-0.1em] text-muted brand:inline-block" />}
               {r.text && <span className="mt-0.5 block text-sm text-muted">{r.text}</span>}
             </span>
-            <Icon name={r.external ? "external" : "chevron"} className="size-4 shrink-0 text-muted" />
+            <Icon name={r.external ? "external" : "chevron"} className="size-4 shrink-0 text-muted brand:hidden" />
           </>
         );
-        const cls = "group flex items-center justify-between gap-4 border-b border-border py-3";
+        const cls = "group flex items-center justify-between gap-4 border-b border-border py-3 brand:block brand:border-b-0 brand:py-0";
         return (
           <li key={r.href}>
             {r.external ? (
@@ -239,7 +270,7 @@ function Trip({ climate = false }: { climate?: boolean }) {
   return (
     <Block title="Plan your trip" id="trip">
       {climate && (
-        <p className="mt-3 max-w-prose text-sm text-muted">
+        <p className="mt-3 max-w-prose text-sm text-muted brand:mb-8">
           Late March in Jeju: about {MARCH_CLIMATE.low}–{MARCH_CLIMATE.high} °C. {MARCH_CLIMATE.text}
         </p>
       )}
@@ -263,7 +294,7 @@ function Install() {
       <p className="mt-3 max-w-prose">
         Keeps the program, the venue plan and the map on your phone, so they open without a connection at the venue.
       </p>
-      <button type="button" onClick={() => install()} className={`mt-4 ${button}`}>
+      <button type="button" onClick={() => install()} className={`mt-4 ${button} ${secondary}`}>
         <Icon name="download" className="size-4" />
         Install
       </button>
@@ -297,14 +328,16 @@ function Week({ now }: { now: number }) {
 
   return (
     <>
-      <section className={arriving ? "border-b border-border" : ""}>
-        <div className="mx-auto max-w-7xl px-4 pt-8 lg:px-8">
+      {/* Brand look: the opening on the band of the logo's blue (band, below). */}
+      <section className={`${arriving ? "border-b border-border" : ""} ${band}`}>
+        <div className={`mx-auto max-w-7xl px-4 pt-8 lg:px-8 brand:pt-10 sm:brand:pt-14 lg:brand:pt-16 ${arriving ? "" : "brand:pb-12 lg:brand:pb-14"}`}>
           <p className="font-mono text-xs tracking-widest text-muted uppercase plain:hidden">{SITE.name}</p>
-          <h1 className="mt-2 text-3xl sm:text-4xl plain:mt-0">
+          {/* Brand look: the day of the conference is the figure the screen opens on. */}
+          <h1 className="mt-2 text-3xl sm:text-4xl plain:mt-0 brand:text-4xl brand:tabular-nums sm:brand:text-5xl">
             {arriving ? "Welcome to Jeju" : dayIndex >= 0 ? `Day ${dayIndex + 1} of ${days.length}` : SITE.name}
           </h1>
           {arriving && Number.isFinite(firstStart) && data && (
-            <p className="mt-2 text-muted">
+            <p className="mt-2 text-muted brand:mt-4 brand:text-lg">
               The conference opens {dayLabel(days[0])} at {clock(data.sessions.find((s) => Date.parse(s.start) === firstStart)!.start)}.
             </p>
           )}
@@ -315,7 +348,7 @@ function Week({ now }: { now: number }) {
       {/* Up to three running sessions, so today and the shortcuts stay near the top on a phone. */}
       <HappeningNow limit={3} />
 
-      <div className="mx-auto grid max-w-7xl gap-x-12 px-4 pb-14 lg:grid-cols-[1.4fr_1fr] lg:px-8">
+      <div className="mx-auto grid max-w-7xl gap-x-12 px-4 pb-14 lg:grid-cols-[1.4fr_1fr] lg:px-8 brand:block brand:pb-24 lg:brand:pb-28">
         <div>{data && today && <Today program={data} today={today} now={now} />}</div>
         <div>
           <QuickActions />
@@ -333,15 +366,18 @@ function Week({ now }: { now: number }) {
 
 function Arrival({ checkedAt }: { checkedAt?: string }) {
   return (
-    <div className="mx-auto max-w-7xl px-4 pb-8 lg:px-8">
-      <LinkList
-        rows={[
-          { href: "/getting-there/", title: "Airport to ICC Jeju", text: "Bus 600 or a taxi, about an hour" },
-          { href: "/getting-there/#taxi", title: "Taxi card", text: "Your destination in Korean, to show the driver" },
-          { href: "/venue/?find=registration", title: "Registration desk", text: "Where to collect your badge" },
-        ]}
-      />
-      <p className="mt-4 font-mono text-xs text-muted">
+    <div className="mx-auto max-w-7xl px-4 pb-8 lg:px-8 brand:pb-12">
+      {/* Brand look: the three first steps as columns under a rule (no box otherwise). */}
+      <div className="contents brand:mt-10 brand:block brand:border-t brand:border-brand-field-muted brand:pt-6 lg:brand:mt-12 brand:[&>:first-child]:mt-0">
+        <LinkList
+          rows={[
+            { href: "/getting-there/", title: "Airport to ICC Jeju", text: "Bus 600 or a taxi, about an hour" },
+            { href: "/getting-there/#taxi", title: "Taxi card", text: "Your destination in Korean, to show the driver" },
+            { href: "/venue/?find=registration", title: "Registration desk", text: "Where to collect your badge" },
+          ]}
+        />
+      </div>
+      <p className="mt-4 font-mono text-xs text-muted brand:mt-8">
         {checkedAt
           ? `Program saved on this device · checked ${new Date(checkedAt).toLocaleString("en-GB", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" })}`
           : "Program not saved yet: open the app once with a connection."}
@@ -395,7 +431,7 @@ function Today({ program, today, now }: { program: Program; today: string; now: 
             <li key={`${r.start}-${r.title}`}>
               <Link
                 href={r.href}
-                className={`group grid grid-cols-[3.5rem_1fr] gap-x-3 border-b border-border py-2.5 ${running ? "border-l-2 border-l-tangerine pl-2" : ""} ${over ? "text-muted" : ""}`}
+                className={`group grid grid-cols-[3.5rem_1fr] gap-x-3 border-b border-border py-2.5 brand:grid-cols-[4.5rem_1fr] brand:gap-x-6 brand:py-3 ${running ? "border-l-2 border-l-tangerine pl-2" : ""} ${over ? "text-muted" : ""}`}
               >
                 <span className="font-mono text-sm tabular-nums">{running ? <b className="font-semibold text-tangerine">NOW</b> : clock(r.start)}</span>
                 <span className={r.quiet ? "text-muted" : ""}>
@@ -424,10 +460,11 @@ const QUICK: { href: string; label: string; icon: IconName }[] = [
 function QuickActions() {
   return (
     <Block title="Shortcuts" id="shortcuts">
-      <ul className="mt-3 grid grid-cols-2 border-t border-l border-border">
+      {/* Brand look: one row of four, no tile borders. */}
+      <ul className="mt-3 grid grid-cols-2 border-t border-l border-border brand:gap-x-12 brand:border-0 sm:brand:grid-cols-4">
         {QUICK.map((q) => (
-          <li key={q.href} className="border-r border-b border-border">
-            <Link href={q.href} className="flex min-h-14 items-center gap-2.5 px-3 hover:bg-surface">
+          <li key={q.href} className="border-r border-b border-border brand:border-0">
+            <Link href={q.href} className="flex min-h-14 items-center gap-2.5 px-3 hover:bg-surface brand:min-h-12 brand:px-0 brand:hover:bg-transparent brand:hover:underline brand:hover:underline-offset-4">
               <Icon name={q.icon} className="size-5 text-muted" />
               <span className="font-medium">{q.label}</span>
             </Link>
@@ -457,11 +494,18 @@ function Conditions() {
 
 function After() {
   return (
-    <section className="mx-auto w-full max-w-7xl px-4 py-10 pb-14 lg:px-8">
-      <p className="max-w-2xl text-sm text-balance text-muted sm:text-base">{SITE.officialName}</p>
-      <h1 className="mt-2 text-4xl">{SITE.name}</h1>
-      <p className="mt-3 text-lg text-muted">Held in Jeju, {SITE.dates}. Thank you for coming.</p>
-      <div className="max-w-2xl">
+    // Brand look: the name and the thanks as one composed opening, the record in columns under a rule,
+    // all on the band (the wrapper has no box of its own otherwise).
+    <div className={band}>
+    <section className="mx-auto w-full max-w-7xl px-4 py-10 pb-14 lg:px-8 brand:pt-10 brand:pb-14 sm:brand:pt-14 lg:brand:grid lg:brand:grid-cols-12 lg:brand:items-end lg:brand:gap-x-12 lg:brand:pt-20 lg:brand:pb-20">
+      <p className="max-w-2xl text-sm text-balance text-muted sm:text-base lg:brand:col-span-12">{SITE.officialName}</p>
+      <h1 className="mt-2 text-4xl brand:mt-3 brand:text-5xl brand:leading-[1.02] sm:brand:text-7xl lg:brand:col-span-8 lg:brand:text-[4.5rem] xl:brand:text-[5rem]">
+        {SITE.name}
+      </h1>
+      <p className="mt-3 text-lg text-muted brand:mt-6 brand:leading-relaxed lg:brand:col-span-4 lg:brand:mt-0">
+        Held in Jeju, {SITE.dates}. Thank you for coming.
+      </p>
+      <div className="max-w-2xl brand:mt-12 brand:max-w-none brand:border-t brand:border-brand-field-muted brand:pt-6 lg:brand:col-span-12 lg:brand:mt-20 brand:[&>:first-child]:mt-0">
         <LinkList
           rows={[
             { href: "/program/", title: "The program", text: "Talks and posters as they ran" },
@@ -471,5 +515,6 @@ function After() {
         />
       </div>
     </section>
+    </div>
   );
 }

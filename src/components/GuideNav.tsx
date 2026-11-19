@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { GUIDES } from "@/data/guides";
-import { PageTitle } from "./PageTitle";
+import { BRAND_FIELD, PageTitle } from "./PageTitle";
 
 export function GuideNav({ className = "" }: { className?: string }) {
   const pathname = usePathname();
@@ -27,11 +27,15 @@ export function GuideNav({ className = "" }: { className?: string }) {
 
 export function GuideHeader({ kicker, title, children }: { kicker: string; title: string; children?: React.ReactNode }) {
   return (
-    <header>
+    // Brand look: the tabs, title and introduction share one blue field; the header takes over
+    // cancelling the page's top padding, and keeps a sliver above the tabs for their focus ring.
+    <header
+      className={`${BRAND_FIELD} brand:-mt-6 brand:mb-12 brand:pt-1 brand:pb-10 sm:brand:-mt-10 lg:brand:mb-14 lg:brand:pb-14`}
+    >
       {/* Cancel the page's top padding so the tabs sit right under the site bar, as on the map. */}
-      <GuideNav className="-mt-6 sm:-mt-10" />
-      <PageTitle kicker={kicker} title={title} className="mt-8" />
-      {children && <div className="mt-3 max-w-3xl text-muted">{children}</div>}
+      <GuideNav className="-mt-6 sm:-mt-10 brand:mt-0 brand:border-brand-field-muted/40 sm:brand:mt-0" />
+      <PageTitle kicker={kicker} title={title} brandField={false} className="mt-8 brand:mt-10 lg:brand:mt-14" />
+      {children && <div className="mt-3 max-w-3xl text-muted brand:mt-5">{children}</div>}
     </header>
   );
 }
