@@ -6,8 +6,8 @@
 <meta name="robots" content="noindex">
 <title>Preview comparison</title>
 <!--
-  Two versions of the site side by side, for discussion: the visitor guide and the conference-app
-  edition, or the current design and a variant (?look=plain, ?look=brand) of either edition.
+  Versions of the site side by side, for discussion: tick any mix of edition (visitor guide,
+  conference app) and look (current design, ?look=plain, ?look=brand), two or more at once.
   Each frame is named "qm2027:edition=…&notice=…&look=…"; the site's inline script reads that name
   (see src/lib/edition-script.ts), so the frames keep their settings while you click around in
   them and never touch this browser's own setting.
@@ -22,20 +22,25 @@
   }
   * { box-sizing: border-box; }
   body { margin: 0; background: var(--bg); color: var(--fg); font: 15px/1.5 system-ui, sans-serif; }
-  header { position: sticky; top: 0; z-index: 1; background: var(--bg); border-bottom: 1px solid var(--border); padding: 12px 16px; display: flex; flex-wrap: wrap; gap: 12px 24px; align-items: center; }
-  h1 { margin: 0; font: 500 12px/1 ui-monospace, monospace; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); }
-  .group { display: flex; flex-wrap: wrap; gap: 4px; align-items: center; }
-  .group > span { font: 12px ui-monospace, monospace; color: var(--muted); margin-right: 4px; }
-  button { font: inherit; font-size: 14px; color: var(--fg); background: none; border: 1px solid var(--border); border-radius: 6px; padding: 6px 10px; cursor: pointer; }
-  button:hover { background: var(--surface); }
-  button[aria-pressed="true"] { border-color: var(--fg); background: var(--fg); color: var(--bg); }
-  label { display: flex; gap: 6px; align-items: center; font-size: 14px; }
+  header { position: sticky; top: 0; z-index: 1; background: var(--bg); border-bottom: 1px solid var(--border); padding: 12px 16px; display: flex; flex-wrap: wrap; gap: 12px 32px; align-items: flex-start; }
+  h1 { flex-basis: 100%; margin: 0; font: 500 12px/1 ui-monospace, monospace; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); }
+  fieldset { border: 0; margin: 0; padding: 0; min-width: 0; }
+  legend { padding: 0; margin-bottom: 4px; font: 12px ui-monospace, monospace; color: var(--muted); }
+  input { accent-color: var(--accent); margin: 0; }
+  label { display: flex; gap: 6px; align-items: center; font-size: 14px; cursor: pointer; }
+  .options { display: flex; flex-wrap: wrap; gap: 4px 14px; }
+  table { border-collapse: collapse; font-size: 14px; }
+  th { font-weight: 400; text-align: left; padding: 2px 14px 2px 0; }
+  thead th { font: 12px ui-monospace, monospace; color: var(--muted); }
+  td { padding: 2px 14px 2px 0; }
+  td label { justify-content: flex-start; }
   #hint { flex-basis: 100%; margin: 0; font-size: 13px; color: var(--muted); }
-  main { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px; padding: 20px 16px 40px; }
-  main.phone { justify-content: center; grid-template-columns: repeat(2, 390px); }
+  main { display: grid; grid-template-columns: repeat(var(--cols, 2), minmax(0, 1fr)); gap: 24px; padding: 20px 16px 40px; }
+  main.phone { justify-content: center; grid-template-columns: repeat(var(--cols, 2), minmax(0, 390px)); }
+  main:empty::before { content: "Tick at least one version above."; color: var(--muted); }
   figure { margin: 0; min-width: 0; }
   figcaption { font: 500 12px ui-monospace, monospace; letter-spacing: .08em; text-transform: uppercase; margin-bottom: 8px; display: flex; justify-content: space-between; gap: 8px; }
-  figcaption a { color: var(--muted); text-transform: none; letter-spacing: 0; }
+  figcaption a { color: var(--muted); text-transform: none; letter-spacing: 0; white-space: nowrap; }
   .viewport { border: 1px solid var(--border); overflow: hidden; position: relative; }
   iframe { border: 0; display: block; transform-origin: 0 0; background: var(--bg); }
   @media (max-width: 860px) {
@@ -47,10 +52,22 @@
 <body>
 <header>
   <h1>QM2027 previews</h1>
-  <div class="group" id="sets"><span>Compare</span></div>
-  <div class="group" id="phases"><span>When</span></div>
-  <div class="group" id="sizes"><span>Size</span></div>
-  <label><input type="checkbox" id="notice"> Hide “Not fully developed” bar</label>
+  <fieldset>
+    <legend>Compare (tick two or more)</legend>
+    <table id="variants"></table>
+  </fieldset>
+  <fieldset>
+    <legend>When</legend>
+    <div class="options" id="phases"></div>
+  </fieldset>
+  <fieldset>
+    <legend>Size</legend>
+    <div class="options" id="sizes"></div>
+  </fieldset>
+  <fieldset>
+    <legend>Bar</legend>
+    <label><input type="checkbox" id="notice"> Hide “Not fully developed” bar</label>
+  </fieldset>
   <p id="hint"></p>
 </header>
 <main id="frames"></main>
@@ -69,50 +86,50 @@
     { id: "phone", label: "Phone", w: 390, h: 844 },
     { id: "desktop", label: "Desktop", w: 1280, h: 800 },
   ];
-  const SETS = [
-    { id: "editions", label: "Guide vs app", frames: [
-      { label: "Visitor guide (live)", edition: "guide" },
-      { label: "Conference app (preview)", edition: "app" },
-    ] },
-    { id: "looks-guide", label: "Guide: current vs plain", frames: [
-      { label: "Visitor guide, current design", edition: "guide" },
-      { label: "Visitor guide, plain look", edition: "guide", look: "plain" },
-    ] },
-    { id: "looks-app", label: "App: current vs plain", frames: [
-      { label: "Conference app, current design", edition: "app" },
-      { label: "Conference app, plain look", edition: "app", look: "plain" },
-    ] },
-    { id: "brand-guide", label: "Guide: current vs brand", frames: [
-      { label: "Visitor guide, current design", edition: "guide" },
-      { label: "Visitor guide, brand look", edition: "guide", look: "brand" },
-    ] },
-    { id: "brand-app", label: "App: current vs brand", frames: [
-      { label: "Conference app, current design", edition: "app" },
-      { label: "Conference app, brand look", edition: "app", look: "brand" },
-    ] },
+  const EDITIONS = [
+    { id: "guide", label: "Visitor guide" },
+    { id: "app", label: "Conference app" },
   ];
+  const LOOKS = [
+    { id: "default", label: "Current" },
+    { id: "plain", label: "Plain" },
+    { id: "brand", label: "Brand" },
+  ];
+  const key = (ed, look) => ed + "/" + look;
 
-  const state = { set: "editions", phase: "week", size: "phone", notice: true };
-  try { Object.assign(state, JSON.parse(sessionStorage.getItem("compare") || "{}")); } catch (_) {}
+  const state = { picks: [key("guide", "default"), key("app", "default")], phase: "week", size: "phone", notice: true };
+  try { Object.assign(state, JSON.parse(sessionStorage.getItem("compare2") || "{}")); } catch (_) {}
 
   const $ = (id) => document.getElementById(id);
-  function buttons(container, items, key) {
+  const esc = (s) => s.replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]);
+
+  // Edition × look grid of checkboxes.
+  $("variants").innerHTML =
+    "<thead><tr><th></th>" + LOOKS.map((l) => `<th scope="col">${esc(l.label)}</th>`).join("") + "</tr></thead><tbody>" +
+    EDITIONS.map((e) => `<tr><th scope="row">${esc(e.label)}</th>` +
+      LOOKS.map((l) => `<td><label><input type="checkbox" value="${key(e.id, l.id)}" aria-label="${esc(e.label + ", " + l.label.toLowerCase() + " look")}"></label></td>`).join("") +
+      "</tr>").join("") + "</tbody>";
+  for (const cb of document.querySelectorAll("#variants input")) {
+    cb.onchange = () => {
+      state.picks = [...document.querySelectorAll("#variants input:checked")].map((c) => c.value);
+      render();
+    };
+  }
+
+  function radios(container, items, name) {
     for (const it of items) {
-      const b = document.createElement("button");
-      b.type = "button";
-      b.textContent = it.label;
-      b.dataset.id = it.id;
-      b.onclick = () => { state[key] = it.id; render(); };
-      container.append(b);
+      const l = document.createElement("label");
+      l.innerHTML = `<input type="radio" name="${name}" value="${it.id}"> ${esc(it.label)}`;
+      l.firstElementChild.onchange = () => { state[name] = it.id; render(); };
+      container.append(l);
     }
   }
-  buttons($("sets"), SETS, "set");
-  buttons($("phases"), PHASES, "phase");
-  buttons($("sizes"), SIZES, "size");
+  radios($("phases"), PHASES, "phase");
+  radios($("sizes"), SIZES, "size");
   $("notice").onchange = (e) => { state.notice = !e.target.checked; render(); };
 
   function fit() {
-    const size = SIZES.find((s) => s.id === state.size);
+    const size = SIZES.find((s) => s.id === state.size) || SIZES[0];
     for (const vp of document.querySelectorAll(".viewport")) {
       const scale = Math.min(1, vp.parentElement.clientWidth / size.w);
       vp.style.width = size.w * scale + "px";
@@ -122,30 +139,36 @@
   }
 
   function render() {
-    try { sessionStorage.setItem("compare", JSON.stringify(state)); } catch (_) {}
-    for (const b of document.querySelectorAll("#sets button")) b.setAttribute("aria-pressed", String(b.dataset.id === state.set));
-    for (const b of document.querySelectorAll("#phases button")) b.setAttribute("aria-pressed", String(b.dataset.id === state.phase));
-    for (const b of document.querySelectorAll("#sizes button")) b.setAttribute("aria-pressed", String(b.dataset.id === state.size));
+    try { sessionStorage.setItem("compare2", JSON.stringify(state)); } catch (_) {}
+    for (const cb of document.querySelectorAll("#variants input")) cb.checked = state.picks.includes(cb.value);
+    for (const r of document.querySelectorAll('input[name="phase"]')) r.checked = r.value === state.phase;
+    for (const r of document.querySelectorAll('input[name="size"]')) r.checked = r.value === state.size;
     $("notice").checked = !state.notice;
     const phase = PHASES.find((p) => p.id === state.phase) || PHASES[0];
-    const size = SIZES.find((s) => s.id === state.size);
-    const set = SETS.find((s) => s.id === state.set) || SETS[0];
+    const size = SIZES.find((s) => s.id === state.size) || SIZES[0];
     $("hint").textContent = phase.hint + " Links inside each frame keep its edition and look.";
 
+    // Frames in grid order: guide before app, current before plain before brand.
+    const picked = [];
+    for (const e of EDITIONS) for (const l of LOOKS) if (state.picks.includes(key(e.id, l.id))) picked.push({ e, l });
+
     const frames = $("frames");
-    frames.className = state.size;
+    frames.className = size.id;
+    // Desktop frames are scaled down, so at most three per row; phones fit up to four.
+    frames.style.setProperty("--cols", String(Math.max(1, Math.min(picked.length, size.id === "phone" ? 4 : 3))));
     frames.replaceChildren();
-    for (const ed of set.frames) {
+    for (const { e, l } of picked) {
+      const label = e.label + (l.id === "default" ? ", current design" : ", " + l.label.toLowerCase() + " look");
       const prefs = new URLSearchParams();
-      if (ed.edition === "app") prefs.set("edition", "app");
+      if (e.id === "app") prefs.set("edition", "app");
       if (!state.notice) prefs.set("notice", "off");
-      if (ed.look) prefs.set("look", ed.look);
+      if (l.id !== "default") prefs.set("look", l.id);
       const src = "./" + (phase.q ? "?" + phase.q : "");
       // The same view in a tab of its own (this sets that tab's remembered edition and look).
-      const own = "./?" + [phase.q, "edition=" + ed.edition, state.notice ? "notice=on" : "notice=off", "look=" + (ed.look || "default")].filter(Boolean).join("&");
+      const own = "./?" + [phase.q, "edition=" + e.id, state.notice ? "notice=on" : "notice=off", "look=" + l.id].filter(Boolean).join("&");
 
       const fig = document.createElement("figure");
-      fig.innerHTML = `<figcaption><span>${ed.label}</span><a href="${own}" target="_blank" rel="noopener">Open in a tab ↗</a></figcaption><div class="viewport"><iframe title="${ed.label}"></iframe></div>`;
+      fig.innerHTML = `<figcaption><span>${esc(label)}</span><a href="${own}" target="_blank" rel="noopener">Open in a tab ↗</a></figcaption><div class="viewport"><iframe title="${esc(label)}"></iframe></div>`;
       const iframe = fig.querySelector("iframe");
       iframe.name = "qm2027:" + prefs.toString();
       iframe.width = size.w;
