@@ -2,7 +2,8 @@ export const SITE = {
   guideName: "QM2027 Jeju Visitor Guide",
   name: "Quark Matter 2027",
   shortName: "QM2027",
-  tagline:
+  /** The conference's formal name; `name` is the one it goes by. */
+  officialName:
     "32nd International Conference on Ultra-relativistic Nucleus-Nucleus Collisions",
   dates: "21–27 March 2027",
   start: "2027-03-21T08:30:00+09:00",

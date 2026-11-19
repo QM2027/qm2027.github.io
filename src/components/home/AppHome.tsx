@@ -65,8 +65,9 @@ function Before({ now, phase, pinned }: { now: number; phase: "prep" | "departur
       <section className="border-b border-border">
         <div className="mx-auto grid max-w-7xl items-center gap-8 px-4 py-8 sm:py-12 lg:grid-cols-[1fr_1fr] lg:px-8">
           <div>
-            <p className="font-mono text-xs tracking-widest text-muted uppercase plain:hidden">{SITE.shortName} · Conference app</p>
-            <h1 className="mt-3 text-4xl leading-tight sm:text-5xl plain:mt-0">{SITE.name}</h1>
+            {/* The official name over the name everyone uses, in every look. */}
+            <p className="max-w-2xl text-sm text-balance text-muted sm:text-base">{SITE.officialName}</p>
+            <h1 className="mt-2 text-4xl leading-tight sm:text-5xl">{SITE.name}</h1>
             <p className="mt-3 text-lg text-muted">
               {SITE.dates}
               <span className="plain:hidden"> · </span>
@@ -457,8 +458,8 @@ function Conditions() {
 function After() {
   return (
     <section className="mx-auto w-full max-w-7xl px-4 py-10 pb-14 lg:px-8">
-      <p className="font-mono text-xs tracking-widest text-muted uppercase plain:hidden">{SITE.shortName}</p>
-      <h1 className="mt-3 text-4xl plain:mt-0">{SITE.name}</h1>
+      <p className="max-w-2xl text-sm text-balance text-muted sm:text-base">{SITE.officialName}</p>
+      <h1 className="mt-2 text-4xl">{SITE.name}</h1>
       <p className="mt-3 text-lg text-muted">Held in Jeju, {SITE.dates}. Thank you for coming.</p>
       <div className="max-w-2xl">
         <LinkList
