@@ -7,7 +7,7 @@
 <title>Preview comparison</title>
 <!--
   Two versions of the site side by side, for discussion: the visitor guide and the conference-app
-  edition, or the current design and the plain look (?look=plain) of either edition.
+  edition, or the current design and a variant (?look=plain, ?look=brand) of either edition.
   Each frame is named "qm2027:edition=…&notice=…&look=…"; the site's inline script reads that name
   (see src/lib/edition-script.ts), so the frames keep their settings while you click around in
   them and never touch this browser's own setting.
@@ -81,6 +81,14 @@
     { id: "looks-app", label: "App: current vs plain", frames: [
       { label: "Conference app, current design", edition: "app" },
       { label: "Conference app, plain look", edition: "app", look: "plain" },
+    ] },
+    { id: "brand-guide", label: "Guide: current vs brand", frames: [
+      { label: "Visitor guide, current design", edition: "guide" },
+      { label: "Visitor guide, brand look", edition: "guide", look: "brand" },
+    ] },
+    { id: "brand-app", label: "App: current vs brand", frames: [
+      { label: "Conference app, current design", edition: "app" },
+      { label: "Conference app, brand look", edition: "app", look: "brand" },
     ] },
   ];
 

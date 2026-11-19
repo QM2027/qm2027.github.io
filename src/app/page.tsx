@@ -53,7 +53,7 @@ export default function Home() {
                 what to do on the island before, between and after the sessions.
               </p>
               <div className="mt-8 flex flex-wrap items-center gap-x-6 gap-y-3">
-                <Link href="/explore/" className="inline-flex min-h-12 items-center rounded-md bg-foreground px-6 font-medium text-background hover:opacity-90">
+                <Link href="/explore/" className="inline-flex min-h-12 items-center rounded-md bg-foreground px-6 font-medium text-background hover:opacity-90 brand:bg-tangerine">
                   Open the map
                 </Link>
                 <a href={SITE.indico} target="_blank" rel="noreferrer" className="text-sm underline decoration-border underline-offset-4 hover:decoration-foreground">

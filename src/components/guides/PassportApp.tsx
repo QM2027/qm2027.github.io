@@ -133,7 +133,7 @@ export function PassportApp() {
             </p>
           </div>
           {badge && (
-            <button onClick={share} className="min-h-11 rounded-md bg-foreground px-4 font-medium text-background">
+            <button onClick={share} className="min-h-11 rounded-md bg-foreground px-4 font-medium text-background brand:bg-tangerine">
               Share badge
             </button>
           )}

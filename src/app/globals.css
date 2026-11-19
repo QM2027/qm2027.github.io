@@ -10,18 +10,22 @@ html[data-notice="off"] .dev-notice {
   display: none !important;
 }
 
-/* Design variant under discussion, ?look=plain. Markup states its own differences with plain:
-   utilities (plain:hidden, hidden plain:inline for changed words); the rule below covers the one
-   tell that repeats on every page. */
-@custom-variant plain (&:where([data-look="plain"], [data-look="plain"] *));
+/* Design variants under discussion (?look=, src/lib/edition-script.ts).
+   plain: the tells of generated design taken out. Markup states its own differences with plain:
+   utilities (plain:hidden, hidden plain:inline for changed words); the rules below cover the one
+   tell that repeats on every page.
+   brand: everything in plain, plus the colour and type of the QM2027 logo (tokens further down). */
+@custom-variant plain (&:where([data-look="plain"], [data-look="plain"] *, [data-look="brand"], [data-look="brand"] *));
+/* The brand look alone: the primary action takes the brand colour (brand:bg-tangerine). */
+@custom-variant brand (&:where([data-look="brand"], [data-look="brand"] *));
 
 /* Labels: sentence case in the body face, untracked, a step up from the 12px mono caps. Steps back
    where the element says how it looks in plain, and inside SVG, where caps are map lettering. */
-html[data-look="plain"] .uppercase:not(svg *):not([class*="plain:"]) {
+html:is([data-look="plain"], [data-look="brand"]) .uppercase:not(svg *):not([class*="plain:"]) {
   text-transform: none;
   letter-spacing: normal;
 }
-html[data-look="plain"] .font-mono.uppercase:not([class*="plain:"]) {
+html:is([data-look="plain"], [data-look="brand"]) .font-mono.uppercase:not([class*="plain:"]) {
   font-family: var(--font-plex), var(--font-plex-kr), system-ui, sans-serif;
   font-size: 0.875rem;
   line-height: 1.25rem;
@@ -68,6 +72,27 @@ html[data-look="plain"] .font-mono.uppercase:not([class*="plain:"]) {
     --k-office: #c66ae0;
     --k-service: #e08a33;
   }
+}
+
+/* Brand look: the accent is the logo's blue, where the current one is a burnt orange that no part of
+   the logo carries, and headings are set in Plex Sans like the rest of the page. A serif display
+   over a warm accent is the look generated pages fall into most. Every serif on the page (the
+   h1/h2 rule, font-serif) reads --font-source-serif, so pointing it at Plex swaps them all.
+   The blue is the logo's #0070b0 taken a step darker, for AA as small text on white, --surface and
+   a 10% tint of itself, like --canola above. --alert stays: it means a warning, not the brand. */
+html[data-look="brand"] {
+  --canola: #00649e;
+  --tangerine: #00649e;
+  --font-source-serif: var(--font-plex);
+}
+@media (prefers-color-scheme: dark) {
+  html[data-look="brand"] {
+    --canola: #5aaee6;
+    --tangerine: #5aaee6;
+  }
+}
+html[data-look="brand"] :is(h1, h2) {
+  letter-spacing: -0.02em;
 }
 
 @theme inline {

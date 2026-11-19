@@ -111,7 +111,7 @@ function Block({ title, plainTitle, children, id }: { title: string; plainTitle?
 }
 
 const button =
-  "inline-flex min-h-11 items-center gap-1.5 rounded-md bg-foreground px-5 font-medium text-background hover:opacity-90";
+  "inline-flex min-h-11 items-center gap-1.5 rounded-md bg-foreground px-5 font-medium text-background hover:opacity-90 brand:bg-tangerine";
 const textLink = "text-sm underline decoration-border underline-offset-4 hover:decoration-foreground";
 
 const kstDay = (t: number) => new Date(t).toLocaleDateString("sv-SE", { timeZone: KST });
