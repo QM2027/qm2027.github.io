@@ -131,8 +131,7 @@ const textLink = "text-sm underline decoration-border underline-offset-4 hover:d
 /** Brand look: the full-bleed band of the logo's blue under a screen's opening. It points the ink
     tokens at the band's white and pale blue, so text-muted, border-foreground and the rest follow,
     and gives links a white focus ring (the default ring is blue and would vanish on it). One per screen. */
-const band =
-  "brand:bg-brand-field brand:text-foreground brand:[--foreground:var(--on-brand-field)] brand:[--muted:var(--brand-field-muted)] brand:[--border:var(--brand-field-muted)] brand:[&_a:focus-visible]:outline-2 brand:[&_a:focus-visible]:outline-offset-2 brand:[&_a:focus-visible]:outline-on-brand-field";
+const band = "brand:bg-brand-field brand:field-ink";
 
 const kstDay = (t: number) => new Date(t).toLocaleDateString("sv-SE", { timeZone: KST });
 

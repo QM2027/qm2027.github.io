@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { AIRPORT_KM, AIRPORT_OPTIONS } from "@/data/airport";
+import { TRAVEL_APPS } from "@/data/apps";
 import { INDICO_ACCOMMODATION, INDICO_VENUE } from "@/data/indico-links";
 
 /*
@@ -94,11 +95,8 @@ export function BrandArrival() {
   );
 }
 
-const APPS = [
-  { name: "Kakao Map / Naver Map", text: "Bus routes and walking directions" },
-  { name: "Kakao T", text: "Taxis (works with foreign cards)" },
-  { name: "Papago", text: "Translation, including from photos" },
-];
+/** As a list of its own the use starts the line, so it takes a capital. */
+const APPS = TRAVEL_APPS.map((a) => ({ name: a.name, text: a.use.charAt(0).toUpperCase() + a.use.slice(1) }));
 
 /** Apps to install and the island beyond the venue: two quiet ruled rows. */
 export function BrandMore() {

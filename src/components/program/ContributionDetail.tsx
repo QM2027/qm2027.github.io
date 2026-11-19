@@ -36,7 +36,7 @@ const btn = "flex min-h-11 items-center gap-1 rounded-md border border-border px
 /** Brand look: the panel opens on the logo blue, holding what the item is and when; the wrapper is
  *  display: contents in the other looks. Tokens are re-pointed so muted text and borders read on it. */
 const FIELD =
-  "brand:-mx-5 brand:-mt-[max(1.25rem,env(safe-area-inset-top))] brand:bg-brand-field brand:px-5 brand:pt-[max(1.25rem,env(safe-area-inset-top))] brand:pb-5 brand:text-on-brand-field brand:[--foreground:var(--on-brand-field)] brand:[--muted:var(--brand-field-muted)] brand:[--border:var(--brand-field-muted)]";
+  "brand:-mx-5 brand:-mt-[max(1.25rem,env(safe-area-inset-top))] brand:bg-brand-field brand:px-5 brand:pt-[max(1.25rem,env(safe-area-inset-top))] brand:pb-5 brand:field-ink";
 const onField = "brand:focus-visible:outline-2 brand:focus-visible:outline-offset-2 brand:focus-visible:outline-on-brand-field";
 
 const KIND: Record<Material["kind"], string> = { pdf: "PDF", slides: "Slides", video: "Video", image: "Image", link: "Link", file: "File" };

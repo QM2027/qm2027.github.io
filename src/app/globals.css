@@ -108,6 +108,30 @@ html[data-look="brand"] {
   }
 }
 
+/* On the field: re-point the ink tokens at white and pale blue, so text-foreground, text-muted,
+   borders and text-sea inside follow, and give controls a white focus ring (the default ring is
+   blue and would vanish on it). Use with bg-brand-field: `brand:bg-brand-field brand:field-ink`,
+   or without the variant on a node that only renders in the brand look. */
+@utility field-ink {
+  --foreground: var(--on-brand-field);
+  --muted: var(--brand-field-muted);
+  --border: var(--brand-field-muted);
+  --sea: var(--on-brand-field);
+  color: var(--on-brand-field);
+  & :is(a, button, summary, [tabindex]):focus-visible {
+    outline: 2px solid var(--on-brand-field);
+    outline-offset: 2px;
+  }
+}
+
+/* Paint the field across the whole window behind a block that sits inside a padded container.
+   A box-shadow never widens the page (no sideways scroll, with or without a scrollbar), and the
+   clip-path trims it to the block's own height. */
+@utility field-bleed {
+  box-shadow: 0 0 0 100vmax var(--brand-field);
+  clip-path: inset(0 -100vmax);
+}
+
 @theme inline {
   --color-background: var(--background);
   --color-surface: var(--surface);

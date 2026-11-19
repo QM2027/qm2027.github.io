@@ -22,6 +22,38 @@ Local build with the GitHub Pages base path (Git Bash on Windows needs `MSYS_NO_
 NEXT_PUBLIC_BASE_PATH=/qm2027_pwa npm run build
 ```
 
+If a page shows styles older than the code (a Tailwind class that has no effect), stop the dev
+server, delete `.next/dev` (its Turbopack cache) and start it again.
+
+## Preview switches and design looks
+
+Query parameters set before the first paint and remembered in the browser
+([src/lib/edition-script.ts](src/lib/edition-script.ts)):
+
+| Parameter | Values | What |
+| --- | --- | --- |
+| `edition` | `guide` (default), `app` | Visitor guide or the conference-app edition |
+| `look` | `default`, `plain`, `brand` | The design: current, current layout without the tells of generated design, or pages redesigned on the logo's colours |
+| `notice` | `on` (default), `off` | The "Not fully developed" bar |
+
+[public/compare.html](public/compare.html) shows any of these side by side.
+
+How the looks are built, so one can be kept and the others removed later:
+
+- **Variants** in [src/app/globals.css](src/app/globals.css): `plain:` applies in plain and brand,
+  `brand:` in brand only. Markup carries each look's differences beside the current classes
+  (`plain:hidden`, `hidden brand:block` for changed words or blocks).
+- **Tokens:** plain and brand switch the accent to the logo's blue and headings to Plex Sans.
+  Brand adds the blue field (`bg-brand-field`) with `field-ink` (white ink, white focus rings) and
+  `field-bleed` (the field across the window from inside a padded container).
+- **Brand-only pages:** [BrandHome](src/components/home/BrandHome.tsx) and
+  [BrandGettingThere](src/components/BrandGettingThere.tsx); other pages restyle in place.
+- **To keep one look:** delete the other looks' classes and nodes, then the variant and the
+  `LOOKS` entry. Searching for `plain:`, `brand:` and `brand-field` finds every place.
+
+Photos in [src/assets/photos/](src/assets/photos/) are from Wikimedia Commons; each is credited
+in the caption beside it, with its licence. Keep the credit if a photo is reused.
+
 ## Program
 
 The program (talks and posters) is not part of this repository. [QM2027/program-data](https://github.com/QM2027/program-data)

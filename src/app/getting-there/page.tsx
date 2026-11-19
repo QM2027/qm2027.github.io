@@ -4,6 +4,7 @@ import { PageTitle } from "@/components/PageTitle";
 import { BrandArrival, BrandMore } from "@/components/BrandGettingThere";
 import { TaxiCard } from "@/components/TaxiCard";
 import { AIRPORT_KM, AIRPORT_OPTIONS as OPTIONS } from "@/data/airport";
+import { TRAVEL_APPS } from "@/data/apps";
 import { INDICO_ACCOMMODATION, INDICO_VENUE } from "@/data/indico-links";
 
 export const metadata: Metadata = {
@@ -62,9 +63,11 @@ export default function GettingTherePage() {
         <div className="rounded-md border border-border bg-surface p-5">
           <h2 className="font-semibold">Apps worth installing</h2>
           <ul className="mt-2 space-y-1 text-sm text-muted">
-            <li><b className="text-foreground">Kakao Map / Naver Map</b>: bus routes and walking directions</li>
-            <li><b className="text-foreground">Kakao T</b>: taxis (works with foreign cards)</li>
-            <li><b className="text-foreground">Papago</b>: translation, including from photos</li>
+            {TRAVEL_APPS.map((a) => (
+              <li key={a.name}>
+                <b className="text-foreground">{a.name}</b>: {a.use}
+              </li>
+            ))}
           </ul>
         </div>
         <div className="rounded-md border border-border bg-surface p-5">

@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { BRAND_FIELD } from "@/components/PageTitle";
 import { EMERGENCY } from "@/data/emergency";
-import { INDICO_CONDUCT, INDICO_GROUPS } from "@/data/indico-links";
+import { INDICO_CONDUCT, INDICO_GROUPS, INDICO_KEY_LINKS } from "@/data/indico-links";
 import { SITE } from "@/lib/site";
 
 // The conference-app edition's Info tab (preview). On-site practicalities live here; official texts
@@ -25,11 +25,6 @@ const brandRow = "brand:mt-16 brand:pt-6 lg:brand:mt-20 lg:brand:grid lg:brand:g
 /** Filled in once the organizing committee confirms the details. */
 const ON_SITE = ["Wi-Fi", "Cloakroom and luggage", "Lost and found", "First aid", "Prayer and quiet room", "Badge"];
 
-/** Brand look: the Indico pages a participant opens most, as on the brand home; every page sits behind "All Indico pages". */
-const KEY_INDICO = ["Register", "Important Dates", "Call for Abstracts", "Timetable", "Accommodation", "Code of Conduct"];
-const keyIndico = KEY_INDICO.map((label) => INDICO_GROUPS.flatMap((g) => g.links).find((l) => l.label === label)).filter(
-  (l): l is NonNullable<typeof l> => Boolean(l),
-);
 
 export default function InfoPage() {
   return (
@@ -164,7 +159,7 @@ export default function InfoPage() {
         </div>
         <div className="mt-4 lg:col-span-9 lg:mt-0">
           <ul className="flex flex-wrap gap-x-8 gap-y-2">
-            {keyIndico.map((l) => (
+            {INDICO_KEY_LINKS.map((l) => (
               <li key={l.href}>
                 <a href={l.href} target="_blank" rel="noreferrer" className="inline-block py-1 underline decoration-border underline-offset-4 hover:decoration-foreground">
                   {l.label}

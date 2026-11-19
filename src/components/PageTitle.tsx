@@ -1,12 +1,8 @@
 /**
  * Brand look (?look=brand): a field of the logo's blue behind a block inside a page's padded
- * <main>, running the full width of the window. The colour beyond the block's own box is a
- * box-shadow, which never widens the page (no sideways scroll, with or without a scrollbar), and
- * clip-path trims it to the block's height. The ink tokens are re-pointed at white and pale blue so
- * the classes inside follow, and links get a white focus ring (the default one is blue).
+ * <main>, running the full width of the window. See field-bleed and field-ink in globals.css.
  */
-export const BRAND_FIELD =
-  "brand:bg-brand-field brand:text-foreground brand:[box-shadow:0_0_0_100vmax_var(--brand-field)] brand:[clip-path:inset(0_-100vmax)] brand:[--foreground:var(--on-brand-field)] brand:[--muted:var(--brand-field-muted)] brand:[--border:var(--brand-field-muted)] brand:[--sea:var(--on-brand-field)] brand:[&_a:focus-visible]:outline-2 brand:[&_a:focus-visible]:outline-offset-2 brand:[&_a:focus-visible]:outline-on-brand-field";
+export const BRAND_FIELD = "brand:bg-brand-field brand:field-bleed brand:field-ink";
 
 /**
  * A page's h1 and the short line that introduces it. Current look: the line sits above the title

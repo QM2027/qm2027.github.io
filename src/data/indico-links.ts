@@ -54,6 +54,16 @@ export const INDICO_GROUPS: IndicoGroup[] = [
   },
 ];
 
+/** The pages a participant opens most, in this order. The brand look lists them first and keeps
+ *  every page of INDICO_GROUPS behind "All Indico pages". A renamed label fails the build here
+ *  rather than dropping out of the list. */
+const KEY_LABELS = ["Register", "Important Dates", "Call for Abstracts", "Timetable", "Accommodation", "Code of Conduct"];
+export const INDICO_KEY_LINKS: IndicoLink[] = KEY_LABELS.map((label) => {
+  const link = INDICO_GROUPS.flatMap((g) => g.links).find((l) => l.label === label);
+  if (!link) throw new Error(`indico-links: no Indico link labelled "${label}"`);
+  return link;
+});
+
 export const INDICO_TIMETABLE = `${EVENT}/timetable/`;
 export const INDICO_DATES = `${EVENT}/page/41198-important-dates`;
 export const INDICO_REGISTER = `${EVENT}/registrations/`;

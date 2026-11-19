@@ -5,7 +5,7 @@ import baengnokdamSmall from "@/assets/photos/baengnokdam-640.webp";
 import islandLarge from "@/assets/photos/jeju-landsat-1920.webp";
 import islandSmall from "@/assets/photos/jeju-landsat-960.webp";
 import { GUIDES } from "@/data/guides";
-import { INDICO_GROUPS } from "@/data/indico-links";
+import { INDICO_GROUPS, INDICO_KEY_LINKS } from "@/data/indico-links";
 import { SITE } from "@/lib/site";
 
 /*
@@ -51,15 +51,8 @@ const WHEN: { title: string; links: { href: string; title: string; text: string 
   },
 ];
 
-/** The Indico pages a participant opens most; the rest sit behind "All Indico pages". */
-const KEY_INDICO = ["Register", "Important Dates", "Call for Abstracts", "Timetable", "Accommodation", "Code of Conduct"];
-/** Text tokens re-pointed for white and pale-blue ink on the blue field. */
-const ON_FIELD =
-  "bg-brand-field text-on-brand-field [--foreground:var(--on-brand-field)] [--muted:var(--brand-field-muted)] [--border:var(--brand-field-muted)]";
-
-const keyIndico = KEY_INDICO.map((label) => INDICO_GROUPS.flatMap((g) => g.links).find((l) => l.label === label)).filter(
-  (l): l is NonNullable<typeof l> => Boolean(l),
-);
+/** The blue field with white and pale-blue ink (field-ink in globals.css). */
+const ON_FIELD = "bg-brand-field field-ink";
 
 export function BrandHome() {
   return (
@@ -178,7 +171,7 @@ export function BrandHome() {
           </div>
           <div className="mt-4 lg:col-span-9 lg:mt-0">
             <ul className="flex flex-wrap gap-x-8 gap-y-2">
-              {keyIndico.map((l) => (
+              {INDICO_KEY_LINKS.map((l) => (
                 <li key={l.href}>
                   <a href={l.href} target="_blank" rel="noreferrer" className="inline-block py-1 underline decoration-border underline-offset-4 hover:decoration-foreground">
                     {l.label}
