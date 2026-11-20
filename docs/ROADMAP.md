@@ -36,7 +36,7 @@
 - [ ] 택시 카드 주소(ICC, 서귀포의료원) 확인 — [src/components/TaxiCard.tsx](../src/components/TaxiCard.tsx)
 - [ ] GitHub 저장소 Settings → Pages → Source를 "GitHub Actions"로 설정
 - [ ] 커스텀 도메인 전환 시: Pages 설정에 도메인 등록 + `public/CNAME` 추가 (basePath는 워크플로가 자동 처리)
-- [ ] 데이터 저장소(program-data, weather-data, tour-data) 타이머 확인 — GitHub schedule 대신 Cloudflare Worker `qm2027-trigger`가 `workflow_dispatch`로 실행(GitHub schedule은 몇 시간씩 지연·누락). 3/15 전: Worker에 3/15–28 5분 간격 항목 있는지, GitHub 토큰(fine-grained, Actions read/write) 만료일이 4월 이후인지, Actions 탭에 최근 실행 계속 쌓이는지
+- [ ] 데이터 저장소 타이머 확인 — program-data·weather-data는 GitHub schedule 대신 Cloudflare Worker `qm2027-trigger`가 `workflow_dispatch`로 실행(GitHub schedule은 몇 시간씩 지연·누락). 3/15 전: Worker에 3/15–28 5분 간격 항목 있는지, GitHub 토큰(fine-grained, Actions read/write) 만료일이 4월 이후인지, Actions 탭에 최근 실행 계속 쌓이는지. tour-data는 실시간성 불필요해 GitHub schedule(주 1회) 유지 — 60일 무활동 시 자동 비활성화되므로 1월 말쯤 커밋 1개로 연장
 
 ## 📋 다음 작업 (우선순위 순)
 
@@ -127,7 +127,7 @@
 - [ ] program-data의 최종 `index.json`·해시 파일(program, abstracts), tour-data 최종 JSON을 main repo `public/`에 커밋하고, 사이트가 외부 데이터 저장소 대신 이 파일을 읽게 경로 교체
 - [ ] 폴링 중단(index.json 5분 폴링, 탭 복귀 갱신), Updates·"내 항목 변경" 배너·NOW 표시 등 실시간 기능을 종료 상태로 정리
 - [ ] 실시간 날씨(Open-Meteo/기상청)·플래너 예보 제거 또는 3월 평년 기후만 표시
-- [ ] Cloudflare Worker `qm2027-trigger` 삭제, GitHub 토큰 폐기, 데이터 저장소 archive
+- [ ] Cloudflare Worker `qm2027-trigger` 삭제, GitHub 토큰 폐기, tour-data 워크플로 비활성화(Actions → Disable workflow), 데이터 저장소 archive
 - [ ] `DATA_GO_KR_KEY` 조직 시크릿 삭제, data.go.kr 활용신청 해지
 - [ ] main repo 배포 워크플로가 외부 저장소·시크릿 없이 빌드되는지 확인 (빌드 타임 외부 fetch 제거)
 - [ ] `public/sw.js` 캐시 버전 올려 설치된 PWA가 고정 데이터로 갱신되게, 오프라인 열람 재확인
