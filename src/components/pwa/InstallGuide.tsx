@@ -51,7 +51,7 @@ export function InstallGuide({ mode, onClose }: { mode: "ios" | "mac-safari"; on
       >
         {variant === "ipad" && <Arrow up className="mr-10" />}
         {variant === "mac" && <Arrow up className="ml-8" />}
-        <div className="w-full rounded-md border border-border bg-background p-5 text-foreground shadow-xl">
+        <div className="max-h-[calc(100dvh-6rem)] w-full overflow-y-auto overscroll-contain rounded-md border border-border bg-background p-5 text-foreground shadow-xl">
           <div className="flex items-start justify-between gap-3">
             <h2 id="install-guide-title" className="text-xl">
               {variant === "mac" ? "Add to Dock" : "Add to Home Screen"}
@@ -107,16 +107,52 @@ function IosSteps({ variant }: { variant: Exclude<Variant, "mac"> }) {
       )}
       <Step n={2}>
         <p>
-          Tap <Ui icon="addSquare">Add to Home Screen</Ui>.
+          Scroll down the Share menu to the list and tap <Ui icon="addSquare">Add to Home Screen</Ui>, below Add to Favorites.
         </p>
         <p className="mt-1 text-muted">
-          Not in the list? Tap <b className="text-foreground">View More</b> under Add to Favorites, and it&apos;s there.
+          No list? Tap <b className="text-foreground">View More</b>, the last of the round buttons after Copy, and it opens.
         </p>
+        <ShareSheetSketch />
       </Step>
       <Step n={3}>
         Tap <b>Add</b>.
       </Step>
     </>
+  );
+}
+
+/**
+ * A drawn outline of the lower half of iOS's Share menu (round buttons, then the list), marking
+ * View More and Add to Home Screen. Labels only; no screenshot, since a real one shows contacts.
+ */
+function ShareSheetSketch() {
+  const round = ["Copy", "Add to Bookmarks", "Add to Reading List"];
+  return (
+    <div aria-hidden className="mt-2 rounded-md border border-border bg-surface p-3 text-[10px] leading-3">
+      <div className="grid grid-cols-4 gap-1 text-center text-muted">
+        {round.map((label) => (
+          <div key={label} className="flex flex-col items-center gap-1">
+            <span className="size-7 rounded-full bg-border" />
+            <span>{label}</span>
+          </div>
+        ))}
+        <div className="flex flex-col items-center gap-1 font-semibold text-foreground">
+          <span className="flex size-7 items-center justify-center rounded-full bg-border ring-2 ring-sea">
+            <Icon name="chevron" className="size-3.5 rotate-90" />
+          </span>
+          <span>View More</span>
+        </div>
+      </div>
+      <div className="mt-3 divide-y divide-border overflow-hidden rounded-md bg-background text-xs leading-4">
+        <p className="flex items-center gap-2 px-3 py-1.5 text-muted">
+          <Icon name="star" className="size-3.5" /> Add to Favorites
+        </p>
+        <p className="px-3 py-1.5 pl-[2.125rem] text-muted">Find on Page</p>
+        <p className="flex items-center gap-2 bg-sea px-3 py-1.5 font-medium text-on-sea">
+          <Icon name="addSquare" className="size-3.5" /> Add to Home Screen
+        </p>
+      </div>
+    </div>
   );
 }
 
