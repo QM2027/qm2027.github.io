@@ -8,7 +8,7 @@ type InstallEvent = Event & { prompt: () => Promise<void>; userChoice: Promise<{
  * How this browser installs the guide:
  * - "prompt": Chromium fired beforeinstallprompt, so a button can open the native dialog.
  * - "ios": iPhone/iPad have no prompt; the visitor adds it from the Share sheet.
- * - "mac-safari": Safari on macOS adds web apps from File > Add to Dock.
+ * - "mac-safari": Safari 17+ on macOS (Sonoma) adds web apps from File > Add to Dock.
  * - null: already installed, or the browser can't install it (or hasn't offered yet).
  */
 export type InstallMode = "prompt" | "ios" | "mac-safari" | null;
@@ -36,7 +36,10 @@ function isStandalone() {
 if (typeof window !== "undefined" && !isStandalone()) {
   const ua = navigator.userAgent;
   const ios = /iPad|iPhone|iPod/.test(ua) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
-  const macSafari = !ios && /Macintosh/.test(ua) && /Safari\//.test(ua) && !/Chrome|Chromium|Edg|Firefox|OPR/.test(ua);
+  // Add to Dock arrived with Safari 17 (macOS Sonoma 14); older Safari has no way to install.
+  const safariMajor = Number(/Version\/(\d+)/.exec(ua)?.[1] ?? 0);
+  const macSafari =
+    !ios && /Macintosh/.test(ua) && /Safari\//.test(ua) && !/Chrome|Chromium|Edg|Firefox|OPR/.test(ua) && safariMajor >= 17;
   if (ios) state = { ...state, mode: "ios" };
   else if (macSafari) state = { ...state, mode: "mac-safari" };
 

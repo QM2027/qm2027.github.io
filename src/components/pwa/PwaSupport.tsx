@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { Icon } from "@/components/Icon";
+import { InstallGuide } from "./InstallGuide";
 import { closeInstallHelp, install, persistStorage, useInstall } from "./install";
 import { applyUpdate, dismissUpdate, registerServiceWorker, useUpdate } from "./update";
 
@@ -24,7 +25,8 @@ async function registerProgramSync() {
 /**
  * Registers the service worker, offers a new version when one is ready, and offers "add to home
  * screen" once per device. After "Later", the header keeps a small Update button (see SiteNav).
- * The header's Install button reopens the install banner where there is no native prompt.
+ * Where there is no native prompt (Safari), the header's Install button and the banner's "Show me
+ * how" open a step-by-step guide instead.
  */
 export function PwaSupport() {
   const { mode, helpOpen } = useInstall();
@@ -78,17 +80,22 @@ export function PwaSupport() {
     );
   }
 
-  if (!mode || !(auto || helpOpen)) return null;
+  if (!mode) return null;
+  if (helpOpen && mode !== "prompt") return <InstallGuide mode={mode} onClose={dismiss} />;
+  if (!auto) return null;
 
   return (
     <div role="dialog" aria-label="Install the guide" className={BANNER}>
       <div className="flex-1 text-sm">
         <p className="guide-only font-semibold">Use the guide offline</p>
         <p className="app-only font-semibold">Use the app offline</p>
-        {mode === "ios" ? (
-          <p className="mt-1 text-on-sea/75">Tap the Share button, then “Add to Home Screen”. Maps you&apos;ve viewed and all guides will work without signal.</p>
-        ) : mode === "mac-safari" ? (
-          <p className="mt-1 text-on-sea/75">In Safari, choose File › Add to Dock. Guides and maps you&apos;ve viewed work without signal.</p>
+        {mode !== "prompt" ? (
+          <>
+            <p className="mt-1 text-on-sea/75">Add it to your Home Screen. Guides and maps you&apos;ve viewed work without signal.</p>
+            <button onClick={() => install()} className="mt-3 min-h-10 rounded-md bg-background px-4 font-semibold text-foreground">
+              Show me how
+            </button>
+          </>
         ) : (
           <>
             <p className="mt-1 text-on-sea/75">Install it on this device. Guides and maps you&apos;ve viewed work without signal.</p>

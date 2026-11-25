@@ -18,6 +18,9 @@ const PATHS = {
   bell: "M6 16v-5a6 6 0 1 1 12 0v5l2 2H4zM10 21h4",
   refresh: "M20 11a8 8 0 1 0-2.3 5.7M20 4v7h-7",
   download: "M12 4v11m0 0-4-4m4 4 4-4M5 20h14",
+  // Apple's Share and Add to Home Screen symbols, so the install steps match what's on screen.
+  share: "M8.5 9H6a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V10a1 1 0 0 0-1-1h-2.5M12 3v11M8.5 6.5 12 3l3.5 3.5",
+  addSquare: "M7 4h10a3 3 0 0 1 3 3v10a3 3 0 0 1-3 3H7a3 3 0 0 1-3-3V7a3 3 0 0 1 3-3zM12 8v8m-4-4h8",
   clip: "M20 11.5 12.4 19a5 5 0 0 1-7.1-7.1l7.9-7.8a3.3 3.3 0 0 1 4.7 4.7l-7.8 7.8a1.7 1.7 0 0 1-2.4-2.4l7.1-7",
 } as const;
 
