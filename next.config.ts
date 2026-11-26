@@ -3,9 +3,10 @@ import type { NextConfig } from "next";
 // Set NEXT_PUBLIC_BASE_PATH=/<repo> when deploying to <user>.github.io/<repo>.
 // Leave it unset for a custom domain.
 const basePath = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
+const isStaticExport = process.env.NEXT_OUTPUT === "export";
 
 const nextConfig: NextConfig = {
-  output: "export",
+  output: isStaticExport ? "export" : undefined,
   basePath,
   assetPrefix: basePath || undefined,
   trailingSlash: true,
